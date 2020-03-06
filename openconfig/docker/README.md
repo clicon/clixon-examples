@@ -5,11 +5,12 @@ openconfig-system docker container.
 
 ## Example run
 
-First, the container is started with the backend running:
+First, the container is started with a backend and a restconf listening on port 8080:
 ```
-  $ sudo docker run --rm --name openconfig -d clixon/openconfig-system clixon_backend -Fs init
+  $ sudo docker run --rm -p 8080:80 --name openconfig -d clixon/openconfig-system
 ```
-Then a CLI is started, and finally the container is removed:
+
+You can start a CLI with some example commands:
 ```
   $ sudo docker exec -it openconfig clixon_cli
 openconfig> set ?
@@ -32,7 +33,8 @@ openconfig> set system
   processes             Parameters related to all monitored processes
   ssh-server            Top-level container for ssh server
   telnet-server         Top-level container for telnet terminal servers
-openconfig> set system clock config timezone-name Europe/Stockholm 
+openconfig> set system clock config timezone-name Europe/Stockholm
+openconfig> commit
 openconfig> show configuration 
 system {
     clock {
@@ -44,6 +46,27 @@ system {
 openconfig> q
 
 $ sudo docker kill 
+```
+
+You can also use netconf via stdin/stdout:
+```
+  $ sudo docker exec -it openconfig clixon_netconf
+  <rpc><get-config><source><candidate/></source></get-config></rpc>]]>]]>
+  <rpc-reply><data><system xmlns="http://openconfig.net/yang/system"><clock><config><timezone-name>Europe/Stockholm</timezone-name></config></clock></system></data></rpc-reply>]]>]]>
+```
+
+Or using restconf using curl on exposed port 8080:
+```
+  $ curl -G http://localhost:8080/restconf/data/openconfig-system:system
+{
+    "openconfig-system:system": {
+      "clock": {
+        "config": {
+          "timezone-name": "Europe/Stockholm"
+        }
+      }
+    }
+  }
 ```
 
 ## Build and push
