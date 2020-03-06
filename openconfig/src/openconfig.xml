@@ -1,0 +1,17 @@
+<clixon-config xmlns="http://clicon.org/config">
+  <CLICON_CONFIGFILE>/usr/local/etc/clixon.xml</CLICON_CONFIGFILE>
+  <CLICON_FEATURE>*:*</CLICON_FEATURE>
+  <CLICON_YANG_DIR>/usr/local/share/clixon</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models/system</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models/types</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models/platform</CLICON_YANG_DIR>
+  <CLICON_YANG_MODULE_MAIN>openconfig-system</CLICON_YANG_MODULE_MAIN>
+  <CLICON_CLI_MODE>openconfig</CLICON_CLI_MODE>
+  <CLICON_CLISPEC_DIR>/usr/local/lib/openconfig/clispec</CLICON_CLISPEC_DIR>
+  <CLICON_SOCK>/usr/local/var/openconfig.sock</CLICON_SOCK>
+  <CLICON_BACKEND_PIDFILE>/usr/local/var/openconfig.pidfile</CLICON_BACKEND_PIDFILE>
+  <CLICON_XMLDB_DIR>/usr/local/var/openconfig</CLICON_XMLDB_DIR>
+  <CLICON_STARTUP_MODE>init</CLICON_STARTUP_MODE>
+  <CLICON_MODULE_LIBRARY_RFC7895>false</CLICON_MODULE_LIBRARY_RFC7895>
+</clixon-config>

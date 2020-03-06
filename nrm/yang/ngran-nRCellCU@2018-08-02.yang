@@ -1,0 +1,68 @@
+submodule ngran-nRCellCU {
+    
+	belongs-to ngran { prefix ngran; }
+    
+    import ManagedFunction { prefix mf; revision-date "2018-07-31"; }
+    import nrm-types-3gpp { prefix nrm-type; revision-date "2018-07-31"; }
+
+    description "NRCellCU derived from basic ManagedFunction";
+
+    revision 2018-08-02 {
+        description "Initial revision";
+    }
+
+    grouping NRCellCU {
+        uses mf:ManagedFunction;
+        
+        leaf nCI {        	
+            config "true";
+            description "It uniquely identifies a NR cell within a PLMN.";
+            reference "See NR Cell identifier (NCI) subclause 8.2 of 3GPP
+                        TS 38.300 [3].";
+       	    type nrm-type:t_NCI;        	
+        }
+
+		list pLMNId {
+            min-elements "1";
+            description "a list of PLMN-Id, PLMN-Id= Mobile Country Codes (MCC)|| Mobile Network Codes(MNC) ";
+            config "true";
+            key MCC;
+            uses nrm-type:pLMNId;
+        }
+		
+       leaf-list s-NSSAI {
+            min-elements "0";
+            config "true";
+            description "It represents the list of S-NSSAI the managed object is capable of supporting, an S-NSSAI is comprised of a SST (Slice/Service
+                        type) and an optional SD (Slice Differentiator) field, (Ref. 3GPPTS 23.003 [13]). ";
+            reference "3GPP TS 23.003";
+        	type nrm-type:t_s-NSSAI; 
+       }
+         
+       leaf rRMPolicyType {
+           config "true";
+           type uint16;
+        }
+	
+       leaf rRMPolicyNSSIId {
+           config "true";
+           type nrm-type:t_dn;
+        }
+	
+       leaf rRMPolicyRatio {
+           config "true";
+           type uint8 {	range 0..100; }
+        }
+	
+       leaf rRMPolicy {
+       	   description "It represents RRM policy which includes guidance for split of radio resources between multiple slices the cell supports. The RRM policy is implementation dependent.";
+           config "true";
+           type string;
+        }
+       container rRMPolicyRatio2 {
+           presence "true";
+           config "true";
+           uses nrm-type:RRMPolicyRatio2;
+        }
+     }
+}

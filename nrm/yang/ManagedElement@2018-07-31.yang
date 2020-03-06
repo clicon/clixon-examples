@@ -1,0 +1,73 @@
+module ManagedElement {
+    namespace "urn:3gpp:tsg:sa5:nrm:ManagedElement";
+    prefix "me";
+    import nrm-types-3gpp { prefix nrm-type; revision-date "2018-07-31"; }
+    import Top { prefix top; revision-date "2018-07-31"; }
+import VsDataContainer {prefix vsData; revision-date "2018-12-18"; }
+    organization "3gpp SA5";
+    description "define basic ManagedElement which will be augmented by other IOCs";
+
+    revision 2018-07-31 {
+        description "Initial revision";
+    }
+ 
+	    grouping ManagedElement {
+	       	uses top:Top;
+			leaf id {
+	            mandatory "true";
+	            config "false";
+	            description "";
+	            type nrm-type:t_dn;
+	        }
+	    leaf vendorName {
+	            mandatory "true";
+	            config "false";
+	            description "";
+	            type string;
+	        }
+	    leaf userDefinedState {
+	            mandatory "true";
+	            config "true";
+	            description "";
+	            type string;
+	        }
+	    leaf swVersion {
+	            mandatory "true";
+	            config "false";
+	            description "";
+	            type string;
+	        }
+	    leaf dnPrefix {
+	            mandatory "true";
+	            config "false";
+	            description "";
+	            type string;
+	        }
+	    leaf userLabel {
+	            description "";
+	            mandatory "true";
+	            config "true";
+	            type string;
+	        }
+	    leaf locationName {
+	            mandatory "true";
+	            config "false";
+	            type string;
+	        }
+	    leaf-list managedBy {
+	            description "";
+	            config "false";
+	            type nrm-type:t_dn;
+	        }
+	    leaf-list managedElementTypeList {
+	            min-elements "1";
+	            config "false";
+	            description "";
+	            type string;
+	        }	
+        list vsDataContainer {
+            min-elements "0";
+       	    uses vsData:VsDataContainer;
+        }
+    }
+}

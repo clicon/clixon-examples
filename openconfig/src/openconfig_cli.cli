@@ -1,5 +1,5 @@
-CLICON_MODE="hello";
-CLICON_PROMPT="cli> ";
+CLICON_MODE="openconfig";
+CLICON_PROMPT="openconfig> ";
 
 # Reference generated data model
 set @datamodel, cli_set();

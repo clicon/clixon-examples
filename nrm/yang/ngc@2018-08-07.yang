@@ -1,0 +1,68 @@
+module ngc {
+    namespace "urn:3gpp:tsg:sa5:nrm:ngc";
+    prefix "ngc";
+    import SubNetwork { prefix subnet; revision-date "2018-07-31"; }
+    import ManagedElement { prefix me; revision-date "2018-07-31"; }
+    include ngc-AMFFunction;
+    include ngc-SMFFunction;
+    include ngc-UPFFunction;
+    include ngc-N3IWFFunction;
+    include ngc-PCFFunction;
+    include ngc-AUSFFunction;
+    include ngc-UDMFunction;
+    include ngc-UDRFunction;
+    include ngc-UDSFFunction;
+    include ngc-NRFFunction;
+    include ngc-NSSFFunction;
+    include ngc-SMSFFunction;
+    include ngc-LMFFunction;
+    include ngc-NGEIRFunction;
+    include ngc-SEPPFunction;
+    include ngc-NWDAFunction;
+    include NFProfile;
+
+    include ngc-AMFSet;    /* XXX Added by Olof */
+    include ngc-AMFRegion; /* XXX Added by Olof */
+
+    revision 2018-08-07 {
+        description "Initial revision";
+    }
+    
+    container SubNetwork {
+		
+    	uses subnet:SubNetwork;
+    	list ManagedElement {
+		uses me:ManagedElement;
+	    	list AMFFunction { uses AMFFunction; }
+	    	list SMFFunction { uses SMFFunction; }
+	        list UPFFunction { uses UPFFunction; }
+	    	list N3IWFFunction { uses N3IWFFunction; }
+	    	list PCFFunction { uses PCFFunction; }
+	    	list AUSFFunction { uses AUSFFunction; }
+	    	list UDMFunction { uses UDMFunction; }
+	    	list UDRFunction { uses UDRFunction; }
+	    	list UDSFFunction { uses UDSFFunction; }
+	        list NRFFunction { uses NRFFunction; }
+	    	list NSSFFunction { uses NSSFFunction; }
+	    	list SMSFFunction { uses SMSFFunction; }
+	    	list LMFFunction { uses LMFFunction; }
+	    	list NGEIRFunction { uses NGEIRFunction; }
+	    	list SEPPFunction { uses SEPPFunction; }
+	    	list NWDAFunction { uses NWDAFunction; }
+    	}
+	list AMFSet { uses AMFSet; }
+        list AMFRegion { uses AMFRegion; }   
+		
+	}
+    	
+}
+
+
+
+
+
+
+
+
+
+

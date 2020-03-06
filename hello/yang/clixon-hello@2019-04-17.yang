@@ -11,37 +11,4 @@ module clixon-hello {
 	    presence true;
 	}
     }
-    grouping g2 {
-        list g2 {
-	    uses g1;
-        }
-      }
-    grouping g1 {
-        list g1 {
-	    uses g2;
-        }
-      }
-
-    list routing-table {
-	key name;
-	leaf name{
-	    type string;
-	}
-	leaf family {
-	    type int32;
-	}
-    }
-    container top{
-	presence true;
-	uses g1;
-        list routing-table {
-	key name;
-	leaf name{
-	    type string;
-	}
-	leaf family {
-	    type int32;
-	}
-    }
-    }
 }

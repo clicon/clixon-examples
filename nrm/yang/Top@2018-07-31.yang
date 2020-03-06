@@ -1,0 +1,30 @@
+module Top {
+    namespace "urn:3gpp:tsg:sa5:nrm:Top";
+    prefix "top";
+    import nrm-types-3gpp { prefix nrm-type; revision-date "2018-07-31"; }
+    organization "3gpp SA5";
+    description "root class to be inherited/reused by other child class including ME, MF, EP, etc.";
+    reference "28.622";
+
+    revision 2018-07-31 {
+        description "Initial revision";
+    }
+
+    grouping Top {
+      leaf objectClass {
+            mandatory "true";
+            config "false";
+            description "";
+            type string;
+        }
+      leaf objectInstance {
+            mandatory "true";
+            config "false";
+            description "";
+            type nrm-type:t_dn;
+        }
+
+
+        description "";
+    }
+}

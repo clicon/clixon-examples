@@ -68,17 +68,17 @@ RUN make install
 RUN make install-include
 
 # Create paths locally (copied to /usr/local in stage 2)
-# Paths are according to hello.xml config file.
+# Paths are according to nrm.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
 RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/hello
-RUN mkdir /clixon/build/lib/hello
-RUN mkdir /clixon/build/lib/hello/clispec
+RUN mkdir /clixon/build/var/nrm
+RUN mkdir /clixon/build/lib/nrm
+RUN mkdir /clixon/build/lib/nrm/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/hello.xml /clixon/build/etc/clixon.xml
-COPY src/hello_cli.cli /clixon/build/lib/hello/clispec/
+COPY src/nrm.xml /clixon/build/etc/clixon.xml
+COPY src/nrm_cli.cli /clixon/build/lib/nrm/clispec/
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
 COPY yang /clixon/build/share/clixon

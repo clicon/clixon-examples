@@ -1,25 +1,20 @@
-# Clixon hello world docker image
+# Clixon 5G NRM docker image
 
-This directory contains code for running, building, and pushing the clixon hello world docker container. 
-
+This directory contains code for running, building, and pushing the clixon 5G NRM docker container. 
 
 ## Example run
 
 The following shows a simple example of how to run the example
 application. First, the container is started with the backend running:
 ```
-  $ sudo docker run --rm --name hello -d clixon/hello clixon_backend -Fs init
+  $ sudo docker run --rm --name nrm -d clixon/nrm clixon_backend -Fs init
 ```
 Then a CLI is started, and finally the container is removed:
 ```
-  $ sudo docker exec -it hello clixon_cli
+  $ sudo docker exec -it nrm clixon_cli
   cli> set ?
-   hello                 
-  cli> set hello world 
-  cli> show configuration 
-  hello world;
-  cli> q
-  $ sudo docker kill hello
+  > q
+  $ sudo docker kill nrm
 ```
 
 ## Build and push

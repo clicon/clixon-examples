@@ -1,0 +1,50 @@
+submodule ngran-bWP {
+    
+	belongs-to ngran { prefix ngran; }
+    
+    import nrm-types-3gpp { prefix nrm-type; revision-date "2018-07-31"; }
+    import ManagedFunction { prefix mf; revision-date "2018-07-31"; }
+
+    description "BWP";
+
+    revision 2018-09-28 {
+        description "Initial revision";
+    }
+
+    grouping BWP {
+        description "";
+        uses mf:ManagedFunction;
+
+        leaf bwpContext {
+            mandatory "true";
+            config "true";
+            type nrm-type:BwpContext;
+       }
+       leaf isInitialBwp {
+            mandatory "true";
+            config "false";
+            description "";
+            type nrm-type:IsInitialBwp;
+        }
+        leaf subCarrierSpacing {
+            mandatory "true";
+            config "true";
+            type uint32;
+        }
+        leaf cyclicPrefix {
+            mandatory "true";
+            config "true";
+            type nrm-type:t_cyclicPrefix;
+        }
+        leaf startRB {
+            mandatory "true";
+            config "true";
+            type uint32;
+        }
+        leaf numberOfRBs {
+            mandatory "true";
+            config "true";
+            type uint32;
+        }
+     }    
+}

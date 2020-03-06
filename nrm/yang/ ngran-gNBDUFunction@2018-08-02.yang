@@ -1,0 +1,62 @@
+submodule ngran-gNBDUFunction {
+    
+	belongs-to ngran { prefix ngran; }
+    
+	import EP_RP { prefix ep-rp; revision-date "2018-07-31"; }
+    import ManagedFunction { prefix mf; revision-date "2018-07-31"; }
+    
+    include ngran-nRCellDU;
+    include ngran-nRSectorCarrier;
+
+    description "GNBDUFunction derived from basic ManagedFunction, for 3 split deployment mode only";
+
+    revision 2018-08-02 {
+        description "15.0.2";
+    }
+
+    grouping GNBDUFunction {
+            uses mf:ManagedFunction;
+            
+    		leaf gNBDUId {
+                description "It uniquely identifies the DU at least within a gNB. See gNB-DU ID in subclause 9.3.1.9 of 3GPP TS 38.473 ";
+                mandatory "true";
+                config "true";
+                type uint32;
+            }
+            leaf gNBDUName {
+                description "PrintableString(SIZE(1..150,))";
+                mandatory "false";
+                config "true";
+                type string {
+                	length "1..150";
+                }
+            }
+            leaf gNBId {
+                description "It identifies a gNB within a PLMN. See gNB Identifier (gNB ID) of subclause 8.2 of 3GPP TS 38.300 [3]). See Global gNB ID in subclause 9.3.1.6 of 3GPP TS 38.413 [5]. ";
+                mandatory "true";
+                config "false";
+                type uint32;
+            }
+  			leaf gNBIdLength {
+                description "It indicates the number of bits for encoding the gNB ID.";
+                mandatory "true";
+                config "false";
+                type uint32 {
+					range " 22..32";
+				}
+            }      
+            
+         	container EP_F1C { uses ep-rp:EP_F1C; }
+         	list EP_F1U { uses ep-rp:EP_F1U; }
+
+	      list NRCellDU { 
+             uses NRCellDU; 
+          }
+	      list NRSectorCarrier { 
+              uses NRSectorCarrier; 
+          }
+          list BWP {
+              uses BWP;
+          }
+    }
+}

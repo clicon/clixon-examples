@@ -68,20 +68,25 @@ RUN make install
 RUN make install-include
 
 # Create paths locally (copied to /usr/local in stage 2)
-# Paths are according to hello.xml config file.
+# Paths are according to openconfig.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
 RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/hello
-RUN mkdir /clixon/build/lib/hello
-RUN mkdir /clixon/build/lib/hello/clispec
+RUN mkdir /clixon/build/var/openconfig
+RUN mkdir /clixon/build/lib/openconfig
+RUN mkdir /clixon/build/lib/openconfig/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/hello.xml /clixon/build/etc/clixon.xml
-COPY src/hello_cli.cli /clixon/build/lib/hello/clispec/
+COPY src/openconfig.xml /clixon/build/etc/clixon.xml
+COPY src/openconfig_cli.cli /clixon/build/lib/openconfig/clispec/
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
-COPY yang /clixon/build/share/clixon
+RUN mkdir /clixon/build/share/openconfig
+WORKDIR /clixon/build/share/openconfig
+RUN git clone https://github.com/openconfig/public
+
+# Copy startscript for starting backend and restconf
+COPY startsystem.sh /clixon/build/bin/
 
 #
 # Stage 2
@@ -112,5 +117,6 @@ COPY --from=0 /www-data /www-data
 RUN chown www-data /www-data
 RUN chgrp www-data /www-data
 
-
+# Start the backend and restconf deamons
+CMD /usr/local/bin/startsystem.sh
 

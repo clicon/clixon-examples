@@ -1,2 +1,5 @@
 hello/docker/src
 hello/docker/yang
+openconfig/docker/src
+nrm/docker/src
+nrm/docker/yang

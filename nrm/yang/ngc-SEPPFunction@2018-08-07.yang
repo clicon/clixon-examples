@@ -1,0 +1,49 @@
+submodule ngc-SEPPFunction {
+    
+	belongs-to ngc { prefix ngc; }
+    
+	import EP_RP { prefix ep-rp; revision-date "2018-07-31"; }
+    import ManagedFunction { prefix mf; revision-date "2018-07-31"; }
+    import nrm-types-3gpp { prefix nrm-type; revision-date "2018-07-31"; }
+    import ietf-inet-types { prefix inet; revision-date "2010-09-24"; }  
+
+    description "SEPPFunction derived from basic ManagedFunction";
+
+    revision 2018-08-07 {
+        description "Initial revision";
+    }
+
+    grouping SEPPFunction {
+        uses mf:ManagedFunction; 
+        
+		list pLMNId {
+            min-elements "1";
+            description "a list of PLMN-Id, PLMN-Id= Mobile Country Codes (MCC)|| Mobile Network Codes(MNC) ";
+            config "true";
+            key "MCC MNC";
+            uses nrm-type:pLMNId;
+        }
+    		
+        leaf sBIFQDN {
+            mandatory "true";
+            config "true";
+            description "";
+            type inet:domain-name;
+        }
+        
+        leaf-list sBIService {
+            min-elements "1";
+            config "false";
+        	type string; 
+       	
+        }
+       
+     	container EP_N32 { uses ep-rp:EP_N32; }
+     	list EP_SBI_IPX {
+     		key id;
+     		uses ep-rp:EP_SBI_IPX; 
+     	} 
+   	
+     }
+
+}

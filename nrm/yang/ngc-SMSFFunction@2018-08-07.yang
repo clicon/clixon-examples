@@ -1,0 +1,30 @@
+submodule ngc-SMSFFunction {
+    
+	belongs-to ngc { prefix ngc; }
+    
+	import EP_RP { prefix ep-rp; revision-date "2018-07-31"; }
+    import ManagedFunction { prefix mf; revision-date "2018-07-31"; }
+    import nrm-types-3gpp { prefix nrm-type; revision-date "2018-07-31"; }
+
+    description "SMSFFunction derived from basic ManagedFunction";
+
+    revision 2018-08-07 {
+        description "Initial revision";
+    }
+
+    grouping SMSFFunction {
+        uses mf:ManagedFunction; 
+        
+		list pLMNId {
+            min-elements "1";
+            description "a list of PLMN-Id, PLMN-Id= Mobile Country Codes (MCC)|| Mobile Network Codes(MNC) ";
+            config "true";
+            key "MCC MNC";
+            uses nrm-type:pLMNId;
+        }
+    		    
+     	list EP_N20 { uses ep-rp:EP_N20; }
+     	list EP_N21 { uses ep-rp:EP_N21; }
+     	list EP_MAP_SMSC { uses ep-rp:EP_MAP_SMSC; }
+    }
+}
