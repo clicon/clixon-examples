@@ -1,7 +1,7 @@
 #
 # ***** BEGIN LICENSE BLOCK *****
 # 
-# Copyright (C) 2009-2019 Olof Hagsand and Benny Holmgren
+# Copyright (C) 2009-2020 Olof Hagsand
 #
 # This file is part of CLIXON
 #
@@ -51,10 +51,7 @@ RUN ./configure --prefix=/clixon/build
 RUN make
 RUN make install
 
-
-
-
-# Need to add www user manually
+# For nginx and RESTCONF: Need to add www user manually
 RUN adduser -D -H www-data
 # nginx adds group www-data
 RUN apk add --update nginx
@@ -70,11 +67,20 @@ RUN make
 RUN make install
 RUN make install-include
 
-# Build and install the clixon hello example (not really necessary for base)
-WORKDIR /clixon/clixon/example/hello
-RUN make
-RUN make install
-RUN install hello.xml /clixon/build/etc/clixon.xml # For 2nd level
+# Copy src and yang files from local. Paths are according to hello.xml config file.
+# To make this adaptive, an installation script inside the container can be made, but now
+# the hardcoded paths are used.
+RUN mkdir /clixon/example
+WORKDIR /clixon/example
+COPY src/hello.xml /usr/local/etc/
+
+RUN mkdir /usr/local/lib/hello
+RUN mkdir /usr/local/lib/hello/clispec
+COPY src/hello_cli.cli /usr/local/lib/hello/clispec/
+
+# Copy yang files from local. Paths are according to hello.xml config file.
+RUN mkdir /usr/local/share/clixon
+COPY yang/*.yang /usr/local/share/clixon/
 
 #
 # Stage 2

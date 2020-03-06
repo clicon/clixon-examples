@@ -35,28 +35,31 @@ srcdir  	= .
 top_srcdir  	= ../..
 
 # docker.hub image. CHANGE THIS IF YOU PUSH YOUR OWN
-IMG   = clixon/clixon # base image
+IMG   = clixon/hello
 
-SHELL	= /bin/sh
-
-.PHONY: all clean distclean docker push depend install-include install uninstall test
+.PHONY: all clean distclean docker push depend install-include install uninstall
 
 all:	
 	echo "Run make docker to build docker image"
 
 clean:
-	rm -rf clixon # clone of top-srcdir
+	rm -rf yang src
 
 distclean: clean
 	rm -f Makefile *~ .depend
 
-test:
+yang:
+	cp -R ${srcdir}/../$@ .
 
-docker: Dockerfile
+src:
+	cp -R ${srcdir}/../$@ .
+
+docker: Dockerfile yang src
 	sudo docker build -t $(IMG) .  # --no-cache
 
 push:
 	sudo docker push $(IMG)
+
 depend:
 
 install-include:
