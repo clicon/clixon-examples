@@ -1,4 +1,8 @@
-# clixon-examples
+<div align="center">
+  <img src="http://www.clicon.org/Clixon_logga_liggande_med-ikon.png" width="400">
+</div>
+
+# Clixon-examples
 
 Example clixon applications.
 
@@ -8,12 +12,9 @@ netconf and change the configured state.
 
 The examples are not complete but the docker images should work
 
-- Hello world
-  - [docker](hello/docker)
-- Openconfig system from: [openconfig-system](https://github.com/openconfig/public)
-  - [docker](openconfig/docker)
-- 5G Network Resource Model (NRM) from 3GPP: [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g10.zip)
-  - [docker](nrm/docker)
+- [Hello world](hello)
+- [Openconfig](openconfig) system from: [openconfig-system](https://github.com/openconfig/public)
+- 5G Network Resource Model [NRM](nrm) from 3GPP: [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g10.zip)
 
 ## Build and install:
 ```
