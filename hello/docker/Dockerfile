@@ -83,6 +83,9 @@ COPY src/hello_cli.cli /clixon/build/lib/hello/clispec/
 # Copy yang files from local. Paths are according to openconfig.xml config file.
 COPY yang /clixon/build/share/clixon
 
+# Copy startscript for starting backend and restconf
+COPY startsystem.sh /clixon/build/bin/
+
 #
 # Stage 2
 #
@@ -112,5 +115,7 @@ COPY --from=0 /www-data /www-data
 RUN chown www-data /www-data
 RUN chgrp www-data /www-data
 
+# Start the backend and restconf deamons
+CMD /usr/local/bin/startsystem.sh
 
 

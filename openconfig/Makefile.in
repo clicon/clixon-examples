@@ -33,54 +33,53 @@
 VPATH       	= @srcdir@
 srcdir  	= @srcdir@
 top_srcdir  	= @top_srcdir@
-prefix 		= @prefix@
-bindir 		= @bindir@
-includedir	= @includedir@
-datarootdir     = @datarootdir@
-sysconfdir      = @sysconfdir@
-datarootdir	= @datarootdir@
-localstatedir   = @localstatedir@
-libdir          = @exec_prefix@/lib
-
-APPNAME	        = hello
-
 CC		= @CC@
-CFLAGS  	= @CFLAGS@ -fPIC 
-INSTALLFLAGS  	= @INSTALLFLAGS@ 
+CFLAGS  	= @CFLAGS@ 
+LDFLAGS 	= @LDFLAGS@
+LIBS    	= @LIBS@
 
-INCLUDES 	= -I$(includedir) @INCLUDES@ 
-CPPFLAGS  	= @CPPFLAGS@ -fPIC
+SHELL	= /bin/sh
 
-.PHONY: all clean depend install 
+# No local install - yang files are not installed,...
+#SUBDIRS  = src
+SUBDIRS = docker
 
-all:
+.PHONY: all clean depend install push $(SUBDIRS)
 
-.SUFFIXES: .c .o
+all:	# src
+	echo "To install applications locally: sudo make install"
+	echo "To build docker images: make docker"
 
-# implicit rule
-.c.o:
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c $<
+depend:
+	for i in $(SUBDIRS); \
+	do (cd $$i; $(MAKE) $(MFLAGS) $@); done
 
-CLISPECS = $(APPNAME)_cli.cli
+$(SUBDIRS):
+	(cd $@; $(MAKE) $(MFLAGS) all)
+
+install:
+	for i in $(SUBDIRS); \
+	do (cd $$i && $(MAKE) $(MFLAGS) $@)||exit 1; done
+
+uninstall:
+	for i in $(SUBDIRS); \
+	do (cd $$i; $(MAKE) $(MFLAGS) $@)||exit 1; done
+
+docker:
+	(cd docker; $(MAKE) $(MFLAGS) $@)
+	echo "make push to push images to dockerhub"
+
+push:
+	(cd docker; $(MAKE) $(MFLAGS) $@)
 
 clean:
+	for i in $(SUBDIRS); \
+	do (cd $$i; $(MAKE) $(MFLAGS) $@); done
 
 distclean: clean
 	rm -f Makefile *~ .depend
+	for i in $(SUBDIRS); \
+	do (cd $$i; $(MAKE) $(MFLAGS) $@); done
 
-install: $(CLISPECS) $(APPNAME).xml
-	install -m 0644 $(APPNAME).xml $(DESTDIR)$(sysconfdir)
-	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)
-	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
-	install -m 0644 $(CLISPECS) $(DESTDIR)$(libdir)/$(APPNAME)/clispec
-	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
-
-uninstall: 
-	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
-	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
-
-depend:
-	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend
-
-#include .depend
-
+TAGS:
+	find $(srcdir) -name '*.[chyl]' -print | etags -

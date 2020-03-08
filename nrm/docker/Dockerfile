@@ -62,7 +62,7 @@ RUN git clone https://github.com/clicon/clixon.git
 
 # Configure, build and install clixon
 WORKDIR /clixon/clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-wwwuser=www-data
+RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-wwwuser=www-data --enable-debug
 RUN make
 RUN make install
 RUN make install-include
@@ -112,5 +112,6 @@ COPY --from=0 /www-data /www-data
 RUN chown www-data /www-data
 RUN chgrp www-data /www-data
 
+RUN apk add --update gdb
 
 

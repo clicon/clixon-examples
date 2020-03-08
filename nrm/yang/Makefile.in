@@ -1,0 +1,112 @@
+#
+# ***** BEGIN LICENSE BLOCK *****
+# 
+# Copyright (C) 2020 Olof Hagsand and Rubicon Communications, LLC
+#
+# This file is part of CLIXON
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Alternatively, the contents of this file may be used under the terms of
+# the GNU General Public License Version 3 or later (the "GPL"),
+# in which case the provisions of the GPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of the GPL, and not to allow others to
+# use your version of this file under the terms of Apache License version 2, 
+# indicate your decision by deleting the provisions above and replace them with
+# the notice and other provisions required by the GPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the Apache License version 2 or the GPL.
+#
+# ***** END LICENSE BLOCK *****
+#
+VPATH       	= @srcdir@
+srcdir  	= @srcdir@
+top_srcdir  	= @top_srcdir@
+prefix 		= @prefix@
+bindir 		= @bindir@
+includedir	= @includedir@
+datarootdir     = @datarootdir@
+sysconfdir      = @sysconfdir@
+datarootdir	= @datarootdir@
+localstatedir   = @localstatedir@
+libdir          = @exec_prefix@/lib
+
+INSTALLFLAGS  	= @INSTALLFLAGS@ 
+
+# Here is where example yang appears
+YANG_INSTALLDIR  = @YANG_INSTALLDIR@
+
+# Local yang files to install
+YANGSPECS  = EP_RP@2018-07-31.yang
+YANGSPECS += ietf-inet-types@2010-09-24.yang
+YANGSPECS += ietf-yang-types@2010-09-24.yang
+YANGSPECS += ManagedElement@2018-07-31.yang
+YANGSPECS += ManagedFunction@2018-07-31.yang
+YANGSPECS += ManagementNode@2018-12-18.yang
+YANGSPECS += MeContext@2018-12-18.yang
+YANGSPECS += NFProfile@2018-08-08.yang
+YANGSPECS += ngc@2018-08-07.yang
+YANGSPECS += ngc-AMFFunction@2018-08-07.yang
+YANGSPECS += ngc-AMFRegion@2018-12-18.yang
+YANGSPECS += ngc-AMFSet@2018-12-18.yang
+YANGSPECS += ngc-AUSFFunction@2018-08-07.yang
+YANGSPECS += ngc-LMFFunction@2018-12-18.yang
+YANGSPECS += ngc-N3IWFFunction@2018-08-07.yang
+YANGSPECS += ngc-NGEIRFunction@2018-08-07.yang
+YANGSPECS += ngc-NRFFunction@2018-08-07.yang
+YANGSPECS += ngc-NSSFFunction@2018-08-07.yang
+YANGSPECS += ngc-NWDAFunction@2018-08-07.yang
+YANGSPECS += ngc-PCFFunction@2018-08-07.yang
+YANGSPECS += ngc-SEPPFunction@2018-08-07.yang
+YANGSPECS += ngc-SMFFunction@2018-08-07.yang
+YANGSPECS += ngc-SMSFFunction@2018-08-07.yang
+YANGSPECS += ngc-UDMFunction@2018-08-07.yang
+YANGSPECS += ngc-UDRFunction@2018-08-07.yang
+YANGSPECS += ngc-UDSFFunction@2018-08-07.yang
+YANGSPECS += ngc-UPFFunction@2018-08-07.yang
+YANGSPECS += ngran@2018-07-27.yang
+YANGSPECS += ngran-bWP@2018-09-28.yang
+YANGSPECS += ngran-gNBCUCPFunction@2018-08-02.yang
+YANGSPECS += ngran-gNBCUUPFunction@2018-08-02.yang
+YANGSPECS += ngran-gNBDUFunction@2018-08-02.yang
+YANGSPECS += ngran-nRCellCU@2018-08-02.yang
+YANGSPECS += ngran-nRCellDU@2018-08-02.yang
+YANGSPECS += ngran-nRSectorCarrier@2018-08-02.yang
+YANGSPECS += nrm-types-3gpp@2018-07-31.yang
+YANGSPECS += SubNetwork@2018-07-31.yang
+YANGSPECS += Top@2018-07-31.yang
+YANGSPECS += VsDataContainer@2018-12-18.yang
+
+.PHONY: all clean distclean install uninstall depend
+
+all:
+
+clean:
+
+distclean: clean
+	rm -f Makefile *~ .depend
+
+install: $(YANGSPECS)
+	install -d -m 0755 $(DESTDIR)$(YANG_INSTALLDIR)
+	install -m 0644 $(YANGSPECS) $(DESTDIR)$(YANG_INSTALLDIR)
+
+uninstall: 
+	for i in $(YANGSPEC) ; \
+	do rm $(DESTDIR)$(YANG_INSTALLDIR)/$$i; done
+
+depend:
+	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend
+
+#include .depend
+

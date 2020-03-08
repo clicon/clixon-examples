@@ -51,7 +51,7 @@ $ sudo docker kill
 You can also use netconf via stdin/stdout:
 ```
   $ sudo docker exec -it openconfig clixon_netconf
-  <rpc><get-config><source><candidate/></source></get-config></rpc>]]>]]>
+  <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
   <rpc-reply><data><system xmlns="http://openconfig.net/yang/system"><clock><config><timezone-name>Europe/Stockholm</timezone-name></config></clock></system></data></rpc-reply>]]>]]>
 ```
 

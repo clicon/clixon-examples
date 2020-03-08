@@ -2,15 +2,14 @@
 
 This directory contains code for running, building, and pushing the clixon hello world docker container. 
 
-
 ## Example run
 
-The following shows a simple example of how to run the example
-application. First, the container is started with the backend running:
+First, the container is started with a backend and a restconf listening on port 8080:
 ```
-  $ sudo docker run --rm --name hello -d clixon/hello clixon_backend -Fs init
+  $ sudo docker run --rm -p 8080:80 --name hello -d clixon/hello
 ```
-Then a CLI is started, and finally the container is removed:
+
+You can start a CLI with some example commands:
 ```
   $ sudo docker exec -it hello clixon_cli
   cli> set ?
@@ -21,6 +20,17 @@ Then a CLI is started, and finally the container is removed:
   cli> q
   $ sudo docker kill hello
 ```
+
+You can also use netconf via stdin/stdout:
+```
+  $ sudo docker exec -it openconfig clixon_netconf
+  <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
+```
+
+Or using restconf using curl on exposed port 8080:
+```
+  $ curl -G http://localhost:8080/restconf/data/hello:system
+ ```
 
 ## Build and push
 
