@@ -2,19 +2,21 @@
   <img src="http://www.clicon.org/Clixon_logga_liggande_med-ikon.png" width="400">
 </div>
 
-# Clixon-examples
+# Examples
 
-Example clixon applications.
+This repo consists of examples broken out from the [main clixon
+repository](https://github.com/clicon/clixon). The intention is to
+show how clixon can be used and submissions are welcome.
 
-These are just empty OAM modules of some applications, there is no
-backend semantics, nothing "happens" except you can run CLI or use
-netconf and change the configured state. 
+To start with, the examples are generated OAM modules from YANG, but
+lacking backend semantics. You can configure, using generated CLI,
+Netconf or Restconf, but nothing "happens".
 
-The examples are not complete but the docker images should work
+The examples include a local install and docker build (which can run directly from dockerhub.
 
 - [Hello world](hello)
-- [Openconfig](openconfig) system from: [openconfig-system](https://github.com/openconfig/public)
-- 5G Network Resource Model [NRM](nrm) from 3GPP: [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g10.zip)
+- [Openconfig-system](openconfig) from: [openconfig-system](https://github.com/openconfig/public)
+- [NRM](nrm): 5G Network Resource Model from [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g10.zip)
 
 ## Build and install:
 ```
@@ -25,5 +27,5 @@ The examples are not complete but the docker images should work
 > make push          # Push docker containers to github (requires changing target)
 ```
 
-See instructions on how to run the examples as locally installed or as docker containers [here](https://clixon-docs.readthedocs.io/en/latest/quickstart.html) or in the specific example documentation
+See instructions on how to run the examples as locally installed or as docker containers in [the clixon docs quick start](https://clixon-docs.readthedocs.io/en/latest/quickstart.html) or in the specific example documentation
 
