@@ -1,0 +1,79 @@
+module _3gpp-5gc-nrm-nwdaffunction {
+  yang-version 1.1;
+  
+  namespace urn:3gpp:sa5:_3gpp-5gc-nrm-nwdaffunction;
+  prefix nwdaf3gpp;
+  
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import ietf-inet-types { prefix inet; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  
+  organization "3gpp SA5";
+  description "This IOC represents the NWDAF function in 5GC. For more information about the NWDAF, see 3GPP TS 23.501.";
+  reference "3GPP TS 28.541";
+  
+  revision 2019-10-25 { reference "S5-194457 S5-195427 S5-193518"; }
+  
+  revision 2019-05-15 {
+    description "initial revision";
+    reference "Based on
+      3GPP TS 28.541 V15.X.XX";
+  }
+  
+  grouping NWDAFFunctionGrp {
+    uses mf3gpp:ManagedFunctionGrp;
+    
+    list pLMNIdList {
+      description "List of at most six entries of PLMN Identifiers, but at least one (the primary PLMN Id).
+                   The PLMN Identifier is composed of a Mobile Country Code (MCC) and a Mobile Network Code (MNC).";
+
+      min-elements 1;
+      max-elements 6;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    leaf sBIFQDN {
+      description "The FQDN of the registered NF instance in the service-based interface.";
+      type inet:domain-name;
+    }
+    
+    leaf-list sNSSAIList {
+      description "List of S-NSSAIs the managed object is capable of supporting.
+                   (Single Network Slice Selection Assistance Information)
+                   An S-NSSAI has an SST (Slice/Service type) and an optional SD
+                   (Slice Differentiator) field.";
+      //optional support
+      reference "3GPP TS 23.003";
+      type types3gpp:SNssai;
+    }
+    
+    list managedNFProfile {
+      key idx;
+      min-elements 1;
+      uses types3gpp:ManagedNFProfile;
+    }
+
+    list commModelList {
+      min-elements 1;
+      key "groupId";
+      uses types5g3gpp:CommModel;
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement" {
+    list NWDAFFunction {
+      description "5G Core NWDAF Function";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses NWDAFFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}
+

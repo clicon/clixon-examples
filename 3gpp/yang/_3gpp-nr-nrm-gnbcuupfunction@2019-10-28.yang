@@ -1,0 +1,64 @@
+module _3gpp-nr-nrm-gnbcuupfunction {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-gnbcuupfunction";
+  prefix "gnbcuup3gpp";
+    
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the GNBCUUPFunction Information
+    Object Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-08-21 {
+    description "Initial revision";
+  }
+
+  grouping GNBCUUPFunctionGrp {
+    description "Represents the GNBCUUPFunction IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp; 
+
+    leaf gNBCUUPId {
+      type uint64 {
+        range "0..68719476735" ;
+      }
+      config false;
+      mandatory true;
+      description "Identifies the gNB-CU-UP at least within a gNB-CU-CP";
+      reference "'gNB-CU-UP ID' in subclause 9.3.1.15 of 3GPP TS 38.463";
+    }
+    
+    leaf gNBId {
+      mandatory true;
+      type int32 { range "22..32"; }
+      description "Indicates the number of bits for encoding the gNB ID.";
+      reference "gNB ID in 3GPP TS 38.300, Global gNB ID in 3GPP TS 38.413";
+    }
+            
+    list pLMNIdList {
+      description "A list of PLMN identifiers. Defines from which set of PLMNs
+        an UE must have as its serving PLMN to be allowed to use the
+        gNB CU-UP.";
+      uses types3gpp:PLMNId;
+    }   		
+  }
+
+  augment "/me3gpp:ManagedElement" {
+
+    list GNBCUUPFunction {
+      key id;
+      description "Represents the logical function CU-UP of gNB or en-gNB.";
+      reference "3GPP TS 28.541";
+      uses top3gpp:Top_Grp;
+      container attributes {    
+        uses GNBCUUPFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}

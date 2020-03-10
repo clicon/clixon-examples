@@ -160,8 +160,8 @@ AC_OUTPUT([Makefile
     	  hello/docker/Makefile
   	  openconfig/Makefile
     	  openconfig/docker/Makefile
-	  nrm/Makefile
-  	  nrm/src/Makefile
-	  nrm/yang/Makefile
-    	  nrm/docker/Makefile
+	  3gpp/Makefile
+  	  3gpp/src/Makefile
+	  3gpp/yang/Makefile
+    	  3gpp/docker/Makefile
 ])

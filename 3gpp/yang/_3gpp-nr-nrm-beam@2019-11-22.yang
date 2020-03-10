@@ -1,0 +1,101 @@
+module _3gpp-nr-nrm-beam {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-nrnetwork-beam";
+  prefix "beam3gpp";
+
+  import _3gpp-nr-nrm-commonbeamformingfunction { prefix cbeamff3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-nr-nrm-gnbdufunction { prefix gnbdu3gpp; }
+  import _3gpp-nr-nrm-nrsectorcarrier { prefix nrsectcarr3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the Beam Information
+    Object Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-11-22 {
+    description "Initial revision";
+    reference "S5-197643";
+  }
+
+  typedef BeamType {
+    type enumeration {
+      enum SSB-BEAM;
+    }
+  }
+
+  grouping BeamGrp {
+    description "Represents the Beam IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp;
+
+    leaf beamIndex {
+      description "Index of the beam. ";
+      mandatory true;
+      type int32;
+    }
+
+    leaf beamType {
+      description "The type of the beam. ";
+      mandatory false;
+      type BeamType;
+    }
+
+    leaf beamAzimuth {
+      description "The azimuth of a beam transmission, which means the horizontal beamforming pointing angle (beam peak direction) in the (Phi) φ-axis in 1/10th degree resolution.  The pointing angle is the direction equal to the geometric centre of the half-power contour of the beam relative to the reference plane. Zero degree implies explicit antenna bearing (boresight). Positive angle implies clockwise from the antenna bearing.";
+      reference "3GPP TS 38.104, TS 38.901, TS 28.662";
+      mandatory false;
+      type int32 { range "-1800..1800"; }
+      units "0.1";
+    }
+
+    leaf beamTilt {
+      description "The tilt of a beam transmission, which means the vertical beamforming pointing angle (beam peak direction) in the (Theta) θ-axis in 1/10th degree resolution. 
+The pointing angle is the direction equal to the geometric centre of the half-power contour of the beam relative to the reference plane. Positive value implies downtilt.";
+      reference "3GPP TS 38.104, TS 38.901, TS 28.662";
+      mandatory false;
+      type int32 { range "-900..900"; }
+      units "0.1";
+    }
+
+
+
+    leaf beamHorizWidth {
+      description " The Horizontal beamWidth of a beam transmission, which means the horizontal beamforming half-power (3dB down) beamwidth in the (Phi) φ-axis in 1/10th degree resolution.";
+      reference "3GPP TS 38.104, TS 38.901";
+      mandatory false;
+      type int32 { range "0..3599"; }
+      units "0.1";
+    }
+
+    leaf beamVertWidth {
+      description " The Vertical beamWidth of a beam transmission, which means the vertical beamforming half-power (3dB down) beamwidth in the (Theta) θ-axis in 1/10th degree resolution.";
+      reference "3GPP TS 38.104, TS 38.901";
+      mandatory false;
+      type int32 { range "0..1800"; }
+      units "0.1";
+    }
+
+	
+  }    
+
+  augment "/me3gpp:ManagedElement/gnbdu3gpp:GNBDUFunction/nrsectcarr3gpp:NRSectorCarrier/cbeamff3gpp:CommonBeamformingFunction" {
+
+    list Beam {
+      description "Represents the per-Beam information required for, e.g. beam performance management utilizing measurements generated in the RAN. Can have spatial attributes of horizontal/azimuth (ie: Phi φ-axis) and vertical/tilt (ie: Theta θ-axis) beam pointing direction and beam width attributes.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses BeamGrp;
+      }
+    }
+  }
+}
+
+
+
+
+

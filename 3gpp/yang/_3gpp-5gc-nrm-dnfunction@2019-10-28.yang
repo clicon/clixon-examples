@@ -1,0 +1,40 @@
+module _3gpp-5gc-nrm-dnfunction {
+  yang-version 1.1;
+  
+  namespace urn:3gpp:sa5_3gpp-5gc-nrm-dnfunction;
+  prefix dn3gpp;
+  
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  
+  organization "3gpp SA5";
+  description "This IOC is defined only to describe the IOCs representing
+               Data Network (DN) interaction interface with 5GC (i.e. EP_N6).
+               It has no attributes defined.";
+  reference "3GPP TS 28.541";
+  
+  revision 2019-10-28 { reference S5-193518 ; }
+
+  revision 2019-05-15 {
+    description "initial revision";
+  }
+  
+  grouping DNFunctionGrp {
+    uses mf3gpp:ManagedFunctionGrp;
+  }
+  
+  augment "/me3gpp:ManagedElement" {
+    list DNFunction {
+      description "5G Core DN Function";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses DNFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}
+

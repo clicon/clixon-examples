@@ -1,0 +1,224 @@
+module _3gpp-nr-nrm-nrcellcu {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-nrcellcu";
+  prefix "nrcellcu3gpp";
+
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-nr-nrm-gnbcucpfunction { prefix gnbcucp3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the NRCellCU Information Object
+    Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  typedef quotaType {
+    type enumeration {
+      enum STRICT;
+      enum FLOAT;
+    }
+  }
+
+  grouping RRMPolicyRatio1 {
+    description "Represents properties of RRMPolicyRatio1.";
+
+    leaf groupId {
+      description "Uniquely identifies one sNSSAIList group inside an
+        NRCellCU instance.";
+        type uint32;
+    }
+
+    leaf-list sNSSAIList {
+      description "List of S-NSSAIs the managed object is supporting. NSSAI is
+        a set of supported S-NSSAIs. An S-NSSAI is comprised of an
+        SST (Slice/Service type) and an optional SD (Slice Differentiator)
+        field.";
+      reference "3GPP TS 23.003";
+      type types3gpp:SNssai; 
+    }
+
+    leaf rRRMPolicyRatio {
+      description "Percentage of PRBs to be allocated to the corresponding
+        S-NSSAIs, in average over time. The sum of the values for
+        rRMPolicyRatio described in rRMPolicyRatio1List shall be less or
+        equal to 100.";
+      type uint8 { range "0..100"; }
+      units %;
+    }
+  }
+
+  grouping RRMPolicyRatio2 {
+    description "Represents properties of RRMPolicyRatio2. The RRM policy
+      setting the ratios for the split of the radio resources between the
+      supported S-NSSAI lists, in average over time.";
+
+    leaf groupId {
+      description "Uniquely identifies one sNSSAIList group inside an
+        NRCellCU instance.";
+      type uint32;
+    }
+
+    leaf-list sNSSAIList {
+      description "List of S-NSSAIs the managed object is supporting. NSSAI
+        is a set of supported S-NSSAI(s). An S-NSSAI is comprised of an 
+        SST (Slice/Service type) and an optional SD (Slice Differentiator)
+        field.";
+      reference "3GPP TS 23.003";
+      type types3gpp:SNssai;
+    }
+
+    leaf quotaType {
+      description "The type of the quota which allows to allocate resources as
+        strictly usable for defined slice(s) (strict quota) or allows that
+        resources to be used by other slice(s) when defined slice(s) do not
+        need them (float quota).";
+      type quotaType;
+    }
+
+    leaf rRMPolicyMaxRatio {
+      description "The RRM policy setting the maximum percentage of radio
+        resources to be allocated to the corresponding S-NSSAI list. This
+        quota can be strict or float quota. Strict quota means resources are
+        not allowed for other sNSSAIs even when they are not used by the
+        defined sNSSAIList. Float quota resources can be used by other sNSSAIs
+        when the defined sNSSAIList do not need them. Value 0 indicates that
+        there is no maximum limit.";
+      type uint8 { range "0..100"; }
+      units %;
+    }
+
+    leaf rRMPolicyMarginMaxRatio {
+      description "Maximum quota margin ratio is applicable when maximum quota
+        policy ratio is of type float quota. It defines the resource quota
+        within maximum quota to reserve buffers for new resource requirements
+        for the specified S-NSSAI list. With the margin ratio, unused resources
+        of the maximum resource quota can be allocated to other S-NSSAIs when
+        the free resources are more than resource amount indicated by the
+        margin. The margin resource quota can only be used for the specific
+        S-NSSAI list. Value 0 indicates that no margin is used.";
+      type uint8 { range "0..100"; }
+      units %;
+    }
+
+    leaf rRMPolicyMinRatio {
+      description "The RRM policy setting the minimum percentage of radio
+        resources to be allocated to the corresponding S-NSSAI list. This
+        quota can be strict or float quota. Strict quota means resources are
+        not allowed for other sNSSAIs even when they are not used by the
+        defined sNSSAIList. Float quota resources can be used by other sNSSAIs
+        when the defined sNSSAIList do not need them. Value 0 indicates that
+        there is no minimum limit.";
+      type uint8 { range "0..100"; }
+      units %;
+    }
+
+    leaf rRMPolicyMarginMinRatio {
+      description "Minimum quota margin ratio is applicable when minimum quota
+        policy ratio is of type float quota. It defines the resource quota
+        within minimum quota to reserve buffers for new resource requirements
+        for the specified S-NSSAI list. With the margin ratio, unused resources
+        of the minimum resource quota can be allocated to other S-NSSAIs when
+        the free resources are more than resource amount indicated by the
+        margin. The margin resource quota can only be used for the specific
+        S-NSSAI list. Value 0 indicates that no margin is used. Value 0
+        indicates that there is no minimum limit.";
+      type uint8 { range "0..100"; }
+      units %;
+    }
+  }
+
+  grouping NRCellCUGrp {
+    description "Represents the NRCellCU IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp;
+
+    leaf cellLocalId {        	
+      description "Identifies an NR cell of a gNB. Together with corresponding
+        gNB ID it forms the NR Cell Identifier (NCI).";
+      mandatory true;
+      type int32 { range "0..16383"; }      	
+    }
+
+    list pLMNIdList {
+      description "Defines which PLMNs that can be served by the NR cell.";
+      // Note: Whether this attribute can be writable depends on the implementation.
+      key "mcc mnc";
+      min-elements 1;
+      max-elements 12;
+      uses types3gpp:PLMNId;
+    }
+		
+    leaf-list sNSSAIList {
+      description "List of S-NSSAIs the cell is capable of supporting. An
+        S-NSSAI is comprised of an SST (Slice/Service Type) and an optional
+        SD (Slice Differentiator) field.";
+      reference "3GPP TS 23.003";
+      min-elements 0;
+      type types3gpp:SNssai;
+    }
+         
+    leaf rRMPolicyType {
+      description "Type of RRM policy. The value 0 denotes use of the
+        rRMPolicy. The value 1 denotes use of the rRMPolicyRatio1List.
+        The value 2 denotes use of the rRMPolicyRatio2.";
+      mandatory true;
+      type uint16 { range "0..65535"; }
+    }
+	
+    leaf rRMPolicy {
+      description "RRM policy which includes guidance for split of radio
+        resources between multiple slices the cell supports.";
+      mandatory true;
+      type string;
+    }
+
+    list rRMPolicyRatio1List {
+      description "List of RRMPolicyRatio1. Used for setting the ratio for the
+        split of the radio resources (i.e. PRBs) between the supported S-NSSAI
+        lists.";
+      key groupId;
+      min-elements 1;    
+      uses RRMPolicyRatio1;
+    }
+
+    list rRMPolicyRatio2 {
+      description "List of RRMPolicyRatio2. Used for setting the ratio for the
+        split of the radio resources between the S-NSSAI lists for radio
+        resources (e.g. RRC connected users, PDCP resource, etc.), in average
+        time.";
+      key groupId;
+      min-elements 1;
+      uses RRMPolicyRatio2;
+    }
+
+    leaf nRFrequencyRef {
+      description "Reference to corresponding NRFrequency instance.";
+      config false;
+      type types3gpp:DistinguishedName;
+    }
+  }
+
+  augment "/me3gpp:ManagedElement/gnbcucp3gpp:GNBCUCPFunction" {
+
+    list NRCellCU {
+      description "Represents the information required by CU that is
+        responsible for the management of inter-cell mobility and neighbour
+        relations via ANR.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses NRCellCUGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}
+

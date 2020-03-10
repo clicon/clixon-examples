@@ -1,0 +1,43 @@
+module _3gpp-5gc-nrm-externalnrffunction {
+  yang-version 1.1;
+  namespace urn:3gpp:sa5:_3gpp-5gc-nrm-externalnrffunction;
+  prefix extnrf3gpp;
+  
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  
+  description "This IOC represents external NRF function controlled by another management domain.";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-11 {
+    description "Ericsson refactoring.";
+  }
+  
+  grouping ExternalNRFFunctionGrp {
+    uses mf3gpp:ManagedFunctionGrp;
+    
+    list pLMNIdList {
+      description "List of at most six entries of PLMN Identifiers, but at least one (the primary PLMN Id).
+                   The PLMN Identifier is composed of a Mobile Country Code (MCC) and a Mobile Network Code (MNC).";
+      min-elements 1;
+      max-elements 6;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+  }
+  
+  augment "/subnet3gpp:SubNetwork" {
+    list ExternalNRFFunction {
+      description "5G Core External NRF Function";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses ExternalNRFFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;    }
+  }
+}
+

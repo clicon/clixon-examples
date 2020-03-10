@@ -1,0 +1,287 @@
+module _3gpp-5gc-nrm-nfservice {
+  yang-version 1.1;
+  
+  namespace urn:3gpp:sa5:_3gpp-5gc-nrm-nfservice;
+  prefix nfs3gpp;
+  
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  
+  organization "3gpp SA5";
+  description "NF service class.";
+  reference "3GPP TS 29.510";
+  
+  revision 2019-06-17 {
+    description "initial revision";
+  }
+  
+  grouping NFServiceGrp {
+    leaf serviceInstanceID {
+      description "Unique ID of the service instance within a given NF Instance.";
+      mandatory true;
+      type string;
+    }
+    
+    leaf serviceName {
+      description "Name of the service instance (e.g. 'nudm-sdm').";
+      mandatory true;
+      type ServiceName;
+    }
+    
+    list versions { //check in review if key is ok (unique)
+      description "API versions supported by the NF Service and if available, the corresponding retirement date of the NF Service.";
+      min-elements 1;
+      key "apiVersionInUri apiFullVersion";
+      uses NFServiceVersion;
+    }
+    
+    leaf scheme {
+      description "URI scheme (e.g. 'http', 'https').";
+      mandatory true;
+      type UriScheme;
+    }
+    
+    leaf nfServiceStatus {
+      description "Status of the NF Service Instance.";
+      mandatory true;
+      type NFServiceStatus;
+    }
+    
+    leaf fqdn {
+      description "FQDN of the NF Service Instance.";
+      //optional support
+      type inet:domain-name;
+    }
+    
+    leaf interPlmnFqdn {
+      description "If the NF service needs to be discoverable by other NFs in a different PLMN,
+                   then an FQDN that is used for inter PLMN routing.";
+      //optional support
+      type inet:domain-name;
+    }
+    
+    list ipEndPoints {
+      description "IP address(es) and port information of the Network Function (including IPv4 and/or IPv6 address)
+                   where the service is listening for incoming service requests.";
+      //optional support
+      
+      key idx;
+      leaf idx {
+        type string;
+      }
+      min-elements 1;
+      uses ipEndPoint;
+    }
+    
+    leaf apiPrefix {
+      description "Optional path segment(s) used to construct the {apiRoot} variable of the different API URIs.";
+      //optional support
+      type string;
+    }
+    
+    list defaultNotificationSubscriptions {
+      description "Notification endpoints for different notification types.";
+      key notificationType;
+      //optional support
+      min-elements 1;
+      uses types3gpp:DefaultNotificationSubscription;
+    }
+    
+    list allowedPlmns {
+      description "PLMNs allowed to access the service instance.
+                   The absence of this attribute indicates that any PLMN is allowed to access the service instance.";
+      
+      min-elements 1;
+      //optional support
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    leaf-list allowedNfTypes {
+      description "Type of the NFs allowed to access the service instance.
+                   The absence of this attribute indicates that any NF type is allowed to access the service instance.";
+      
+      min-elements 1;
+      //optional support
+      type types3gpp:NfType;
+    }
+    
+    leaf-list allowedNfDomains {
+      description "Pattern representing the NF domain names allowed to access the service instance.";
+      //optional support
+      min-elements 1;
+      type string;
+    }
+    
+    leaf-list allowedNssais {
+      description "S-NSSAI of the allowed slices to access the service instance.
+                   The absence of this attribute indicates that any slice is allowed to access the service instance.";
+      min-elements 1;
+      //optional support
+      type types3gpp:SNssai;
+    }
+    
+    leaf priority {
+      description "Priority (relative to other services of the same type) in the range of 0-65535,
+                   to be used for NF Service selection; lower values indicate a higher priority.";
+      //optional support
+      type uint16;
+    }
+    
+    leaf capacity {
+      description "Static capacity information in the range of 0-65535, expressed as a weight relative to other services of the same type.";
+      //optional support
+      type uint16;
+    }
+    
+    leaf load {
+      description "Dynamic load information, ranged from 0 to 100, indicates the current load percentage of the NF Service.";
+      //optional support
+      type types3gpp:Load;
+    }
+    
+    leaf recoveryTime {
+      description "Timestamp when the NF was (re)started.";
+      //optional support
+      type yang:date-and-time;
+    }
+    
+    list chfServiceInfo { //is the key unique
+      description "Specific data for a CHF service instance.";
+      //optional support
+      max-elements 1;
+      key "primaryChfServiceInstance secondaryChfServiceInstance";
+      uses ChfServiceInfo;
+    }
+    
+    leaf supportedFeatures {
+      description "Supported Features of the NF Service instance.";
+      //optional support
+      type SupportedFeatures;
+    }
+  }
+  
+  typedef SupportedFeatures {
+    type string {
+      pattern '[A-Fa-f0-9]*';
+    }
+  }
+  
+  grouping ipEndPoint {
+    choice address {
+      leaf ipv4Address {
+        type inet:ipv4-address;
+      }
+      
+      leaf ipv6Address {
+        type inet:ipv6-address;
+      }
+      
+      leaf ipv6Prefix {
+        type inet:ipv6-prefix;
+      }
+    }
+
+    leaf transport {
+      type TransportProtocol;
+    }
+
+    leaf port {
+      type uint16;
+    }
+  }
+  
+  typedef TransportProtocol {
+    type enumeration {
+      enum TCP;
+      enum STCP;
+      enum UDP;
+    }
+  }
+  
+  grouping NFServiceVersion {
+    leaf apiVersionInUri {
+      mandatory true;
+      type string;
+    }
+    
+    leaf apiFullVersion {
+      mandatory true;
+      type string;
+    }
+    
+    leaf expiry {
+      //optional to support
+      type yang:date-and-time;
+    }
+  }
+  
+  typedef ServiceName {
+    type enumeration {
+      enum NNRF_NFM;
+      enum NNRF_DISC;
+      enum NUDM_SDM;
+      enum NUDM_UECM;
+      enum NUDM_UEAU;
+      enum NUDM_EE;
+      enum NUDM_PP;
+      enum NAMF_COMM;
+      enum NAMF_EVTS;
+      enum NAMF_MT;
+      enum NAMF_LOC;
+      enum NSMF_PDUSESSION;
+      enum NSMF_EVENT-EXPOSURE;
+      enum NAUSF_AUTH;
+      enum NAUSF_SORPROTECTION;
+      enum NNEF_PFDMANAGEMENT;
+      enum NPCF_AM-POLICY-CONTROL;
+      enum NPCF_SMPOLICYCONTROL;
+      enum NPCF_POLICYAUTHORIZATION;
+      enum NPCF_BDTPOLICYCONTROL;
+      enum NPCF_EVENTEXPOSURE;
+      enum NPCF_UE_POLICY_CONTROL;
+      enum NSMSF_SMS;
+      enum NNSSF_NSSELECTION;
+      enum NNSSF_NSSAIAVAILABILITY;
+      enum NUDR_DR;
+      enum NLMF_LOC;
+      enum N5G_EIR_EIC;
+      enum NBSF_MANAGEMENT;
+      enum NCHF_SPENDINGLIMITCONTROL;
+      enum NCHF_CONVERGEDCHARGING;
+      enum NNWDAF_EVENTSSUBSCRIPTION;
+      enum NNWDAF_ANALYTICSINFO;
+    }
+  }
+  
+  typedef UriScheme {
+    type enumeration {
+      enum HTTP;
+      enum HTTPS;
+    }
+  }
+  
+  typedef NFServiceStatus {
+    type enumeration {
+      enum REGISTERED;
+      enum SUSPENDED;
+      enum UNDISCOVERABLE;
+    }
+  }
+  
+  grouping ChfServiceInfo {
+    leaf primaryChfServiceInstance {
+      description "Shall be present if the CHF service instance serves as a secondary CHF instance of another primary CHF service instance.";
+      //conditional to support
+      type string;
+    }
+    
+    leaf secondaryChfServiceInstance {
+      description "Shall be present if the CHF service instance serves as a primary CHF instance of another secondary CHF service instance.";
+      //conditional to support
+      type string;
+    }
+  }
+}
+

@@ -1,0 +1,209 @@
+module _3gpp-nr-nrm-eutranfreqrelation {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-eutranfreqrelation";
+  prefix "eutranfreqrel3gpp";
+    
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-nr-nrm-gnbcucpfunction { prefix gnbcucp3gpp; }
+  import _3gpp-nr-nrm-nrcellcu { prefix nrcellcu3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the EUtranFreqRelation Information
+    Object Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  grouping EUtranFreqRelationGrp {
+    description "Represents the EUtranFreqRelation IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp;
+
+    leaf cellIndividualOffset {
+      description "Offset applicable to a neighbouring cell. Used for
+        evaluating the neighbouring cell for handover in connected mode.
+        Used by the HandOver parameter Optimization (HOO) function or
+        Load Balancing Optimization (LBO) function.";
+      reference "cellIndividualOffset in MeasObjectEUTRA in 3GPP TS 38.331";
+      default 0;
+      type types3gpp:QOffsetRange;
+    }
+
+    leaf-list blackListEntry {
+      description "A list of Physical Cell Identities (PCIs) that are
+        blacklisted in E-UTRAN measurements.";
+      reference "3GPP TS 38.331";
+      min-elements 0;
+      type uint16 { range "0..1007"; }
+    }
+
+    leaf-list blackListEntryIdleMode {
+      description "A list of Physical Cell Identities (PCIs) that are
+        blacklisted in SIB4 and SIB5.";
+      min-elements 0;
+      type uint16 { range "0..1007"; }
+    }
+
+    leaf cellReselectionPriority {
+      description "The absolute priority of the carrier frequency used by the
+        cell reselection procedure. Value 0 means lowest priority. The value
+        must not already used by other RAT, i.e. equal priorities between RATs
+        are not supported. The UE behaviour when no value is entered is
+        specified in subclause 5.2.4.1 of 3GPP TS 38.304.";
+      reference "CellReselectionPriority in 3GPP TS 38.331, priority in
+        3GPP TS 38.304";
+      mandatory true;
+      type int32 { range "0..7"; }
+    }
+
+    leaf cellReselectionSubPriority {
+      description "Indicates a fractional value to be added to the value of
+        cellReselectionPriority to obtain the absolute priority of the
+        concerned carrier frequency for E-UTRA and NR.";
+      reference "3GPP TS 38.331";
+      type uint8 { range "2 | 4 | 6 | 8"; }
+      units "0.1";
+    }
+
+    leaf pMax {
+      description "Used for calculation of the parameter Pcompensation 
+        (defined in 3GPP TS 38.304), at cell reselection to a cell.";
+      reference "PEMAX in 3GPP TS 38.101";
+      mandatory true;
+      type int32 { range "-30..33"; }
+      units dBm;
+    }
+
+    leaf qOffsetFreq {
+      description "The frequency specific offset applied when evaluating
+        candidates for cell reselection.";
+      type int32;
+      default 0;
+    }
+
+    leaf qQualMin {
+      description "Indicates the minimum required quality level in the cell.
+        Value 0 means that it is not sent and UE applies in such case the
+        (default) value of negative infinity for Qqualmin. Sent in SIB3 or
+        SIB5.";
+      reference "qQualMin in TS 38.304";
+      mandatory true;
+      type int32 { range "-34..-3 | 0"; }
+      units dB;
+    }
+
+    leaf qRxLevMin {
+      description "Indicates the required minimum received Reference Symbol
+        Received Power (RSRP) level in the (E-UTRA) frequency for cell
+        reselection. Broadcast in SIB3 or SIB5, depending on whether the
+        related frequency is intra- or inter-frequency. Resolution is 2.";
+      reference "Qrxlevmin in 3GPP TS 38.304";
+      mandatory true;
+      type int32 { range "-140..-44"; }
+      units dBm;
+    }
+
+    leaf threshXHighP {
+      description "Specifies the Srxlev threshold used by the UE when
+        reselecting towards a higher priority RAT/frequency than the current
+        serving frequency. Each frequency of NR and E-UTRAN might have a
+        specific threshold. Resolution is 2.";
+      reference "ThreshX, HighP in 3GPP TS 38.304";
+      mandatory true;
+      type int32 { range "0..62"; }
+      units dB;
+    }
+
+    leaf threshXHighQ {
+      description "Specifies the Squal threshold used by the UE when
+        reselecting towards a higher priority RAT/frequency than the current
+        serving frequency. Each frequency of NR and E-UTRAN might have a
+        specific threshold.";
+      reference "ThreshX, HighQ in 3GPP TS 38.304";
+      mandatory true;
+      type int32 { range 0..31; }
+      units dB;
+    }
+
+    leaf threshXLowP {
+      description "Specifies the Srxlev threshold used by the UE when
+        reselecting towards a lower priority RAT/frequency than the current
+        serving frequency. Each frequency of NR and E-UTRAN might have a
+        specific threshold. Resolution is 2.";
+      reference "ThreshX, LowP in 3GPP TS 38.304";
+      mandatory true;
+      type int32 { range "0..62"; }
+      units dB;
+    }
+
+    leaf threshXLowQ {
+      description "Specifies the Squal threshold used by the UE when
+        reselecting towards a lower priority RAT/frequency than the current
+        serving frequency. Each frequency of NR and E-UTRAN might have a
+        specific threshold.";
+      reference "ThreshX, LowQ in 3GPP TS 38.304";
+      mandatory false;
+      type int32 { range "0..31"; }
+      units dB;
+    }
+
+    leaf tReselectionEutra {
+      description "Cell reselection timer for intra frequency E-UTRA cell
+        reselection. May be used for Mobility Robustness Optimization.";
+      reference "t-ReselectionEUTRA in 3GPP TS 36.331 and in 3GPP TS 23.207";
+      mandatory true;
+      type uint8 { range "0..7"; }
+      units s;
+    }
+
+    leaf tReselectionEutraSfHigh {
+      description "The attribute tReselectionEutra (parameter TreselectionEUTRA
+        in 3GPP TS 38.304) multiplied with this scaling factor if the UE is in
+        high mobility state.";
+      reference "Speed dependent ScalingFactor for TreselectionEUTRA for high
+        mobility state in 3GPP TS 38.304";
+      mandatory true;
+      type uint8 { range "25 | 50 | 75 | 100"; }
+      units %;
+    }
+
+    leaf tReselectionEutraSfMedium {
+      description "The attribute tReselectionEutra (parameter TreselectionEUTRA
+        in 3GPP TS 38.304) multiplied with this scaling factor if the UE is in
+        medium mobility state.";
+      reference "Speed dependent ScalingFactor for TreselectionEUTRA for medium
+        mobility state in 3GPP TS 38.304";
+      mandatory true;
+      type uint8 { range "25 | 50 | 75 | 100"; }
+      units %;
+    }
+
+    leaf eUtranFrequencyRef {
+      description "Reference to a corresponding EUtranFrequency instance.";
+        mandatory true;
+        type types3gpp:DistinguishedName;
+    }
+  }
+    
+  augment /me3gpp:ManagedElement/gnbcucp3gpp:GNBCUCPFunction/nrcellcu3gpp:NRCellCU {
+
+    list EUtranFreqRelation {
+      description "Represents a frequency relation between an NR cell and an
+        E-UTRAN cell.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {    
+        uses EUtranFreqRelationGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}
+

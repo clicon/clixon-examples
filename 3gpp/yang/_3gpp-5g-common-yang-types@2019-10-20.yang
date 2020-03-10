@@ -1,0 +1,71 @@
+module _3gpp-5g-common-yang-types {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-5g-common-yang-types";
+  prefix "types5g3gpp";
+  
+  import ietf-inet-types { prefix inet; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
+
+  organization "3GPP SA5";
+  description "The model defines common types for 5G networks and 
+    network slicing.";
+  reference "3GPP TS 28.541";
+
+  revision 2019-10-20 {
+    description "Initial version.";
+    reference "Based on
+      3GPP TS 28.541 V16.X.XX";
+  }
+ 
+  typedef CommModelType {
+    reference "3GPP TS 23501";
+    type enumeration {
+      enum DIRECT_COMMUNICATION_WO_NRF {
+        value 0;
+        description "Directly communicate to other pre-configured NF service.";
+      }
+
+      enum DIRECT_COMMUNICATION_WITH_NRF {
+        value 1;
+        description "Directly communicate to other NF service discovered by NRF.";
+      }
+	  
+      enum INDIRECT_COMMUNICATION_WO_DEDICATED_DISCOVERY {
+        value 2;
+        description "Communicate to pre-configured other NF service through SCP as a proxy.";
+      }
+
+      enum INDIRECT_COMMUNICATION_WITH_DEDICATED_DISCOVERY {
+        value 3;
+        description "Communication to NF service discovered by NRF through SCP as a proxy.";
+      }
+
+    }
+  }
+  
+  grouping CommModel {
+    leaf groupId {
+      type uint16;   
+    }
+    leaf commModelType {
+       type CommModelType;
+    }  
+    leaf-list targetNFServiceList {
+      type DistinguishedName;   
+    }
+    leaf commModelConfiguration {
+       type string;
+    }  
+  }
+  
+  grouping SupportedFunc {
+    leaf function {
+      type string;   
+    }
+    leaf policy {
+       type string;
+    }  
+  }
+
+}
+

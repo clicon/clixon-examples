@@ -1,0 +1,72 @@
+module _3gpp-nr-nrm-nrfrequency {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-nrnetwork-nrfrequency";
+  prefix "nrfreq3gpp";
+
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-nr-nrm-nrnetwork { prefix nrnet3gpp; }
+  import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the NRFrequency Information Object
+    Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  grouping NRFrequencyGrp {
+    description "Represents the NRFrequency IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp;
+
+    leaf absoluteFrequencySSB {
+      description "The absolute frequency applicable for a downlink NR carrier
+        frequency associated with the SSB, in terms of NR-ARFCN.";
+      mandatory true;
+      type uint32 { range "0.. 3279165"; }
+    }
+
+    leaf sSBSubCarrierSpacing {
+      description "Sub-carrier spacing of the SSB.";
+      mandatory true;
+      type uint8 { range "15 | 30 | 60 | 120"; }
+      units "kHz";
+    }
+
+    leaf-list multiFrequencyBandListNR {
+      description "List of additional frequency bands the frequency belongs to.
+        The list is automatically set by the gNB.";
+      config false;
+      min-elements 0;
+      type uint16 { range "1..256"; }
+    }
+  }
+
+  grouping NRFrequencyWrapper {
+    list NRFrequency {
+      description "Represents certain NR frequency properties.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses NRFrequencyGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  } 
+  
+  augment "/subnet3gpp:SubNetwork" {
+    if-feature subnet3gpp:ExternalsUnderSubNetwork ;
+    uses NRFrequencyWrapper;
+  }
+
+  augment "/nrnet3gpp:NRNetwork" {
+    if-feature nrnet3gpp:ExternalsUnderNRNetwork;
+    uses NRFrequencyWrapper;
+  }
+}
+

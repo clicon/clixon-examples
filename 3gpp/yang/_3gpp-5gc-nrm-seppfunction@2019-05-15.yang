@@ -1,0 +1,72 @@
+module _3gpp-5gc-nrm-seppfunction {
+  yang-version 1.1;
+  
+  namespace urn:3gpp:sa5:_3gpp-5gc-nrm-seppfunction;
+  prefix sepp3gpp;
+  
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  
+  organization "3gpp SA5";
+  description "This IOC represents the SEPP function which support message filtering
+               and policing on inter-PLMN control plane interface. For more information about the SEPP, see 3GPP TS 23.501.";
+  reference "3GPP TS 28.541";
+  
+  revision 2019-10-28 { reference S5-193518 ; }
+
+  revision 2019-11-17 {
+    description "initial revision";
+  }
+  
+  typedef SEPPType {
+    reference "3GPP TS 23501";
+    type enumeration {
+      enum CSEPP {
+        value 0;
+        description "consumer SEPP";
+      }
+
+      enum PSEPP {
+        value 1;
+        description "producer SEPP";
+      }
+    }
+  }
+
+  grouping SEPPFunctionGrp {
+    uses mf3gpp:ManagedFunctionGrp;
+  
+    container pLMNId {
+      description "PLMN Identifiers of the sepp.
+                   The PLMN Identifier is composed of a Mobile Country Code (MCC) and a Mobile Network Code (MNC).";
+      uses types3gpp:PLMNId;
+    }
+	
+	leaf sEPPType {
+      type sepp3gpp:SEPPType;
+    }
+
+	leaf sEPPId {
+      type uint16;
+    }    
+
+	leaf fqdn {
+      description "The domain name of the SEPP.";
+      type inet:domain-name;
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement" {
+    list SEPPFunction {
+      description "5G Core SEPP Function";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses SEPPFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;    }
+  }
+}

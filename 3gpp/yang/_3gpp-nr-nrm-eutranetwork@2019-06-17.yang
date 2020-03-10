@@ -1,0 +1,62 @@
+module _3gpp-nr-nrm-eutranetwork {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-eutranetwork";
+  prefix "eutranet3gpp";
+
+  import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the EUtraNetwork Information Object
+    Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  feature ExternalsUnderEUtraNetwork {
+    description "Classes representing external entities like EUtranFrequency, 
+      ExternalENBFunction are contained under a EUtraNetwork list/class.";
+  }
+
+  grouping EUtraNetworkGrp {
+    description "Represents the EUtraNetwork IOC.";
+    reference "3GPP TS 28.541";
+    uses subnet3gpp:SubNetworkGrp;
+  }
+
+  list EUtraNetwork {
+    description "A subnetwork containing gNB external E-UTRAN entities.";
+      reference "3GPP TS 28.541";
+    key id;
+    uses top3gpp:Top_Grp;
+    container attributes {
+      uses EUtraNetworkGrp;
+      leaf-list parents {
+        description "Reference to all containg EUtraNetwork instances 
+          in strict order from the root EUtraNetwork down to the immediate 
+          parent EUtraNetwork.
+          If EUtraNetworks form a containment hierarchy this is 
+          modeled using references between the child EUtraNetwork and the parent 
+          EUtraNetworks. 
+          This reference MUST NOT be present for the top level EUtraNetwork and 
+          MUST be present for other EUtraNetworks.";
+        type leafref {
+          path "../../../EUtraNetwork/id";  
+        } 
+      }
+      
+      leaf-list containedChildren{
+        description "Reference to all directly contained EUtraNetwork instances.
+          If EUtraNetworks form a containment hierarchy this is 
+          modeled using references between the child EUtraNetwork and the parent 
+          EUtraNetwork.";
+        type leafref {
+          path "../../../EUtraNetwork/id";  
+        } 
+      }
+    }
+  }
+}
+

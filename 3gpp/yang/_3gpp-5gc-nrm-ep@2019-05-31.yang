@@ -1,0 +1,644 @@
+module _3gpp-5gc-nrm-ep {
+  yang-version 1.1;
+  namespace "urn:3gpp:tsg:sa5:nrm:_3gpp-5gc-nrm-ep";
+  prefix "cep3gpp";
+  
+  import _3gpp-common-ep-rp { prefix eprp3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-5gc-nrm-affunction { prefix af3gpp; }
+  import _3gpp-5gc-nrm-amffunction { prefix amf3gpp; }
+  import _3gpp-5gc-nrm-ausffunction { prefix ausf3gpp; }
+  import _3gpp-5gc-nrm-dnfunction { prefix dn3gpp; }
+  import _3gpp-5gc-nrm-lmffunction { prefix lmf3gpp; }
+  import _3gpp-5gc-nrm-n3iwffunction { prefix n3iwf3gpp; }
+  import _3gpp-5gc-nrm-ngeirfunction { prefix ngeir3gpp; }
+  import _3gpp-5gc-nrm-nrffunction { prefix nrf3gpp; }
+  import _3gpp-5gc-nrm-nssffunction { prefix nssf3gpp; }
+  import _3gpp-5gc-nrm-pcffunction { prefix pcf3gpp; }
+  import _3gpp-5gc-nrm-seppfunction { prefix sepp3gpp; }
+  import _3gpp-5gc-nrm-smffunction { prefix smf3gpp; }
+  import _3gpp-5gc-nrm-smsffunction { prefix smsf3gpp; }
+  import _3gpp-5gc-nrm-udmfunction { prefix udm3gpp; }
+  import _3gpp-5gc-nrm-upffunction { prefix upf3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the 5GC related endpoint
+               Information Object Classes (IOCs) that are part of the 5G Core 
+               Network Resource Model.";
+  reference "3GPP TS 28.541";
+  
+  revision 2019-11-18 {
+    description "Ericsson refactoring.";
+  }
+  
+  revision 2018-07-31 {
+    description "Initial revision";
+  }
+  
+  grouping EP_N2Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N3Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N4Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N5Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N6Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N7Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N8Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N9Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N10Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N11Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N12Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N13Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N14Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N15Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N16Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N17Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N20Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N21Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N22Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N26Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N27Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N31Grp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_N32Grp {
+    uses eprp3gpp:EP_Common;
+    container remotePlmnId {
+      description "PLMN Identifiers of the remote sepp.
+                   The PLMN Identifier is composed of a Mobile Country Code (MCC) and a Mobile Network Code (MNC).";
+      uses types3gpp:PLMNId;
+    }
+	
+	leaf remoteSeppAddress {
+      description "The host address of the SEPP.";
+      type inet:host;
+    }
+
+	leaf remoteSeppId {
+      type uint16;
+    }    
+
+    leaf n32cParas {
+      type string;
+    }    
+
+    leaf n32fPolicy {
+      type string;
+    }    
+
+    leaf withIPX {
+      type boolean;
+    }    
+  }
+  
+  grouping EP_S5CGrp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_S5UGrp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_RxGrp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_MAP_SMSCGrp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_NLSGrp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_NLGGrp {
+    uses eprp3gpp:EP_Common;
+  }
+  
+  grouping EP_SBI_IPXGrp {
+    uses eprp3gpp:EP_Common;
+    leaf-list sBIService {
+      min-elements 1;
+      config false;
+      type string;
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/af3gpp:AFFunction" {
+    list EP_N6 {
+      description "Represents the EP_N6 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N6Grp;
+      }
+    }
+    
+    list EP_Rx {
+      description "Represents the EP_Rx IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_RxGrp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/amf3gpp:AMFFunction" {
+    list EP_N2 {
+      description "Represents the EP_N2 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N2Grp;
+      }
+    }
+    
+    list EP_N8 {
+      description "Represents the EP_N8 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N8Grp;
+      }
+    }
+    
+    list EP_N11 {
+      description "Represents the EP_N11 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N11Grp;
+      }
+    }
+    
+    list EP_N12 {
+      description "Represents the EP_N12 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N12Grp;
+      }
+    }
+    
+    list EP_N14 {
+      description "Represents the EP_N14 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N14Grp;
+      }
+    }
+    
+    list EP_N15 {
+      description "Represents the EP_N15 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N15Grp;
+      }
+    }
+    
+    list EP_N17 {
+      description "Represents the EP_N17 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N17Grp;
+      }
+    }
+    
+    list EP_N20 {
+      description "Represents the EP_N20 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N20Grp;
+      }
+    }
+    
+    list EP_N22 {
+      description "Represents the EP_N22 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N22Grp;
+      }
+    }
+    
+    list EP_N26 {
+      description "Represents the EP_N26 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N26Grp;
+      }
+    }
+    
+    list EP_NLS {
+      description "Represents the EP_NLS IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_NLSGrp;
+      }
+    }
+    
+    list EP_NLG {
+      description "Represents the EP_NLG IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_NLGGrp;
+      }
+    }
+  }
+      
+  augment "/me3gpp:ManagedElement/ausf3gpp:AUSFFunction" {
+    list EP_N12 {
+      description "Represents the EP_N12 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N12Grp;
+      }
+    }
+    
+    list EP_N13 {
+      description "Represents the EP_N13 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N13Grp;
+      }
+    }    
+  }
+  
+  augment "/me3gpp:ManagedElement/dn3gpp:DNFunction" {
+    list EP_N6 {
+      description "Represents the EP_N6 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N6Grp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/lmf3gpp:LMFFunction" {
+    list EP_NLS {
+      description "Represents the EP_NLS IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_NLSGrp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/n3iwf3gpp:N3IWFFunction" {
+    list EP_N2 {
+      description "Represents the EP_N2 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N2Grp;
+      }
+    }
+    
+    list EP_N3 {
+      description "Represents the EP_N3 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N3Grp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/ngeir3gpp:NGEIRFunction" {
+    list EP_N17 {
+      description "Represents the EP_N17 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N17Grp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/nrf3gpp:NRFFunction" {
+    list EP_N27 {
+      description "Represents the EP_N27 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N26Grp;
+      }
+    }    
+
+  }
+  
+  augment "/me3gpp:ManagedElement/nssf3gpp:NSSFFunction" {
+    list EP_N22 {
+      description "Represents the EP_N22 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N22Grp;
+      }
+    }
+    
+    list EP_N31 {
+      description "Represents the EP_N31 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N31Grp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/pcf3gpp:PCFFunction" {
+    list EP_N5 {
+      description "Represents the EP_N5 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N5Grp;
+      }
+    }
+    
+    list EP_N7 {
+      description "Represents the EP_N7 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N7Grp;
+      }
+    }
+    
+    list EP_N15 {
+      description "Represents the EP_N15 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N15Grp;
+      }
+    }
+    
+    list EP_N16 {
+      description "Represents the EP_N16 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N16Grp;
+      }
+    }
+    
+    list EP_Rx {
+      description "Represents the EP_Rx IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_RxGrp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/sepp3gpp:SEPPFunction" {
+    list EP_N32 {
+      description "Represents the EP_N32 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N32Grp;
+      }
+    }
+    
+  augment "/me3gpp:ManagedElement/smsf3gpp:SMSFFunction" {
+    list EP_N20 {
+      description "Represents the EP_20 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N20Grp;
+      }
+    }
+    
+    list EP_N21 {
+      description "Represents the EP_N21 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N21Grp;
+      }
+    }
+    
+    list EP_MAP_SMSC {
+      description "Represents the EP_MAP_SMSC IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_MAP_SMSCGrp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/smf3gpp:SMFFunction" {
+    list EP_N4 {
+      description "Represents the EP_N4 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N4Grp;
+      }
+    }
+    
+    list EP_N7 {
+      description "Represents the EP_N7 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N7Grp;
+      }
+    }
+    
+    list EP_N10 {
+      description "Represents the EP_N10 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N10Grp;
+      }
+    }
+    
+    list EP_N11 {
+      description "Represents the EP_N11 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N11Grp;
+      }
+    }
+    
+    list EP_N16 {
+      description "Represents the EP_N16 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N16Grp;
+      }
+    }
+    
+    list EP_S5C {
+    description "Represents the EP_S5C IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_S5CGrp;
+      }
+    }
+  }
+  
+  augment "/me3gpp:ManagedElement/udm3gpp:UDMFunction" {
+    list EP_N8 {
+      description "Represents the EP_N8 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N8Grp;
+      }
+    }
+    
+    list EP_N10 {
+      description "Represents the EP_N10 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N10Grp;
+      }
+    }
+    
+    list EP_N13 {
+      description "Represents the EP_N13 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N13Grp;
+      }
+    }
+
+  }
+  
+  augment "/me3gpp:ManagedElement/upf3gpp:UPFFunction" {
+    list EP_N4 {
+      description "Represents the EP_N4 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N4Grp;
+      }
+    }
+    
+    list EP_N3 {
+      description "Represents the EP_N3 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N3Grp;
+      }
+    }
+    
+    list EP_N9 {
+      description "Represents the EP_N9 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N9Grp;
+      }
+    }
+    
+    list EP_S5U {
+      description "Represents the EP_S5U IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_S5UGrp;
+      }
+    }
+    
+    list EP_EP_N6 {
+      description "Represents the EP_N6 IOC.";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses EP_N6Grp;
+      }
+    }
+  }
+}
+

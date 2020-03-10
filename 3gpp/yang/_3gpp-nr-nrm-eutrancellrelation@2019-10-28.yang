@@ -1,0 +1,152 @@
+module _3gpp-nr-nrm-eutrancellrelation {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-eutrancellrelation";
+  prefix "eutrancellrel3gpp";
+    
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-nr-nrm-gnbcucpfunction { prefix gnbcucp3gpp; }
+  import _3gpp-nr-nrm-nrcellcu { prefix nrcellcu3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the EUtranCellRelation Information
+    Object Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  typedef ActionAllowed {
+    type enumeration {
+      enum YES;
+      enum NO;                            
+    }
+  }
+  
+  typedef EnergySavingCoverage {
+    type enumeration {
+      enum YES;
+      enum NO; 
+      enum PARTIAL;                       
+    }
+  }
+
+  grouping EUtranCellRelationGrp {
+    description "Represents the EUtranCellRelation IOC.";
+    reference "3GPP TS 28.541, EUtranRelation in 3GPP TS 28.658";
+    uses mf3gpp:ManagedFunctionGrp;
+
+    leaf tCI {
+      description "Target Cell Identifier. Consists of E-UTRAN Cell Global
+        Identifier (ECGI) and Physical Cell Identifier (PCI) of the target
+        cell. Identifies the target cell from the perspective of the parent
+        cell instance.";
+      mandatory true;
+      type uint64;
+    }
+
+    leaf isRemoveAllowed {
+      description "Indicates if the subject EUtranCellRelation can be removed
+        (deleted) or not. If YES, the subject EUtranCellRelation instance can
+        be removed (deleted). If NO, the subject EUtranCellRelation instance
+        shall not be removed (deleted) by any entity but an IRPManager.";
+      mandatory true;
+      type ActionAllowed;
+    }
+
+    leaf isHOAllowed {
+      description "Indicates if handover is allowed or prohibited. If YES,
+        handover is allowed from source cell to target cell. Source cell is
+        represented by the parent cell instance. Target cell is the adjacent
+        cell referenced by this EUtranCellRelation instance. If NO, handover
+        shall not be allowed.";
+      mandatory true;
+      type ActionAllowed;
+    }
+
+    leaf isICICInformationSendAllowed {
+      description "Indicates if ICIC (Inter Cell Interference Coordination)
+        load information message sending is allowed or prohibited. If YES,
+        ICIC load information message sending is allowed from source cell to
+        target cell. Source cell is represented by the parent cell instance.
+        Target cell is the adjacent cell referenced by this EUtranCellRelation
+        instance. If NO, ICIC load information message sending shall not be
+        allowed.";
+      reference "3GPP TS 36.423"; 
+      mandatory true;
+      type ActionAllowed;
+    }
+
+    leaf isLBAllowed {
+      description "Indicates if load balancing is allowed or prohibited from
+        source cell to target cell. If YES, load balancing is allowed from
+        source cell to target cell. Source cell is represented by the parent
+        cell instance. Target cell is the adjacent cell referenced by this
+        EUtranCellRelation instance. If NO, load balancing shall be prohibited
+        from source cell to target cell.";
+      mandatory true;
+      type ActionAllowed;
+    }
+
+    leaf isESCoveredBy {
+      description "Indicates whether the adjacent cell according to this
+        planning provides no, partial or full coverage for the parent cell
+        instance. Adjacent cells with this attribute equal to YES are
+        recommended to be considered as candidate cells to take over the
+        coverage when the original cell is about to be transferred to energy
+        saving state. The entirety of adjacent cells with this property equal
+        to PARTIAL are recommended to be considered as entirety of candidate
+        cells to take over the coverage when the original cell is about to be
+        transferred to energy saving state.";
+      mandatory true;
+      type EnergySavingCoverage;
+    }
+
+    leaf qOffset {
+      description "Offset applicable to a specific neighbouring cell used for
+        evaluating the cell as a candidate for cell re-selection. Corresponds
+        to parameter q-OffsetCell broadcast in SIB4 for intra-frequency cells
+        and in SIB5 for inter-frequency cells. Used for Mobility Robustness
+        Optimization.";
+      reference "3GPP TS 36.331";
+      mandatory true;
+      type types3gpp:QOffsetRange;
+    }
+
+    leaf cellIndividualOffset {
+      description "Offset applicable to a neighbouring cell. It is used for
+        evaluating the neighbouring cell for handover in connected mode. Used
+        by the HandOver parameter Optimization (HOO) function or Load 
+        Balancing Optimization (LBO) function.";
+      reference "3GPP TS 36.331";
+      config false;
+      type types3gpp:QOffsetRange;
+    }
+
+    leaf adjacentCell {
+      description "Reference to an EUtranCellFDD/TDD or
+        ExternalEUtranCellFDD/TDD instance.";
+      mandatory true;
+      type types3gpp:DistinguishedName;
+    }
+  }
+
+  augment /me3gpp:ManagedElement/gnbcucp3gpp:GNBCUCPFunction/nrcellcu3gpp:NRCellCU {
+
+    list EUtranCellRelation {
+      description "Represents a relation between an NR cell and an E-UTRAN cell.";
+      reference "3GPP TS 28.541";	
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {    
+        uses EUtranCellRelationGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}
+

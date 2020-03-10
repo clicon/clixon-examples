@@ -1,0 +1,1096 @@
+module _3gpp-5gc-nrm-nfprofile {
+  yang-version 1.1;
+  
+  namespace urn:3gpp:sa5:_3gpp-5gc-nrm-nfprofile;
+  prefix nfp3gpp;
+  
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import ietf-inet-types { prefix inet; }
+  import ietf-yang-types { prefix yang; }
+  import _3gpp-5gc-nrm-nfservice { prefix nfs3gpp; }
+  
+  organization "3gpp SA5";
+  description "NF profile class.";
+  reference "3GPP TS 29.510";
+  
+  revision 2019-06-17 {
+    description "initial revision";
+  }
+  
+  grouping NFProfileGrp {
+    leaf nfInstanceID {
+      description "String uniquely identifying a NF instance.";
+      mandatory true;
+      type string;
+    }
+    
+    leaf nfType {
+      description "Type of Network Function.";
+      mandatory true;
+      type types3gpp:NfType;
+    }
+    
+    leaf nfStatus {
+      description "Status of the NF Instance.";
+      mandatory true;
+      type NFStatus;
+    }
+    
+    leaf heartBeatTimer {
+      description "Time in seconds expected between 2 consecutive heart-beat messages from
+                   an NF Instance to the NRF. It may be included in the registration request.
+                   When present in the request it shall contain the heartbeat time proposed by the NF service consumer.";
+      //conditional support
+      type uint16;
+    }
+    
+    list plmnList {
+      description "PLMN(s) of the Network Function.
+                 This IE shall be present if this information is available for the NF.
+                 If not provided, PLMN ID(s) of the PLMN of the NRF are assumed for the NF.";
+      
+      //conditional support
+      min-elements 1;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    list sNssais { //is the key unique
+      description "S-NSSAIs of the Network Function. If not provided, the NF can serve any S-NSSAI.
+                   When present this IE represents the list of S-NSSAIs supported in all the PLMNs listed in the plmnList IE.";
+      min-elements 1;
+      //optional support
+      key "sst sd";
+      uses Snssai;
+    }
+    
+    list perPlmnSnssaiList {
+      description "This IE may be included when the list of S-NSSAIs supported by the NF for each PLMN it is supporting is different.
+                   When present, this IE shall include the S-NSSAIs supported by the Network Function
+                   for each PLMN supported by the Network Function. When present, this IE shall override sNssais IE.";
+      min-elements 1;
+      //optional support
+      key idx; //no obvious leaf to use as a key
+      leaf idx { type uint32; }
+      uses PlmnSnssai;
+    }
+    
+    leaf-list nsiList {
+      description "NSI identities of the Network Function.
+                   If not provided, the NF can serve any NSI.";
+      //optional support
+      min-elements 1;
+      type string;
+    }
+    
+    leaf fqdn {
+      description "FQDN of the Network Function. For AMF, the FQDN registered with the NRF
+                   shall be that of the AMF Name.";
+      //conditional support
+      type inet:domain-name;
+    }
+    
+    leaf interPlmnFqdn {
+      description "If the NF needs to be discoverable by other NFs in a different PLMN,
+                   then an FQDN that is used for inter-PLMN routing is specified.";
+      //conditional support
+      type inet:domain-name;
+    }
+    
+    leaf-list ipv4Addresses {
+      description "IPv4 address(es) of the Network Function.";
+      min-elements 1;
+      //conditional support
+      type inet:ipv4-address;
+    }
+    
+    leaf-list ipv6Addresses {
+      description "IPv6 address(es) of the Network Function.";
+      min-elements 1;
+      //conditional support
+      type inet:ipv6-address;
+    }
+    
+    list allowedPlmns {
+      description "PLMNs allowed to access the NF instance.
+                   If not provided, any PLMN is allowed to access the NF.";
+      
+      min-elements 1;
+      //optional support
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    leaf-list allowedNfTypes {
+      description "Type of the NFs allowed to access the NF instance.
+                   If not provided, any NF type is allowed to access the NF.";
+      min-elements 1;
+      //optional support
+      type types3gpp:NfType;
+    }
+    
+    leaf-list allowedNfDomains {
+      description "Pattern representing the NF domain names allowed to access the NF instance.
+                   If not provided, any NF domain is allowed to access the NF.";
+      min-elements 1;
+      //optional support
+      type string;
+    }
+    
+    list allowedNssais { //is the key unique
+      description "S-NSSAI of the allowed slices to access the NF instance.
+                   If not provided, any slice is allowed to access the NF.";
+      min-elements 1;
+      //optional support
+      key "sst sd";
+      uses Snssai;
+    }
+    
+    leaf priority {
+      description "Priority (relative to other NFs of the same type) in the range of 0-65535, to be used for NF selection;
+                   lower values indicate a higher priority. If priority is also present in the nfServiceList parameters,
+                   those will have precedence over this value. The NRF may overwrite the received priority value when exposing
+                   an NFProfile with the Nnrf_NFDiscovery service.";
+      //optional support
+      type uint16;
+    }
+    
+    leaf capacity {
+      description "Static capacity information in the range of 0-65535, expressed as a weight
+                   relative to other NF instances of the same type; if capacity is also present
+                   in the nfServiceList parameters, those will have precedence over this value.";
+      //optional support
+      type uint16;
+    }
+    
+    leaf load {
+      description "Dynamic load information, ranged from 0 to 100, indicates the current load percentage of the NF.";
+      //optional support
+      type types3gpp:Load;
+    }
+    
+    leaf locality {
+      description "Operator defined information about the location of the NF instance (e.g. geographic location, data center).";
+      //optional support
+      type string;
+    }
+    
+    grouping udrInfo {
+      //optional support
+      
+      leaf groupId {
+        description "Identity of the UDR group that is served by the UDR instance.
+                     If not provided, the UDR instance does not pertain to any UDR group.";
+        //optional support
+        type string;
+      }
+      
+      list supiRanges {
+        description "List of ranges of SUPI's whose profile data is available in the UDR instance.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses SupiRange;
+      }
+      
+      list gpsiRanges {
+        description "List of ranges of GPSIs whose profile data is available in the UDR instance.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses IdentityRange;
+      }
+      
+      list externalGroupIdentifiersRanges {
+        description "List of ranges of external groups whose profile data is available in the UDR instance.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses IdentityRange;
+      }
+      
+      leaf-list supportedDataSets {
+        description "List of supported data sets in the UDR instance.
+                     If not provided, the UDR supports all data sets.";
+        min-elements 1;
+        //optional support
+        type DataSetId;
+      }
+    }
+    
+    grouping udmInfo {
+      //optional support
+      
+      leaf groupId {
+        description "Identity of the UDM group that is served by the UDM instance.
+                     If not provided, the UDM instance does not pertain to any UDM group.";
+        //optional support
+        type string;
+      }
+      
+      list supiRanges {
+        description "List of ranges of SUPI's whose profile data is available in the UDM instance.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses SupiRange;
+      }
+      
+      list gpsiRanges {
+        description "List of ranges of GPSIs whose profile data is available in the UDM instance.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses IdentityRange;
+      }
+      
+      list externalGroupIdentifiersRanges {
+        description "List of ranges of external groups whose profile data is available in the UDM instance.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses IdentityRange;
+      }
+      
+      leaf-list routingIndicators {
+        description "List of Routing Indicator information that allows to route network signalling with SUCI
+                     to the UDM instance. If not provided, the UDM can serve any Routing Indicator.
+                     Pattern: '^[0-9]{1,4}$'.";
+        //optional support
+        min-elements 1;
+        type string;
+      }
+    }
+    
+    grouping ausfInfo {
+      //optional support
+      
+      leaf groupId {
+        description "Identity of the AUSF group. If not provided, the AUSF instance does not pertain to any AUSF group.";
+        //optional support
+        type string;
+      }
+      
+      list supiRanges {
+        description "List of ranges of SUPIs that can be served by the AUSF instance. If not provided, the AUSF can serve any SUPI.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses SupiRange;
+      }
+      
+      leaf-list routingIndicators {
+        description "List of Routing Indicator information that allows to route network signalling with SUCI
+                     to the AUSF instance. If not provided, the AUSF can serve any Routing Indicator.
+                     Pattern: '^[0-9]{1,4}$'.";
+        //optional support
+        min-elements 1;
+        type string;
+      }
+    }
+    
+    grouping amfInfo {
+      //optional support
+      
+      leaf amfRegionId {
+        description "AMF region identifier";
+        type string;
+      }
+      
+      leaf amfSetId {
+        description "AMF set identifier";
+        type string;
+      }
+      
+      list guamiList {
+        description "List of supported GUAMIs.";
+        
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        
+        min-elements 1;
+        uses Guami;
+      }
+      
+      list taiList {
+        description "The list of TAIs the AMF can serve. It may contain the non-3GPP access TAI.
+                     The absence of this attribute and the taiRangeList attribute indicate that
+                     the AMF can be selected for any TAI in the serving network.";
+        
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        
+        //optional support
+        min-elements 1;
+        uses Tai;
+      }
+      
+      list taiRangeList {
+        description "The range of TAIs the AMF can serve. The absence of this attribute and the taiList
+                     attribute indicate that the AMF can be selected for any TAI in the serving network.";
+        //optional support
+        min-elements 1;
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        uses TaiRange;
+      }
+      
+      list backupInfoAmfFailure {
+        description "List of GUAMIs for which the AMF acts as a backup for AMF failure.";
+        
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        
+        //optional support
+        min-elements 1;
+        uses Guami;
+      }
+      
+      list backupInfoAmfRemoval {
+        description "List of GUAMIs for which the AMF acts as a backup for planned AMF removal.";
+        
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        
+        //optional support
+        min-elements 1;
+        uses Guami;
+      }
+      
+      list n2InterfaceAmfInfo {
+        description "N2 interface information of the AMF. This information needs not be sent in NF Discovery responses.
+                     It may be used by the NRF to update the DNS for AMF discovery by the 5G Access Network.";
+        
+        //optional support
+        max-elements 1;
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        uses N2InterfaceAmfInfo;
+      }
+    }
+    
+    grouping smfInfo {
+      //optional support
+      
+      list sNssaiSmfInfoList {
+        description "List of parameters supported by the SMF per S-NSSAI.";
+        min-elements 1;
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        uses sNssaiSmfInfoItem;
+      }
+      
+      list taiList {
+        description "The list of TAIs the SMF can serve. It may contain the non-3GPP access TAI.
+                     The absence of this attribute and the taiRangeList attribute indicate that
+                     the SMF can be selected for any TAI in the serving network.";
+        
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        
+        //optional support
+        min-elements 1;
+        uses Tai;
+      }
+      
+      list taiRangeList {
+        description "The range of TAIs the SMF can serve. The absence of this attribute and the taiList
+                     attribute indicate that the SMF can be selected for any TAI in the serving network.";
+        //optional support
+        min-elements 1;
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        uses TaiRange;
+      }
+      
+      leaf pgwFqdn {
+        description "The FQDN of the PGW if the SMF is a combined SMF/PGW-C.";
+        //optional support
+        type inet:domain-name;
+      }
+      
+      leaf-list accessType {
+        description "If included, this IE shall contain the access type (3GPP_ACCESS and/or NON_3GPP_ACCESS) supported by the SMF.
+                     If not included, it shall be assumed the both access types are supported.";
+        
+        //conditional support
+        min-elements 1;
+        max-elements 2;
+        type AccessType;
+      }
+    }
+    
+    grouping upfInfo {
+      //optional support
+      
+      list sNssaiUpfInfoList {
+        description "List of parameters supported by the UPF per S-NSSAI.";
+        min-elements 1;
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        uses SnssaiUpfInfoItem;
+      }
+      
+      leaf-list smfServingArea {
+        description "The SMF service area(s) the UPF can serve.
+                     If not provided, the UPF can serve any SMF service area.";
+        
+        //optional support
+        min-elements 1;
+        type string;
+      }
+      
+      list interfaceUpfInfo {
+        description "List of User Plane interfaces configured on the UPF. When this IE is provided in the NF Discovery response,
+                     the NF Service Consumer (e.g. SMF) may use this information for UPF selection.";
+        
+        key idx; //no obvious leaf to use as a key
+        leaf idx { type uint32; }
+        
+        //optional support
+        min-elements 1;
+        uses InterfaceUpfInfoItem;
+      }
+      
+      leaf iwkEpsInd {
+        description "Indicates whether interworking with EPS is supported by the UPF.
+                     true: Supported
+                     false (default): Not Supported";
+        
+        //optional support
+        type boolean;
+      }
+      
+      leaf-list pduSessionTypes {
+        description "List of PDU session type(s) supported by the UPF. The absence of this attribute indicates that the UPF can be selected
+                     for any PDU session type.";
+        
+        //optional support
+        min-elements 1;
+        type PduSessionType;
+      }
+    }
+    
+    grouping pcfInfo {
+      //optional support
+      
+      leaf-list dnnList {
+        description "DNNs supported by the PCF.
+                     If not provided, the PCF can serve any DNN.";
+        
+        //optional support
+        min-elements 1;
+        type string;
+      }
+      
+      list supiRanges {
+        description "List of ranges of SUPIs that can be served by the PCF instance. If not provided, the PCF can serve any SUPI.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses SupiRange;
+      }
+      
+      leaf rxDiamHost {
+        description "This IE shall be present if the PCF supports Rx interface.
+                     When present, this IE shall indicate the Diameter host of the Rx interface for the PCF.
+                     Pattern: '^([A-Za-z0-9]+(-[A-Za-z0-9]+).)+[a-z]{2,}$'.";
+        
+        //conditional support
+        type string;
+      }
+      
+      leaf rxDiamRealm {
+        description "This IE shall be present if the PCF supports Rx interface.
+                     When present, this IE shall indicate the Diameter realm of the Rx interface for the PCF.
+                     Pattern: '^([A-Za-z0-9]+(-[A-Za-z0-9]+).)+[a-z]{2,}$'.";
+        
+        //conditional support
+        type string;
+      }
+    }
+    
+    grouping bsfInfo {
+      //optional support
+      
+      list ipv4AddressRanges {
+        description "List of ranges of IPv4 addresses handled by BSF.
+                     If not provided, the BSF can serve any IPv4 address.";
+        //optional support
+        key "start end";
+        uses types3gpp:Ipv4AddressRange;
+      }
+      
+      leaf-list dnnList {
+        description "List of DNNs handled by the BSF
+                     If not provided, the BSF can serve any DNN.";
+        
+        //optional support
+        min-elements 1;
+        type string;
+      }
+      
+      leaf-list ipDomainList {
+        description "List of IPv4 address domains, as described in subclause 6.2 of 3GPP TS 29.513, handled by the BSF.
+                     If not provided, the BSF can serve any IP domain.";
+        //optional support
+        min-elements 1;
+        type string;
+      }
+      
+      list ipv6PrefixRanges {
+        description "List of ranges of IPv6 prefixes handled by the BSF.
+                     If not provided, the BSF can serve any IPv6 prefix.";
+        //optional support
+        key "start end";
+        uses types3gpp:Ipv6PrefixRange;
+      }
+    }
+    
+    grouping chfInfo {
+      //optional support
+      
+      list supiRangeList {
+        description "List of ranges of SUPIs that can be served by the CHF instance. If not provided, the CHF can serve any SUPI.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses SupiRange;
+      }
+      
+      list gpsiRangeList {
+        description "List of ranges of GPSI that can be served by the CHF instance. If not provided, the CHF can serve any GPSI.";
+        key "start end pattern";
+        min-elements 1;
+        //optional support
+        uses IdentityRange;
+      }
+      
+      list plmnRangeList {
+        description "List of ranges of PLMNs (including the PLMN IDs of the CHF instance) that can be served by the CHF instance.
+                     If not provided, the CHF can serve any PLMN.";
+        
+        min-elements 1;
+        //optional support
+        key "mcc mnc";
+        uses types3gpp:PLMNId;
+      }
+    }
+    
+    grouping nrfInfoGrp {
+      //optional support
+      
+      list servedUdrInfo {
+        description "This attribute contains all the udrInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses udrInfo;
+      }
+      
+      list servedUdmInfo {
+        description "This attribute contains all the udmInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses udmInfo;
+      }
+      
+      list servedAusfInfo {
+        description "This attribute contains all the ausfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses ausfInfo;
+      }
+      
+      list servedAmfInfo {
+        description "This attribute contains all the amfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses amfInfo;
+      }
+      
+      list servedSmfInfo {
+        description "This attribute contains all the smfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses smfInfo;
+      }
+      
+      list servedUpfInfo {
+        description "This attribute contains all the upfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses upfInfo;
+      }
+      
+      list servedPcfInfo {
+       description "This attribute contains all the pcfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses pcfInfo;
+      }
+      
+      list servedBsfInfo {
+       description "This attribute contains all the bsfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses bsfInfo;
+      }
+      
+      list servedChfInfo {
+        description "This attribute contains all the bsfInfo attributes locally configured in the NRF or the NRF received during NF registration.";
+        //optional support
+        
+        key nfInstanceID;
+        leaf nfInstanceID {
+          description "String uniquely identifying a NF instance.";
+          type string;
+        }
+        
+        min-elements 1;
+        uses chfInfo;
+      }
+    }
+    
+    list nrfInfo {
+      key idx; //no obvious leaf to use as a key
+      leaf idx { type uint32; }
+      max-elements 1;
+      uses nrfInfoGrp;
+    }
+    
+    leaf customInfo {
+      description "Specific data for custom Network Functions.";
+      type string;
+    }
+    
+    leaf recoveryTime {
+      description "Timestamp when the NF was (re)started.";
+      //optional support
+      type yang:date-and-time;
+    }
+    
+    leaf nfServicePersistence {
+      description "If present, and set to true, it indicates that the different service instances of a same NF Service in this NF instance,
+                   supporting a same API version, are capable to persist their resource state in shared storage and therefore these resources
+                   are available after a new NF service instance supporting the same API version is selected by a NF Service Consumer (see 3GPP TS 23.527).
+                   Otherwise, it indicates that the NF Service Instances of a same NF Service are not capable to share resource state inside the NF Instance.";
+      
+      //optional support
+      type boolean;
+    }
+    
+    list nfServices {
+      description "List of NF Service Instances. It shall include the services produced by the NF that can be discovered by other NFs.";
+      key serviceInstanceID;
+      //optional support
+      min-elements 1;
+      uses nfs3gpp:NFServiceGrp;
+    }
+    
+    leaf nfProfileChangesSupportInd {
+      description "NF Profile Changes Support Indicator. This IE may be present in the NFRegister or NFUpdate (NF Profile Complete Replacement) request and shall be absent in the response.
+                   true: the NF Service Consumer supports receiving NF Profile Changes in the response.
+                   false (default): the NF Service Consumer does not support receiving NF Profile Changes in the response.";
+      
+      //optional support
+      type boolean;
+    }
+    
+    leaf nfProfileChangesInd {
+      description "NF Profile Changes Indicator. This IE shall be absent in the request to the NRF and may be included by the NRF in NFRegister or NFUpdate (NF Profile Complete Replacement) response.
+                   true: the NF Profile contains NF Profile changes.
+                   false (default): complete NF Profile.";
+      
+      //optional support
+      type boolean;
+    }
+    
+    list defaultNotificationSubscriptions {
+      description "Notification endpoints for different notification types.";
+      key notificationType;
+      //optional support
+      min-elements 1;
+      uses types3gpp:DefaultNotificationSubscription;
+    }
+  }
+  
+  typedef NFStatus {
+    type enumeration {
+      enum REGISTERED;
+      enum SUSPENDED;
+    }
+  }
+  
+  typedef DataSetId {
+    type enumeration {
+      enum SUBSCRIPTION;
+      enum POLICY;
+      enum EXPOSURE;
+      enum APPLICATION;
+    }
+  }
+  
+  grouping SupiRange {
+    leaf start {
+      description "First value identifying the start of a SUPI range. To be used when the range of SUPI's can be represented as a numeric range (e.g., IMSI ranges).";
+      type string {
+        pattern '^[0-9]+$';
+      }
+    }
+    
+    leaf end {
+      description "Last value identifying the end of a SUPI range. To be used when the range of SUPI's can be represented as a numeric range (e.g. IMSI ranges).";
+      type string {
+        pattern '^[0-9]+$';
+      }
+    }
+    
+    leaf pattern {
+      description "Pattern representing the set of SUPI's belonging to this range.
+                   A SUPI value is considered part of the range if and only if the SUPI string fully matches the regular expression.";
+      type string;
+    }
+  }
+  
+  grouping IdentityRange {
+    leaf start {
+      description "First value identifying the start of an identity range. To be used when the range of identities can be represented as a numeric range (e.g., MSISDN ranges).";
+      type string {
+        pattern '^[0-9]+$';
+      }
+    }
+    
+    leaf end {
+      description "Last value identifying the end of an identity range. To be used when the range of identities can be represented as a numeric range (e.g. MSISDN ranges).";
+      type string {
+        pattern '^[0-9]+$';
+      }
+    }
+    
+    leaf pattern {
+      description "Pattern representing the set of identities belonging to this range.
+                   An identity value is considered part of the range if and only if the identity string fully matches the regular expression.";
+      type string;
+    }
+  }
+  
+  grouping TacRange {
+    leaf start {
+      description "First value identifying the start of a TAC range, to be used when the range of TAC's can be represented as a hexadecimal range (e.g., TAC ranges).";
+      type string {
+        pattern '^([A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}$)';
+      }
+    }
+    
+    leaf end {
+      description "Last value identifying the end of a TAC range, to be used when the range of TAC's can be represented as a hexadecimal range (e.g. TAC ranges).";
+      type string {
+        pattern '^([A-Fa-f0-9]{4}|[A-Fa-f0-9]{6})$';
+      }
+    }
+    
+    leaf pattern {
+      description "Pattern representing the set of TAC's belonging to this range.";
+      type string;
+    }
+  }
+  
+  grouping SnssaiUpfInfoItem {
+    list sNssai { //is the key unique
+      description "Supported S-NSSAI.";
+      min-elements 1;
+      max-elements 1;
+      key "sst sd";
+      uses Snssai;
+    }
+  
+    list dnnUpfInfoList {
+      description "List of parameters supported by the UPF per DNN.";
+      min-elements 1;
+      key dnn;
+      uses DnnUpfInfoItem;
+    }
+  }
+  
+  grouping DnnUpfInfoItem {
+    leaf dnn {
+      description "String representing a Data Network.";
+      mandatory true;
+      type string;
+    }
+    
+    leaf-list dnaiList {
+      description "List of Data network access identifiers supported by the UPF for this DNN.
+                   The absence of this attribute indicates that the UPF can be selected for this DNN for any DNAI.";
+      min-elements 1;
+      type string; //dnai is the type but its only a string with desc: DNAI (Data network access identifier), is this needed as its own typedef or string is ok
+    }
+    
+    leaf-list pduSessionTypes {
+      description "List of PDU session type(s) supported by the UPF for a specific DNN.";
+      min-elements 1;
+      type PduSessionType;
+    }
+  }
+  
+  grouping Snssai {
+    leaf sst {
+      description "Unsigned integer, within the range 0 to 255, representing the Slice/Service Type.
+                   It indicates the expected Network Slice behaviour in terms of features and services.";
+      mandatory true;
+      type uint32;
+    }
+    
+    leaf sd {
+      description "3-octet string, representing the Slice Differentiator, in hexadecimal representation.";
+      //optional
+      type string {
+        pattern '^[A-Fa-f0-9]{6}$';
+      }
+    }
+    
+    reference "3GPP TS 29.571";
+  }
+  
+  typedef PduSessionType {
+    type enumeration {
+      enum IPV4;
+      enum IPV6;
+      enum IPV4V6;
+      enum UNSTRUCTURED;
+      enum ETHERNET;
+    }
+  }
+  
+  grouping Guami {
+    list plmnId {
+      description "PLMN Identity.";
+      min-elements 1;
+      max-elements 1;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    list amfId {
+      description "AMF Identity.";
+      min-elements 1;
+      max-elements 1;
+      key "amfRegionId amfSetId amfPointer";
+      uses types3gpp:AmfIdentifier;
+    }
+  }
+  
+  grouping Tai {
+    list plmnId {
+      description "PLMN Identity.";
+      min-elements 1;
+      max-elements 1;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    leaf tac { type types3gpp:Tac; }
+  }
+  
+  grouping InterfaceUpfInfoItem {
+    leaf interfaceType {
+      description "User Plane interface type.";
+      mandatory true;
+      type UPInterfaceType;
+    }
+    
+    ////At least one of the addressing parameters (ipv4address, ipv6adress or endpointFqdn) shall be included in the InterfaceUpfInfoItem.
+    choice address {
+      case ipv4EndpointAddresses {
+        leaf-list ipv4EndpointAddresses {
+          description "Available endpoint IPv4 address(es) of the User Plane interface.";
+          //conditional support
+          min-elements 1;
+          type inet:ipv4-address;
+        }
+      }
+    
+      case ipv6EndpointAddresses {
+        leaf-list ipv6EndpointAddresses {
+          description "Available endpoint IPv6 address(es) of the User Plane interface.";
+          //conditional support
+          min-elements 1;
+          type inet:ipv6-address;
+        }
+      }
+    
+      case endpointFqdn {
+        leaf endpointFqdn {
+          description "FQDN of available endpoint of the User Plane interface.";
+          //conditional support
+          type inet:domain-name;
+        }
+      }
+    }
+    
+    leaf networkInstance {
+      description "Network Instance associated to the User Plane interface.";
+      //optional support
+      type string;
+    }
+  }
+  
+  typedef UPInterfaceType {
+    type enumeration {
+      enum N3;
+      enum N6;
+      enum N9;
+    }
+  }
+  
+  grouping TaiRange {
+    list plmnId {
+      description "PLMN ID related to the TacRange.";
+      min-elements 1;
+      max-elements 1;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    list tacRangeList { //is this key unique
+      description "The range of the TACs.";
+      min-elements 1;
+      key "start end";
+      uses TacRange;
+    }
+  }
+  
+  typedef AccessType {
+    type enumeration {
+      enum 3GPP_ACCESS;
+      enum NON_3GPP_ACCESS;
+    }
+  }
+  
+  grouping N2InterfaceAmfInfo {
+    //At least one of the addressing parameters (ipv4address or ipv6adress) shall be included.
+    choice address {
+      case ipv4EndpointAddress {
+        leaf-list ipv4EndpointAddress {
+          description "Available AMF endpoint IPv4 address(es) for N2.";
+          //conditional support
+          min-elements 1;
+          type inet:ipv4-address;
+        }
+      }
+    
+      case ipv6EndpointAddress {
+        leaf-list ipv6EndpointAddress {
+          description "Available AMF endpoint IPv6 address(es) for N2.";
+          //conditional support
+          min-elements 1;
+          type inet:ipv6-address;
+        }
+      }
+    }
+    
+    leaf amfName {
+      description "AMF name.";
+      type string;
+    }
+  }
+  
+  grouping sNssaiSmfInfoItem {
+    list sNssai { //is the key unique
+      description "Supported S-NSSAI.";
+      min-elements 1;
+      max-elements 1;
+      key "sst sd";
+      uses Snssai;
+    }
+    
+    list dnnSmfInfoList { //is the key unique
+      description "List of parameters supported by the SMF per DNN.";
+      min-elements 1;
+      key dnn;
+      uses DnnSmfInfoItem;
+    }
+  }
+  
+  grouping DnnSmfInfoItem {
+    leaf dnn {
+      description "Supported DNN.";
+      mandatory true;
+      type string;
+    }
+  }
+  
+  grouping PlmnSnssai {
+    list plmnId {
+      description "PLMN ID for which list of supported S-NSSAI(s) is provided.";
+      min-elements 1;
+      max-elements 1;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+  
+    list sNssaiList { //is the key unique
+      description "The specific list of S-NSSAIs supported by the given PLMN.";
+      min-elements 1;
+      key "sst sd";
+      uses Snssai;
+    }
+  }
+}
+

@@ -16,7 +16,9 @@ The examples include a local install and docker build (which can run directly fr
 
 - [Hello world](hello)
 - [Openconfig-system](openconfig) from: [openconfig-system](https://github.com/openconfig/public)
-- [NRM](nrm): 5G Network Resource Model from [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g10.zip)
+- [3GPP](3gpp): 5G Network Resource Model from [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g30.zip)
+
+
 
 ## Build and install:
 ```

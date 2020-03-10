@@ -1,0 +1,70 @@
+module _3gpp-nr-nrm-externalamffunction {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-externalamffunction";
+  prefix "extamf3gpp";
+    
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  import _3gpp-nr-nrm-nrnetwork { prefix nrnet3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the ExternalAMFFunction Information
+    Object Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  grouping ExternalAMFFunctionGrp {
+    description "Represents the ExternalAMFFunction IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp;
+
+    list pLMNIdList {
+      description "List of at most six entries of PLMN Identifiers, but at least 
+        one (the primary PLMN Id).
+        The PLMN Identifier is composed of a Mobile Country Code (MCC) and a 
+        Mobile Network Code (MNC).";
+      min-elements 1;
+      max-elements 6;
+      key "mcc mnc";
+      uses types3gpp:PLMNId;
+    }
+    
+    container aMFIdentifier {
+      presence true;
+      description "An AMF identifier, comprising an AMF Region ID, an AMF Set ID and an AMF Pointer.";
+      uses types3gpp:AmfIdentifier;
+    }
+  }
+
+  grouping ExternalAMFFunctionWrapper {
+    list ExternalAMFFunction {
+      description "Represents the properties, known by the management
+        function, of a AMFFunction managed by another management
+        function.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses ExternalAMFFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  } 
+  
+  augment "/subnet3gpp:SubNetwork" {
+    if-feature subnet3gpp:ExternalsUnderSubNetwork ;
+    uses ExternalAMFFunctionWrapper;
+  }
+
+  augment "/nrnet3gpp:NRNetwork" {
+    if-feature nrnet3gpp:ExternalsUnderNRNetwork;
+    uses ExternalAMFFunctionWrapper;
+  }
+}
+

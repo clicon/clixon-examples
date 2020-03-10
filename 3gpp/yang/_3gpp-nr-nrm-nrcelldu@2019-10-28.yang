@@ -1,0 +1,215 @@
+module _3gpp-nr-nrm-nrcelldu {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-nrcelldu";
+  prefix "nrcelldu3gpp";
+
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-nr-nrm-gnbdufunction { prefix gnbdu3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the NRCellDU Information Object
+    Class (IOC) that is part of the NR Network Resource Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-09-03 {
+    description "Initial revision";
+  }
+
+  grouping NRCellDUGrp {
+    description "Represents the NRCellDU IOC.";
+    reference "3GPP TS 28.541";
+    uses mf3gpp:ManagedFunctionGrp;
+        
+    leaf cellLocalId {
+      description "Identifies an NR cell of a gNB. Together with the
+        corresponding gNB identifier in forms the NR Cell Identity (NCI)."; 
+      reference "NCI in 3GPP TS 38.300";
+      mandatory true;
+      type int32 { range "0..16383"; }
+    }
+
+    leaf operationalState  {
+      description "Operational state of the NRCellDU instance. Indicates
+        whether the resource is installed and partially or fully operable
+        (ENABLED) or the resource is not installed or not operable
+        (DISABLED).";
+      config false;
+      type types3gpp:OperationalState;
+    }
+
+    leaf administrativeState  {
+      description "Administrative state of the NRCellDU. Indicates the
+        permission to use or prohibition against using the cell, imposed
+        through the OAM services.";
+      type types3gpp:AdministrativeState;
+      default LOCKED;
+    }
+
+    leaf cellState  {
+      description "Cell state of the NRCellDU instance. Indicates whether the
+        cell is not currently in use (IDLE), or currently in use but not
+        configured to carry traffic (INACTIVE), or currently in use and is
+        configured to carry traffic (ACTIVE).";
+      config false;
+      type types3gpp:CellState;
+    }
+
+    list pLMNIdList {
+      description "Defines which PLMNs that can be served by the NR cell. The
+        first entry of the list is the PLMN used to construct the nCGI for the
+        NR cell.";
+      key "mcc mnc";
+      min-elements 1;
+      max-elements 12;
+      uses types3gpp:PLMNId;
+    }
+		
+    leaf-list sNSSAIList {
+      description "List of S-NSSAIs the NR cell is supporting. NSSAI is a set
+        of supported S-NSSAI(s), and an S-NSSAI is comprised of a SST
+        (Slice/Service type) and an optional SD (Slice Differentiator) field.";
+      reference "3GPP TS 23.003";      type types3gpp:SNssai;
+      }
+
+    leaf nRPCI {
+      description "The Physical Cell Identity (PCI) of the NR cell.";
+      reference "3GPP TS 36.211";
+      mandatory true;
+      type int32 { range "0..1007"; }
+    }
+
+    leaf nRTAC {
+      description "The common 5GS Tracking Area Code for the PLMNs."; 
+      reference "3GPP TS 23.003, 3GPP TS 38.473";
+      type types3gpp:Tac;
+    }
+
+    leaf arfcnDL {
+      description "NR Absolute Radio Frequency Channel Number (NR-ARFCN) for
+        downlink.";
+      reference "3GPP TS 38.104";
+      mandatory true;
+      type int32;
+    }
+ 
+    leaf arfcnUL {
+      description "NR Absolute Radio Frequency Channel Number (NR-ARFCN) for
+        uplink.";
+      reference "3GPP TS 38.104";
+      type int32;
+    }
+
+    leaf arfcnSUL {
+      description "NR Absolute Radio Frequency Channel Number (NR-ARFCN) for
+        supplementary uplink.";
+      reference "3GPP TS 38.104";
+      type int32;
+    }
+
+    leaf bSChannelBwDL {
+      description "Base station channel bandwidth for downlink.";
+      reference "3GPP TS 38.104";
+      type int32;
+      units MHz;
+    }
+
+    leaf bSChannelBwUL {
+      description "Base station channel bandwidth for uplink.";
+      reference "3GPP TS 38.104";
+      type int32;
+      units MHz;
+    }
+
+    leaf bSChannelBwSUL {
+      description "Base station channel bandwidth for supplementary uplink.";
+      reference "3GPP TS 38.104";
+      mandatory false;
+      type int32;
+      units MHz;
+    }
+
+    leaf ssbFrequency {
+      description "Indicates cell defining SSB frequency domain position.
+        Frequency (in terms of NR-ARFCN) of the cell defining SSB transmission.
+        The frequency identifies the position of resource element RE=#0
+        (subcarrier #0) of resource block RB#10 of the SS block. The frequency
+        must be positioned on the NR global frequency raster, as defined in
+        3GPP TS 38.101, and within bSChannelBwDL.";
+      mandatory true;
+      type int32 { range "0..3279165"; }
+    }       
+
+    leaf ssbPeriodicity {
+      description "Indicates cell defined SSB periodicity. The SSB periodicity
+      is used for the rate matching purpose.";
+      mandatory true;
+      type int32 { range "5 | 10 | 20 | 40 | 80 | 160"; }
+      units "subframes (ms)";
+    }
+
+    leaf ssbSubCarrierSpacing {
+      description "Subcarrier spacing of SSB. Only the values 15 kHz or 30 kHz
+        (< 6 GHz), 120 kHz or 240 kHz (> 6 GHz) are applicable.";
+      reference "3GPP TS 38.211";
+      mandatory true;
+      type int32 { range "15 | 30 | 120 | 240"; }
+      units kHz;
+    }
+
+    leaf ssbOffset {
+      description "Indicates cell defining SSB time domain position. Defined
+        as the offset of the measurement window, in which to receive SS/PBCH
+        blocks, where allowed values depend on the ssbPeriodicity
+        (ssbOffset < ssbPeriodicity).";
+      mandatory true;
+      type int32 { range "0..159"; }
+      units "subframes (ms)";
+    }
+
+    leaf ssbDuration {
+      description "Duration of the measurement window in which to receive
+        SS/PBCH blocks.";
+      reference "3GPP TS 38.213";
+      mandatory true;
+      type int32 { range "1..5"; }
+      units "subframes (ms)";
+    }
+
+    leaf-list nRSectorCarrierRef {
+      description "Reference to corresponding NRSectorCarrier instance.";
+      min-elements 1;
+      type types3gpp:DistinguishedName;    	       	
+    }
+
+    leaf-list bWPRef {
+      description "Reference to corresponding BWP instance.";
+      min-elements 0;
+      type types3gpp:DistinguishedName;    	       	
+    }
+
+    leaf-list nRFrequencyRef {
+      description "Reference to corresponding NRFrequency instance.";
+      min-elements 0;
+      type types3gpp:DistinguishedName;    	       	
+    }
+  }
+
+  augment "/me3gpp:ManagedElement/gnbdu3gpp:GNBDUFunction" {
+
+    list NRCellDU {
+      description "Represents the information of a cell known by DU.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses NRCellDUGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  }
+}
+

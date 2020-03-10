@@ -1,0 +1,77 @@
+module _3gpp-nr-nrm-externalgnbdufunction {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-nr-nrm-externalgnbdufunction";
+  prefix "extgnbdu3gpp";
+
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-nr-nrm-nrnetwork { prefix nrnet3gpp; }
+  import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+
+  organization "3GPP SA5";
+  description "Defines the YANG mapping of the ExternalGNBDUFunction
+    Information Object Class (IOC) that is part of the NR Network Resource
+    Model (NRM).";
+  reference "3GPP TS 28.541 5G Network Resource Model (NRM)";
+
+  revision 2019-10-28 { reference S5-193518 ; }
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  grouping ExternalGNBDUFunctionGrp {
+    description "Represets the ExternalGNBDUFunction IOC.";
+    reference "3GPP TS 28.541";   
+    uses mf3gpp:ManagedFunctionGrp; 
+            
+    leaf gNBId {
+      description "Identifies a gNB within a PLMN.";
+      reference "gNB Identifier (gNB ID) in 3GPP TS 38.300, Global gNB ID
+        in 3GPP TS 38.413";
+      mandatory true;
+      type int64 { range "0..4294967295"; }
+    }
+
+    leaf gNBIdLength {
+      description "Indicates the number of bits for encoding the gNB ID.";
+      reference "gNB ID in 3GPP TS 38.300, Global gNB ID in 3GPP TS 38.413";
+      mandatory true;
+      type int32 { range "22..32"; }
+    }
+
+    list pLMNId {
+      description "Specifies the PLMN identifier to be used as part of the
+        global RAN node identity.";
+      key "mcc mnc";
+      min-elements 1;
+      max-elements 1;
+      uses types3gpp:PLMNId;
+    }
+  }
+
+  grouping ExternalGNBDUFunctionWrapper {
+    list ExternalGNBDUFunction {
+      description "Represents the properties, known by the management function,
+        of a GNBDUFunction managed by another management function.";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses ExternalGNBDUFunctionGrp;
+      }
+      uses mf3gpp:ManagedFunctionContainedClasses;
+    }
+  } 
+  
+  augment "/subnet3gpp:SubNetwork" {
+    if-feature subnet3gpp:ExternalsUnderSubNetwork ;
+    uses ExternalGNBDUFunctionWrapper;
+  }
+
+  augment "/nrnet3gpp:NRNetwork" {
+    if-feature nrnet3gpp:ExternalsUnderNRNetwork;
+    uses ExternalGNBDUFunctionWrapper;
+  }
+}
+

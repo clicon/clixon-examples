@@ -30,74 +30,57 @@
 #
 # ***** END LICENSE BLOCK *****
 #
-
-prefix		= @prefix@
-exec_prefix 	= @exec_prefix@
-# abs_top_builddir is by default the absolute path of the builddir.
-includedir	= @includedir@
-datadir 	= @datarootdir@
-localstatedir	= @localstatedir@
-sysconfdir	= @sysconfdir@
-
 VPATH       	= @srcdir@
 srcdir  	= @srcdir@
-libdir		= @libdir@
 top_srcdir  	= @top_srcdir@
+prefix 		= @prefix@
+bindir 		= @bindir@
+includedir	= @includedir@
+datarootdir     = @datarootdir@
+sysconfdir      = @sysconfdir@
+datarootdir	= @datarootdir@
+localstatedir   = @localstatedir@
+libdir          = @exec_prefix@/lib
+
+APPNAME	        = 3gpp
+
 CC		= @CC@
-CFLAGS  	= @CFLAGS@ 
-LDFLAGS 	= @LDFLAGS@
-LIBS    	= @LIBS@
-INSTALL		= @INSTALL@
+CFLAGS  	= @CFLAGS@ -fPIC 
+INSTALLFLAGS  	= @INSTALLFLAGS@ 
 
-INCLUDES 	= -I. -I@srcdir@ @INCLUDES@
-SHELL		= /bin/sh
+INCLUDES 	= -I$(includedir) @INCLUDES@ 
+CPPFLAGS  	= @CPPFLAGS@ -fPIC
 
-SUBDIRS = hello openconfig 3gpp
+.PHONY: all clean depend install 
 
-.PHONY:	all clean depend $(SUBDIRS) install uninstall docker push TAGS .config.status
+all:
 
-all:	$(SUBDIRS)
+.SUFFIXES: .c .o
 
-$(SUBDIRS): 
-	(cd $@ && $(MAKE) $(MFLAGS) all)
+# implicit rule
+.c.o:
+	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c $<
 
-depend:
-	for i in $(SUBDIRS) ; \
-	do (cd $$i && $(MAKE) $(MFLAGS) depend); done
-
-install:  
-	for i in $(SUBDIRS) ; \
-	do (cd $$i; $(MAKE) $(MFLAGS) $@)||exit 1; done; 
-
-uninstall:
-	for i in $(SUBDIRS) ; \
-	do (cd $$i && $(MAKE) $(MFLAGS) $@)||exit 1; done;
-
-docker:
-	for i in $(SUBDIRS) ; \
-	do (cd $$i && $(MAKE) $(MFLAGS) $@)||exit 1; done;
-
-push:
-	for i in $(SUBDIRS) ; \
-	do (cd $$i && $(MAKE) $(MFLAGS) $@)||exit 1; done; 
-
-config.status:	configure
-	$(SHELL) config.status --recheck
-
-configure:	configure.ac
-	cd $(srcdir) && autoconf
+CLISPECS = $(APPNAME)_cli.cli
 
 clean:
-	for i in $(SUBDIRS) ; \
-	do (cd $$i && $(MAKE) $(MFLAGS) $@); done; 
 
-distclean:
-	rm -f Makefile TAGS config.status config.log *~ .depend
-	rm -rf autom4te.cache
-	for i in $(SUBDIRS) ; \
-	do (cd $$i && $(MAKE) $(MFLAGS) $@); done
+distclean: clean
+	rm -f Makefile *~ .depend
 
-TAGS:
-	find $(srcdir) -name '*.[chyl]' -type f | grep -v \.tab\.[ch] | grep -v lex.*.c | grep -v .yy.c | etags -
+install: $(CLISPECS) $(APPNAME).xml
+	install -m 0644 $(APPNAME).xml $(DESTDIR)$(sysconfdir)
+	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)
+	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
+	install -m 0644 $(CLISPECS) $(DESTDIR)$(libdir)/$(APPNAME)/clispec
+	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
 
+uninstall: 
+	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
+	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
+
+depend:
+	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend
+
+#include .depend
 

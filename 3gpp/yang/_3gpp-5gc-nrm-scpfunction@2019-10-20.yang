@@ -1,0 +1,51 @@
+module _3gpp-5gc-nrm-scpfunction {
+  yang-version 1.1;
+  
+  namespace urn:3gpp:sa5:_3gpp-5gc-nrm-scpfunction;
+  prefix scp3gpp;
+  
+  import _3gpp-common-managed-function { prefix mf3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+  import ietf-inet-types { prefix inet; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-5g-common-yang-types { prefix types5g3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  
+  organization "3gpp SA5";
+  description "This IOC represents the SCP function in 5GC. For more information about the SCP, see 3GPP TS 23.501.";
+  reference "3GPP TS 28.541";
+  
+  revision 2019-10-20 {
+    description "initial revision";
+    reference "Based on
+      3GPP TS 28.541 V16.X.XX";
+  }
+  
+  grouping SCPFunctionGrp {
+    uses mf3gpp:ManagedFunctionGrp;
+      
+    leaf address {
+      description "The host address of the SCP.";
+      type inet:host;
+    }
+	
+    list supportedFuncList {
+      min-elements 1;
+      key "function";
+      uses types5g3gpp:SupportedFunc;
+    }	
+    
+  }
+  
+  augment "/me3gpp:ManagedElement" {
+    list SCPFunction {
+      description "5G Core SCP Function";
+      reference "3GPP TS 28.541";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses SCPFunctionGrp;
+      }
+    }
+  }
+}
