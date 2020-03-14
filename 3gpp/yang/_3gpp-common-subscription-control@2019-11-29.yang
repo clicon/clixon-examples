@@ -1,0 +1,195 @@
+module _3gpp-common-subscription-control {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-common-subscription-control";
+  prefix "subscr3gpp";
+    
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-subnetwork { prefix subnet3gpp; }
+  import _3gpp-common-managed-element { prefix me3gpp; }
+
+  organization "3GPP SA5";
+    
+  description "Defines IOCs for subscription and heartbeat control.";
+  reference "3GPP TS 28.623
+      Generic Network Resource Model (NRM)
+      Integration Reference Point (IRP);
+      Solution Set (SS) definitions
+      3GPP TS 28.623";
+  
+  revision 2019-11-29 {
+    description "Initial revision";
+    reference "S5-197648 S5-197647 S5-197829 S5-197828";
+  }
+
+  grouping NtfSubscriptionControlGrp {
+    description "Attributes of a specific notification subscription";
+    
+    leaf notificationRecipientAddress {
+      type string;
+      mandatory true;
+    }
+    
+    leaf-list notificationTypes {
+      type string;
+      description "Defines the types of notifications that are candidates 
+        for being forwarded to the notification recipient.
+        If the notificationFilter attribute is not supported or not present 
+        all candidate notifications types are forwarded to the notification; 
+        discriminated by notificationFilter attribute.";
+    }
+
+    list scope {
+      key "scopeType";
+      min-elements 0;
+      max-elements 1;
+      description "Describes which object instances are selected with 
+        respect to a base object instance.";
+      
+      leaf scopeType { 
+        type enumeration {
+          enum BASE_ONLY;
+          enum BASE_ALL;
+          enum BASE_NTH_LEVEL;
+          enum BASE_SUBTREE;
+        }
+        description "If the optional scopeLevel parameter is not supported 
+          or absent, allowed values of scopeType are BASE_ONLY and BASE_ALL.
+
+          The value BASE_ONLY indicates only the base object is selected.
+          The value BASE_ALL indicates the base object and all of its 
+          subordinate objects (incl. the leaf objects) are selected.
+
+          If the scopeLevel parameter is supported and present, allowed 
+          values of scopeType are BASE_ALL, BASE_ONLY, BASE_NTH_LEVEL 
+          and BASE_SUBTREE.
+
+          The value BASE_NTH_LEVEL indicates all objects on the level, 
+          which is specified by the scopeLevel parameter, below the base 
+          object are selected. The base object is at scopeLevel zero.
+          The value BASE_SUBTREE indicates the base object and all of its 
+          subordinate objects down to and including the objects on the level, 
+          which is specified by the scopeLevel parameter, are selected. 
+          The base object is at scopeLevel zero.";
+      }
+      
+      leaf scopeLevel {
+        when '../scopeType = "BASE_NTH_LEVEL" or ../scopeType = "BASE_SUBTREE"';
+        type uint16; 
+        mandatory true;
+        description "See description of scopeType.";
+      }
+    }
+
+    leaf notificationFilter {
+      type string;
+      description "Defines a filter to be applied to candidate notifications 
+        identified by the notificationTypes attribute. 
+        If notificationFilter is present, only notifications that pass the 
+        filter criteria are forwarded to the notification recipient; all other 
+        notifications are discarded.
+        The filter can be applied to any field of a notification.";
+    }
+  }
+  
+  grouping HeartbeatControlGrp {
+    description "Attributes of HeartbeatControl. Note the triggerHeartbeatNtf attribute
+     has no mapping in the present release.";
+    
+    leaf heartbeatNtfPeriod {
+      type uint32 ;
+      mandatory true;
+      units minute;
+      description "Specifies the periodicity of heartbeat notification emission. 
+        The value of zero has the special meaning of stopping the heartbeat 
+        notification emission.";
+    }
+  }
+  
+  grouping NtfSubscriptionControlWrapper {
+    list NtfSubscriptionControl {
+      description "A NtfSubscriptionControl instance represents the 
+        notification subscription of a particular notification recipient.
+        The scope attribute is used to select managed object instances. 
+        The base object instance of the scope is the object instance 
+        name-containing the NtfSubscriptionControl instance. 
+        The notifications related to the selected managed object instances 
+        are candidates to be sent to the address specified by the 
+        notificationRecipientAddress attribute.
+        The notificationType attribute and notificationFilter attribute 
+        allow MnS consumers to exercise control over which candidate 
+        notifications are sent to the notificationRecipientAddress.
+        If the notificationType attribute is supported and present, its 
+        value identifies the 
+        types of notifications that are candidate to be sent to the 
+        notificationRecipientAddress. If the notificationType attribute is 
+        not supported or not present, all types of notifications are 
+        candidate to be sent to notificationRecipientAddress.
+        If supported, the notificationFilter attribute defines a filter that 
+        is applied to the set of candidate notifications. Only candidate 
+        notifications that pass the filter criteria are sent to the 
+        notificationRecipientAddress. If the notificationFilter attribute is 
+        not supported all candidate notificatios are sent to the 
+        notificationRecipientAddress.
+        To receive notifications, a MnS consumer has to create 
+        NtfSubscriptionControl object instancess on the MnS producer. 
+        A MnS consumer can create a subscription for another MnS consumer 
+        since it is not required the notificationRecipientAddress be his own 
+        address.
+        When a MnS consumer does not wish to receive notifications any more 
+        the MnS consumer shall delete the corresponding NtfSubscriptionControl 
+        instance.
+        Creation and deletion of NtfSubscriptionControl instances by MnS 
+        consumers is optional; when not supported, the NtfSubscriptionControl 
+        instances may be created and deleted by the system or be pre-installed.";
+        
+      key id;
+      uses top3gpp:Top_Grp;      
+      container attributes {
+        uses NtfSubscriptionControlGrp;
+      }
+      
+      list HeartbeatControl {
+        min-elements 1;
+        max-elements 1;
+        description "MnS consumers (i.e. notification recipients) use heartbeat 
+          notifications to monitor the communication channels between them and 
+          data reporting MnS producers emitting notifications such as 
+          notifyNewAlarm and notifyFileReady. 
+          A HeartbeatControl instance allows controlling the emission of 
+          heartbeat notifications by MnS producers. The recipients of heartbeat 
+          notifications are not specified by an attribute of the Heartbeat 
+          instance, but by an attribute of the IOC name-containing the 
+          HeartbeatControl IOC.
+          Note that the MnS consumer managing the HeartbeatControl instance 
+          and the MnS consumer receiving the heartbeat notifications may not be 
+          the same.
+          As a pre-condition for the emission of heartbeat notifications, a 
+          HeartbeatControl instance needs to be created. Creation of an 
+          instance with an initial non-zero value of the heartbeatNtfPeriod 
+          attribute triggers an immediate heartbeat notification emission. 
+          Creation of an instance with an initial zero value of the 
+          heartbeatPeriod attribute does not trigger an emission of a 
+          heartbeat notification. Deletion of this instance does not trigger 
+          an emission of a heartbeat notification.
+          Creation and deletion of HeartbeatControl instances by MnS Consumers 
+          is optional; when not supported, the HeartbeatControl instances may 
+          be created and deleted by the system or be pre-installed.
+";
+        key id;
+        uses top3gpp:Top_Grp;
+        
+        container attributes {
+          uses HeartbeatControlGrp;
+        }
+      }
+    }
+  } 
+  
+  augment /subnet3gpp:SubNetwork {
+    uses NtfSubscriptionControlWrapper;
+  }
+
+  augment /me3gpp:ManagedElement {
+    uses NtfSubscriptionControlWrapper;
+  }
+}

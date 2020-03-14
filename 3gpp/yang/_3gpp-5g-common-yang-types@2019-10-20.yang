@@ -51,7 +51,7 @@ module _3gpp-5g-common-yang-types {
        type CommModelType;
     }  
     leaf-list targetNFServiceList {
-      type DistinguishedName;   
+	type types3gpp:DistinguishedName;   
     }
     leaf commModelConfiguration {
        type string;

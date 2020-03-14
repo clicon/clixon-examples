@@ -1,0 +1,289 @@
+module _3gpp-common-managed-function {
+  yang-version 1.1;
+  namespace urn:3gpp:sa5:_3gpp-common-managed-function;
+  prefix mf3gpp;
+
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-measurements { prefix meas3gpp; }
+  
+  organization "3GPP SA5";
+  description "The module defines a base class/grouping for major 3GPP functions.";
+  reference 
+    "3GPP TS 28.622 
+    Generic Network Resource Model (NRM)
+    Integration Reference Point (IRP);
+    Information Service (IS)
+    
+    3GPP TS 28.620 
+    Umbrella Information Model (UIM)";
+
+  revision 2019-11-21 {
+    reference "S5-197275, S5-197735";
+  }
+
+  revision 2019-10-28 {
+    reference S5-193518 ;
+  }
+
+  revision 2019-06-18 {
+    description "Initial revision";
+  }
+
+  grouping Operation {
+    reference "3gpp TS 28.622";
+    
+    leaf name {
+      type string;
+      mandatory true;
+    }
+    
+    leaf-list allowedNFTypes {
+      type string; 
+      min-elements 1;
+      description "The type of the managed NF service instance
+        The specifc values allowed are described in TS 23.501";
+    }
+
+    leaf operationSemantics {
+      type enumeration {
+        enum REQUEST_RESPONSE;
+        enum SUBSCRIBE_NOTIFY;
+
+      }
+      config false;
+      mandatory true;
+      description "Semantics type of the operation.";
+      reference "3GPP TS 23.502";
+    }
+  }
+  
+  grouping ManagedNFServiceGrp {  
+    description "A ManagedNFService represents a Network Function (NF) service.";
+    reference "Clause 7 of 3GPP TS 23.501.";
+
+    leaf userLabel {
+        type string;
+        description "A user-friendly (and user assignable) name of this object.";
+    }      
+ 
+    leaf nFServiceType {
+      config false;
+      mandatory true;
+      type string; 
+      description "The type of the managed NF service instance
+        The specifc values allowed are described in clause 7.2 of TS 23.501";
+    }
+ 
+    list sAP {
+      key "host port";  
+      min-elements 1;
+      max-elements 1;
+      description "The service access point of the managed NF service instance";
+      uses types3gpp:SAP;            
+    }
+ 
+    list operations {
+      key name;
+      min-elements 1;
+      uses Operation ;
+      description "Set of operations supported by the managed NF 
+        service instance";
+    }
+
+    leaf administrativeState  {
+      type types3gpp:AdministrativeState;
+      mandatory true;
+      description "Permission to use or prohibition against using the instance";
+    }
+
+    leaf operationalState  {
+      type types3gpp:OperationalState;
+      config false;
+      mandatory true;
+      description "Describes whether the resource is installed and working";
+    }
+ 
+    leaf usageState {
+      type types3gpp:usageState ;
+      config false;
+      mandatory true;
+      description "Describes whether the resource is actively in use at a 
+        specific instant, and if so, whether or not it has spare 
+        capacity for additional users.";
+    }
+ 
+    leaf registrationState {
+      type enumeration {
+        enum REGISTERED;
+        enum DEREGISTERED;
+      }
+      config false;
+}
+  }
+  
+  grouping Function_Grp {    
+    description "A base grouping for 3GPP functions.";
+
+    leaf userLabel {
+        type string;
+        description "A user-friendly (and user assignable) name of this object.";
+    }      
+  }
+  
+  grouping ManagedFunctionGrp {
+    description "Abstract root class to be inherited/reused by classes 
+      representing 3GPP functions.
+          
+      Anywhere this grouping is used by classes inheriting from ManagedFunction
+      the list representing the inheriting class needs to include all 
+      contained classes of ManagedFunction too. Contained classes are 
+      either 
+      - augmented into the Function class or 
+      - shall be included in the list representing the inheriting clas 
+      using the grouping  ManagedFunctionContainedClasses:
+        1) EP_RP solved using augment
+        2) uses mf3gpp:ManagedFunctionContainedClasses; 
+      ";
+
+    uses Function_Grp;
+    
+    container vnfParametersList {
+      description "Contains the parameter set of the VNF 
+        instance(s) corresponding to an NE.";
+      presence "The presence of this container indicates that the ManagedFunction 
+        represented is realized by one or more VNF instance(s). Otherwise it  
+        shall be absent.";        
+        
+      leaf vnfInstanceId {
+        type string ;
+        mandatory true;
+        description "VNF instance identifier";
+        reference "ETSI GS NFV-IFA 008 v2.1.1: 
+          Network Functions Virtualisation (NFV); Management and Orchestration; 
+          Ve-Vnfm reference point - Interface and Information Model Specification
+          section 9.4.2 
+          
+          ETSI GS NFV-IFA 015 v2.1.2: Network Functions Virtualisation (NFV); 
+          Management and Orchestration; Report on NFV Information Model
+          section B2.4.2.1.2.3";
+      }
+      
+      leaf vnfdId {
+        type string ;
+        description "Identifier of the VNFD on which the VNF instance is based.
+          The absence of the leaf or a string length of zero for vnfInstanceId 
+          means the VNF instance(s) does not exist (e.g. has not been 
+          instantiated yet, has already been terminated).";
+        reference "ETSI GS NFV-IFA 008 v2.1.1: 
+          Network Functions Virtualisation (NFV); Management and Orchestration; 
+          Ve-Vnfm reference point - Interface and Information Model Specification
+          section 9.4.2"; 
+      }
+      
+      leaf flavourId {
+        type string ;
+        description "Identifier of the VNF Deployment Flavour applied to this 
+          VNF instance.";
+        reference "ETSI GS NFV-IFA 008 v2.1.1: 
+          Network Functions Virtualisation (NFV); Management and Orchestration; 
+          Ve-Vnfm reference point - Interface and Information Model Specification
+          section 9.4.3"; 
+      }
+      
+      leaf autoScalable                        {
+        type boolean ;
+        mandatory true;
+        description "Indicator of whether the auto-scaling of this 
+          VNF instance is enabled or disabled.";
+      } 
+    }
+    
+    container peeParametersList {
+      description "Contains the parameter set for the control 
+        and monitoring of power, energy and environmental parameters of 
+        ManagedFunction instance(s).";
+      presence "Present supported if the control and monitoring of PEE 
+        parameters is supported by the ManagedFunction or sub-class instance.";
+        
+      leaf siteIdentification {
+        type string;
+        mandatory true;
+        description "The identification of the site where the 
+          ManagedFunction resides.";
+      }
+      
+      leaf siteLatitude {
+        type decimal64 {
+          fraction-digits 4;
+          range "-90.0000..+90.0000";        
+        }
+        description "The latitude of the site where the ManagedFunction 
+          instance resides, based on World Geodetic System (1984 version) 
+          global reference frame (WGS 84). Positive values correspond to 
+          the northern hemisphere. This attribute is optional in case of 
+          BTSFunction and RNCFunction instance(s).";
+      }
+      
+      leaf siteLongitude {
+        type decimal64 {
+          fraction-digits 4;
+          range "-180.0000..+180.0000";        
+        }
+        description "The longitude of the site where the ManagedFunction 
+          instance resides, based on World Geodetic System (1984 version) 
+          global reference frame (WGS 84). Positive values correspond to 
+          degrees east of 0 degrees longitude. This attribute is optional in 
+          case of BTSFunction and RNCFunction instance(s).";
+      }
+      
+      leaf siteDescription {
+        type string;
+        mandatory true;
+        description "An operator defined description of the site where 
+          the ManagedFunction instance resides.";
+      }
+      
+      leaf equipmentType {
+        type string;
+        mandatory true;
+        description "The type of equipment where the managedFunction 
+          instance resides.";
+        reference "clause 4.4.1 of ETSI ES 202 336-12";
+      }
+      
+      leaf environmentType {
+        type string;
+        mandatory true;
+        description "The type of environment where the managedFunction 
+          instance resides.";
+        reference "clause 4.4.1 of ETSI ES 202 336-12";
+      }
+      
+      leaf powerInterface {
+        type string;
+        mandatory true;
+        description "The type of power.";
+        reference "clause 4.4.1 of ETSI ES 202 336-12";
+      } 
+    }
+    
+    leaf priorityLabel {
+      mandatory true;
+      type uint32;
+    }
+    uses meas3gpp:Measurements;
+  }
+
+  grouping ManagedFunctionContainedClasses {
+    list ManagedNFService {
+      description "Represents a Network Function (NF)";
+      reference "3GPP TS 23.501";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses ManagedNFServiceGrp;
+      }
+    }    
+  }
+}

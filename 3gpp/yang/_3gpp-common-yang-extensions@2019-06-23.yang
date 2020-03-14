@@ -1,0 +1,95 @@
+module _3gpp-common-yang-extensions {
+  yang-version 1.1;
+  namespace urn:3gpp:sa5:_3gpp-common-yang-extensions ;
+  prefix yext3gpp ;
+
+  organization "3GPP SA5";
+  description "The module defines YANG extensions needed 
+    3GPP YANG modeling.
+
+    Copyright (c) 2019 3GPP. All rights reserved.
+
+    Extensions MUST be defined with the following structure in the
+    description statement:
+        - What is this statement.
+        - Newline,
+        - This statement can be a substatement of the xxx statements with
+        cardinality x..y.
+        - This statement can have the following substatements with
+        cardinality x..y.
+        - Newline
+        - Is changing this statement an editorial, BC(backwards compatible) 
+        or NBC(non-BC) change?
+        - Newline.
+        - The argument its meaning and type. Preferably use YANG types and
+          constraints to define the argument's type.
+
+    Any extension statement can be added with a
+    deviation/deviate add statement. In this case the restriction about
+    the parent statement of the extension SHALL be evaluated based on the
+    target of the deviation statement.
+
+    Support for this module does not mean that a YANG server implements
+    support for each of these extensions.
+    Implementers of each specific module using an extensions MUST check
+    if the server implements support for the used extension.
+    Note: modules use many extensions which individual
+    implementations MAY or MAY NOT support.
+    If support for an extension is missing the extension statement needs
+    individual handling or it SHOULD be removed from the module using
+    the extension e.g. with a deviation.
+          ";
+
+  revision "2019-06-23" {
+    description "Initial version";
+  }
+
+  extension inVariant {
+    description
+      "Indicates that the value for the data node can only be set when its
+      parent data node is being created. To change the value after that, the
+      parent data node must be deleted and recreated with the data node
+      having the new value.
+
+      It is unnecessary to use and MUST NOT be used for key leafs.
+
+      The statement MUST only be a substatement of a leaf, leaf-list, list 
+      statements that is config=true.
+      Zero or one inVariant statement is allowed per parent statement.
+      NO substatements are allowed.
+            
+      Adding this statement is an NBC change, removing it is BC.";
+  }
+
+  extension initial-value {
+    description "Specifies a value that the system will set for a leaf
+      leaf-list if a value is not specified for it when its parent list
+      or container is created. The value has no effect in any other
+      modification e.g. changing or removing the value.
+
+      The description statement of the parent statement SHOULD contain
+      the label 'Initial-value: ' followed by the text from the argument.
+
+      The statement MUST only be a substatement of a leaf or leaf-list.
+      The statement MUST NOT be present if the leaf or the leaf-list 
+      has a default statement or the type used for the data node 
+      has a default value.
+      The statement MUST NOT be used for config=false data or in an 
+      action, rpc or notification.
+      Zero or one initial-value statements are allowed for a leaf parent
+      statement. Zero or more initial-value statements are allowed for a
+      leaf-list parent statement. If the leaf-list is ordered-by user, the
+      initial values are stored in the order they appear in the YANG definition.
+      NO substatements are allowed.
+
+      Always consider using a YANG-default statement instead.
+
+      Modification of the initial-value is a non-backwards-compatible change.
+
+      The argument specifies a single initial value for a leaf or leaf-list.
+      The value MUST be part of the valuespace of the leaf/leaf-list.
+      It follows the same rules as the argument of the default statement.";
+
+    argument "initial-value";
+  }
+}

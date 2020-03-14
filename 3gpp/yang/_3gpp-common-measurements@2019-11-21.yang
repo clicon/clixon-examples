@@ -1,0 +1,555 @@
+module _3gpp-common-measurements {
+  yang-version 1.1;  
+  namespace "urn:3gpp:sa5:_3gpp-common-measurements";
+  prefix "meas3gpp";
+    
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
+
+  organization "3GPP SA5";
+    
+  description "Defines Measurement related groupings
+    Any list/class intending to use this should include 2 uses statements 
+    controlled by a feature:
+    
+    A)  
++++     feature MeasurementsUnderMyClass {
++++       description 'Indicates whether measurements are supported for this class.';
++++     }
+    
+    B) include the attribute supportedMeasurementsGPs indicating the 
+      supported measurmentTypes and GPs. Note that for classes inheriting from 
+      ManagedFunction, EP_RP or SubNetwork this attribute is already inherited, 
+      so there is no need to include it once more.E.g.
+    
+        grouping MyClassGrp {
++++        uses meas3gpp:Measurements;
+        }
+    
+    C) include the classes MeasurementControl & MeasuremntReader to 
+      control the measurements. E.g. 
+      
+        list MyClass {
+          container attributes {
+            uses MyClassGrp;
+          }
++++       uses meas3gpp:MeasurementSubtree {
++++         if-feature MeasurementsUnderMyClass ;
++++       }     
+        }
+        
+    Measurements can be contained under ManagedElement, SubNetwork, or
+    any list representing a class inheriting from EP_RP, Subnetwork or 
+    ManagedFunction.";
+    
+  reference "3GPP TS 28.622
+      Generic Network Resource Model (NRM)
+      Integration Reference Point (IRP);
+      Information Service (IS)";
+
+  revision 2019-11-21 {
+    reference "S5-197275, S5-197735";
+  }
+
+  revision 2019-10-28 {
+    reference "S5-193516";
+  }
+
+  revision 2019-06-17 {
+  }
+ 
+  feature StreamingSupported {
+    description "The delivery of measurement data using streaming is supported.";
+  }
+
+  grouping Measurements {
+    description "Identifies the supported Measurement types and their 
+      supported GPs.";
+      
+    list measurementsList {
+      key idx;
+      config false;
+      description "List of supported Measurement types and their 
+        supported GPs for the parent function/class";
+        
+      leaf idx { type uint32 ; }
+        
+      leaf-list measurementTypes {
+        type string;
+        min-elements 1;
+        description "The Measurement types can be those specified 
+          in TS 28.552, TS 32.404 and can be those specified by 
+          other SDOs or can be vendor-specific.";
+      }
+      
+      leaf-list gPs {
+      type uint32 ;
+      units second;
+      min-elements 1;
+      description "Identifies supported GPs.
+          GP (granularity period) is the time between the initiation
+          of two successive gatherings of measurement data.";
+      }
+    }
+  }   
+  
+  grouping MeasurementControlGrp {
+    description "represents the capabilities to produce and deliver Measurements 
+      identified by a MeasurementReader.
+      There are two delivery methods (i.e. file-based and stream-based) via 
+      which the consumer(s) can receive the Measurements.";
+
+    leaf pMAdministrativeState {
+      default LOCKED;
+      type types3gpp:AdministrativeState ;
+      description "It describes the permission to use or prohibition against 
+        using the capability of MeasurementControl, imposed through the consumer 
+        of OAM services produced by MeasurementControl,
+
+        The measurement report production would begin when pMadministrativeState 
+        is UNLOCKED and pMoperationalState is ENABLED.";
+    }
+    
+    leaf pMOperationalState {
+      config false;
+      mandatory true;
+      type types3gpp:OperationalState ;
+      description "Indicates whether the MeasurementControl is working.";
+    }    
+
+    leaf defaultFileLocation {
+      type string ;
+      description "It is the path to the location where produced 
+        measurement reports (containing PM data) are stored. File based 
+        measurement delivery will not start if this leaf does not have a 
+        valid value. 
+        
+        It is the path to a location on either the producer's file system or a 
+        URI to a network file location that is not part of the producer's file 
+        system. In case it points to a location on the producer's file system, 
+        it is a relative path based on a vendor-specified root directory for 
+        measurement files.
+              
+        The size of this fileLocation is decided by consumer and producer. 
+        The producer is expected to remove old files to make room for 
+        new files, when necessary.
+        
+        This value is ignored in case the fileLocation leaf in the 
+        MeasurementReader is defined.";
+    }
+    
+    leaf defaultFileBasedGP {
+      when '../defaultFileLocation' ;
+      mandatory true;
+      type uint32 ;
+      units second;
+      description "GP (granularity period) defines the frequency of producing 
+        measurement data. Measurement data would be produced immediately at the 
+        end of each fileBasedGP.
+        
+        This value is ignored in case the fileBasedGP leaf in the 
+        MeasurementReader is defined.";     
+    }
+    
+    leaf defaultFileReportingPeriod {
+      when '../defaultFileLocation' ;
+      must '. *60 >= ../defaultFileBasedGP' {
+        error-message "defaultFileBasedGP must not be greater than defaultFileReportingPeriod";
+      }
+      mandatory true;
+      type uint32 ;
+      units minute;
+      description "The frequency of producing the measurement report files. 
+        A measurement report file contains multiple measurement data.
+        
+        This value is ignored in case the fileReportingPeriod leaf in the 
+        MeasurementReader is defined.";
+    }
+    
+    leaf defaultStreamTarget {
+      if-feature StreamingSupported ;
+      type string ;
+      description "Identifies the target of the notifications carrying the 
+        content of the measurement report.
+
+        This value is ignored in case the streamTarget leaf in the 
+        MeasurementReader is defined.";
+    }    
+    
+    leaf defaultStreamBasedGP {
+      if-feature StreamingSupported ;
+      when '../defaultStreamTarget' ;
+      mandatory true;
+      type uint32 ;
+      units second;
+      description "It defines the frequency of producing and sending the 
+        Measurement to the streamTargets.
+        
+        This value is ignored in case the streamBasedGP leaf in the 
+        MeasurementReader is defined.";
+    }    
+  }
+  
+  grouping MeasurementReaderGrp {
+    description "Identifies the entity whose Measurements are required by 
+    consumer, the types of Measurements required and the delivery method for 
+    the measurements.";
+
+    leaf-list measurementTypes {
+      type string ;
+      description "The Measurement type to be reported. It must be one of the 
+        measurmentTypes supported by the containing function/class.
+        The Measurement type can be those specified in TS 28.552, 
+        TS 32.404 and can be those specified by other SDOs or can be 
+        vendor-specific.";
+    }
+    
+    leaf-list managedObjectDNsBasic {
+      type types3gpp:DistinguishedName ;
+      description "Identifies the managed functions whose Measurements are 
+        required to be produced.
+        
+        It identifies specific managed entities (say X, Y, Z). It would mean 
+        Measurements type specified in MeasurementReader.measurementTypes, 
+        are required to be produced if X, Y, Z are capable of supporting 
+        the Measurement types.
+
+        If managedObjectDNs of the same MeasurementReader instance has valid 
+        information, the information of this leaf-list is ignored.";
+    }
+    
+    leaf-list managedObjectDNs {
+      type types3gpp:DistinguishedName ;
+      description "Identifies the managed entities whose Measurements are 
+        required to be produced.  
+
+        In case the base is SubNetwork, it identifies all, including the base, 
+        managed entities that are subordinates, in the sense of name-containment, 
+        of the base. 
+
+        In case the base is NetworkSliceSubnet, it identifies all, including 
+        the base, managed entities that has aggregation association relation 
+        with the base. 
+
+        We called the identified entities a collection. It would mean 
+        Measurement types specified in attribute 
+        MeasurementReader.measurementTypes, are required to be produced if the 
+        member (of the collection) is capable of supporting the Measurement 
+        types.";
+    }
+
+    leaf fileLocation {
+      type string ;
+      description "It is the path to the location where produced 
+        measurement reports (containing PM data) are stored. File based 
+        measurement delivery will not start if this leaf does not have a 
+        valid value. 
+        
+        It is the path to a location on either the producer’s file system or a 
+        URI to a network file location that is not part of the producer’s file 
+        system. In case it points to a location on the producer’s file system, 
+        it is a relative path based on a vendor-specified root directory for 
+        measurement files.
+              
+        The size of this fileLocation is decided by consumer and producer. 
+        The producer is expected to remove old files to make room for 
+        new files, when necessary.
+        
+        If defined this value overrides the value of defaultFileLocation in the 
+        parent MeasuremnetControl.";
+    }
+    
+    leaf fileBasedGP {
+      when '../fileLocation' ;
+      mandatory true;
+      type uint32 ;
+      units second;
+      description "GP (granularity period) defines the frequency of producing 
+        measurement data.";     
+    }
+    
+    leaf fileReportingPeriod {
+      when '../fileLocation' ;
+      must '.  *60 >= ../fileBasedGP' {
+        error-message "fileBasedGP must not be greater than fileReportingPeriod";
+      }
+      mandatory true;
+      type uint32 ;
+      units minute;
+      description "The frequency of producing the measurement report files.";
+    }
+    
+    leaf streamTarget {
+      when 'not(../fileLocation)' ;
+      type string ;
+      description "Identifies the target of the notification carrying the 
+        content of the measurement report.
+        There are two delivery methods (i.e. file-based and stream-based) via 
+        which the consumer(s) can receive the Measurements. This attribute 
+        is used for the stream-based delivery method.";
+    }    
+    
+    leaf streamBasedGP {
+      when '../streamTarget' ;
+      mandatory true;
+      type uint32 ;
+      units second;
+      description "Defines the frequency of producing and sending the 
+        Measurement to the consumer.";
+    }
+  }
+   
+  grouping ThresholdMonitoringCapabilityGrp {
+    description "Represents the capability of threshold monitoring(s) 
+      allowed to be created by ThresholdMonitor to monitor some or all 
+      of the measurements identified by supportedMeasurementsGPs.";
+      
+    leaf-list supportedMonitoringGPs {
+      type uint32;
+      units second;
+      config false;
+      min-elements 1;
+      description "The monitoring granularity periods supported by the 
+        producer for the monitored entities.";
+    }
+  }
+  
+  grouping ThresholdMonitorGrp {
+      description "A threshold monitor that is created by the consumer for 
+        the monitored entities whose measurements are required by consumer 
+        to monitor.";
+
+    list thresholdInfoList {
+      key idx;      
+      leaf idx { type uint32 ; }
+      
+      leaf measurementType {
+        type string;
+        mandatory true;
+        description "Shall be in one of the following form:
+          -	'family.measurementName.subcounter' for monitoring the 
+          measurement types with subcounters defined.
+          -	'family.measurementName' for monitoring the measurement 
+          types without subcounters defined.";
+      }
+      
+      leaf direction {
+        type enumeration {
+          enum INCREASING;
+          enum DECREASING;
+        }
+        mandatory true;
+        description "
+          - If it is 'INCREASING', the threshold crossing 
+          notification is triggered when the measurement value 
+          equals or exceeds a thresholdValue.
+          - If it is 'DECREASING', the threshold crossing notification is 
+          triggered when the measurement value equals or below a 
+          thresholdValue.";      
+      }
+      
+      list thresholdPack {
+        key idx;   
+        min-elements 1;
+        leaf idx { type uint32 ; }
+        
+        leaf  thresholdLevel {
+          type int64;
+          mandatory true;
+          description "";            
+        }
+
+        leaf thresholdValue {
+          type int64;
+          mandatory true;
+          description "";                      
+        }
+        
+        leaf threshold-low  {
+          type int64;
+          description "The values threshold-low and threshold-high must 
+            be present or absent together.
+            The measurementType value is allowed to oscillate between 
+            threshold-low and threshold-highwithout triggering the 
+            threshold crossing notification.";            
+        }
+        
+        leaf threshold-high  {
+          when '../threshold-low';
+          type int64;
+          mandatory true;
+          description "The values threshold-low and threshold-high must 
+            be present or absent together.
+            The measurementType value is allowed to oscillate between 
+            threshold-low and threshold-highwithout triggering the 
+            threshold crossing notification.";            
+        }
+      }
+    }
+    
+    leaf monitoringGP  {
+      type uint32;
+      units second;
+      mandatory true;                          
+      description "Monitoring granularity period";
+    }
+    
+    leaf monitoringNotifTarget {
+      type string;
+      description "Identifies the target of the notifications when the 
+        monitored measurement crosses or reaches the threshold set by the 
+        subject threshold monitor.";
+    }
+    
+    leaf monitoredIOCName  {
+      type string;
+      mandatory true;
+      description "Specifies the name of list(s) representing one object 
+        class for which the threshold monitor is created. 
+        When this attribute is effective, the threshold monitor is created 
+        for all list nodes/entries with the specified name in the containment 
+        tree whose top (tree) node is the list entry containing the subject 
+        ThresholdMonitor list-entry containing this leaf.
+        This leaf is effective when the monitoredObjectDNs contained by 
+        the same ThresholdMonitor list entry is empty.
+	
+        AllowedValues: The IOC names defined in the NRMs specifications.";
+    }
+    
+    leaf-list monitoredObjectDNs {
+      type types3gpp:DistinguishedName;
+      description "Specifies the object instance(s) for threshold monitoring.
+        The attribute monitoredIOCName contained by the same 
+        ThresholdMonitor entry has no effect unless this leaf-list empty.";
+    }
+  }
+    
+  grouping MeasurementSubtree {
+    description "Contains classes that define measurements. 
+      Should be used in al  classes (or classes inheriting from) 
+      - SubNnetwork
+      - ManagedElement
+      - ManagedFunction
+      - NetworkSliceSubnet
+      - EP_RP
+      
+      If some YAM wants to augment these classes/list/groupings they must 
+      augment all user classes!
+      
+      If a class uses this grouping in its list it shall also use the 
+      grouping Measurements to add supportedMeasurementsGPs as 
+      an attribute to its grouping";
+      
+    list MeasurementControl {
+      description "Represents the properties of the file-based and stream-based 
+        measurement delivery methods.
+        
+        The file-based delivery method has properties for the file location, 
+        the file reporting period and the file-based GP. 
+        The stream-based delivery method has properties for the stream target 
+        and the stream-based GP.
+        These properties are labelled as default (e.g. defaultFileBasedGP) in 
+        that they will be ignored in case the same properties captured in 
+        MeasurementReader are used.
+        
+        Instance of this list shall not be created nor deleted by client. It 
+        shall be created and deleted by the system. 
+
+        Depending on particular deployment context and agreement between 
+        operator and vendor, all attributes could be config=false.";
+
+      key id;   
+      uses top3gpp:Top_Grp ;      
+      container attributes {
+        uses MeasurementControlGrp ;
+      }
+      
+      list MeasurementReader {
+        description "Identifies the entity (derivatives of ManagedFunction) 
+          whose Measurements are required by consumer to be produced and 
+          captured. The types of Measurements required are identified by the 
+          measurementNames. 
+           
+          It captures the properties of the two delivery methods for delivering 
+          the Measurements.
+          The file-based delivery method has properties: fileLocation, 
+          reportingPeriod and fileBasedGP. 
+          The stream-based delivery method has properties: streamTarget and 
+          streamBasedGP. 
+          The parent MeasurementControl list entry also can capture the 
+          properties of the file-based and stream-based delivery methods.
+          If the MeasurementReader instance's file-based delivery method has 
+          valid properties, the file-based delivery method is used and the 
+          MeasurementControl instance’s file-based delivery method is ignored. 
+          If the MeasurementReader instance's stream-based delivery method has 
+          valid properties, the stream-based delivery method is used and the 
+          MeasurementControl instance's stream-based delivery is ignored.
+          The file-based and stream-based delivery methods can be active at the 
+          same time for a MeasurementReader instance.
+
+          The activity of a MeasurementReader instance is independent of that 
+          of other MeasurementReader instances. 
+
+          This IOC uses managedObjectDNs or managedObjectDNsBasic to identify 
+          specific managed entities whose Measurements are required by consumer.";
+  
+        key id; 
+        uses top3gpp:Top_Grp ;
+        container attributes {
+          uses MeasurementReaderGrp;
+        }
+      }    
+    }
+    
+    list ThresholdMonitoringCapability {
+      key id;   
+      max-elements 1;
+      description "Represents the capability of threshold monitoring(s) 
+        allowed to be created by ThresholdMonitor to monitor some or all 
+        of the measurements identified by supportedMeasurementsGPs.
+
+        This list entry instance represents the capability of the 
+        threshold monitor(s) allowed to be created for the measurements of 
+        the (tree) nodes of a containment tree whose top (tree) node is 
+        the list-entry instance containing the ThresholdMonitoringCapability 
+        instance. 
+        
+        In case one entry (say A) is contained by a tree node (say X), and 
+        a similar list entry named ThresholdMonitoringCapability  (say B) is 
+        contained by a subordinate tree node (of tree node X), the entry 
+        (B) contained by the subordinate tree node (Y) prevail.";
+      
+      uses top3gpp:Top_Grp ;      
+      container attributes {
+        uses ThresholdMonitoringCapabilityGrp ;
+      }          
+    }
+    
+    list ThresholdMonitor {
+      key id;   
+      max-elements 1;
+      description "A threshold monitor that is created by the consumer for 
+        the monitored entities whose measurements are required by consumer 
+        to monitor. The monitored entities are identified by the attribute 
+        monitoredObjectDNs.
+        
+        The creation request for this list entry may be rejected, if
+        the measurements to be monitered are being collected 
+        (e.g., by a measurement job or NRM configurations) with a GP different 
+        from the monitoringGP; or the measurements to be monitered are not 
+        being collected.
+        
+        In case one entry (say A) is contained by a tree node (say X), and 
+        a similar list entry named ThresholdMonitor (say B) is 
+        contained by a subordinate tree node (of tree node X), 
+        when these two instances have overlaps the entry (B)
+        contained by the subordinate tree node (Y) will prevail for the 
+        overlapped parts.";
+  
+      uses top3gpp:Top_Grp ;      
+      container attributes {
+        uses ThresholdMonitorGrp ;
+      }          
+    }
+  }  
+}

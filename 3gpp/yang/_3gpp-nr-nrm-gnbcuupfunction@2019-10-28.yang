@@ -44,6 +44,11 @@ module _3gpp-nr-nrm-gnbcuupfunction {
       description "A list of PLMN identifiers. Defines from which set of PLMNs
         an UE must have as its serving PLMN to be allowed to use the
         gNB CU-UP.";
+      key dummy;
+      leaf dummy {
+	  description "Dummy key: list must have key";
+	  type string;
+      }
       uses types3gpp:PLMNId;
     }   		
   }

@@ -7,6 +7,7 @@ module _3gpp-5gc-nrm-ngeirfunction {
   import _3gpp-common-managed-function { prefix mf3gpp; }
   import _3gpp-common-managed-element { prefix me3gpp; }
   import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-5g-common-yang-types { prefix types5g3gpp; }
   import _3gpp-common-top { prefix top3gpp; }
   
   organization "3gpp SA5";

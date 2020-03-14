@@ -4,6 +4,8 @@ module _3gpp-5gc-nrm-seppfunction {
   namespace urn:3gpp:sa5:_3gpp-5gc-nrm-seppfunction;
   prefix sepp3gpp;
   
+  import ietf-inet-types { prefix inet; }
+
   import _3gpp-common-managed-function { prefix mf3gpp; }
   import _3gpp-common-managed-element { prefix me3gpp; }
   import _3gpp-common-yang-types { prefix types3gpp; }
@@ -14,11 +16,12 @@ module _3gpp-5gc-nrm-seppfunction {
                and policing on inter-PLMN control plane interface. For more information about the SEPP, see 3GPP TS 23.501.";
   reference "3GPP TS 28.541";
   
-  revision 2019-10-28 { reference S5-193518 ; }
-
   revision 2019-11-17 {
     description "initial revision";
   }
+  revision 2019-10-28 { reference S5-193518 ; }
+
+
   
   typedef SEPPType {
     reference "3GPP TS 23501";

@@ -2,9 +2,12 @@ module _3gpp-5gc-nrm-ep {
   yang-version 1.1;
   namespace "urn:3gpp:tsg:sa5:nrm:_3gpp-5gc-nrm-ep";
   prefix "cep3gpp";
-  
+
+  import ietf-inet-types { prefix inet; }
+
   import _3gpp-common-ep-rp { prefix eprp3gpp; }
   import _3gpp-common-managed-element { prefix me3gpp; }
+  import _3gpp-common-yang-types { prefix types3gpp; }
   import _3gpp-5gc-nrm-affunction { prefix af3gpp; }
   import _3gpp-5gc-nrm-amffunction { prefix amf3gpp; }
   import _3gpp-5gc-nrm-ausffunction { prefix ausf3gpp; }
@@ -478,6 +481,7 @@ module _3gpp-5gc-nrm-ep {
         uses EP_N32Grp;
       }
     }
+  }
     
   augment "/me3gpp:ManagedElement/smsf3gpp:SMSFFunction" {
     list EP_N20 {

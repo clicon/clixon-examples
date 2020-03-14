@@ -1,0 +1,156 @@
+module _3gpp-common-managed-element {
+  yang-version 1.1;  
+  namespace urn:3gpp:sa5:_3gpp-common-managed-element;
+  prefix "me3gpp";
+    
+  import _3gpp-common-yang-types { prefix types3gpp ; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-measurements { prefix meas3gpp; }
+  
+  organization "3GPP SA5";
+  description "Defines ManagedElement which will be augmented 
+      by other IOCs";
+  reference "3GPP TS 28.622
+      Generic Network Resource Model (NRM)
+      Integration Reference Point (IRP);
+      Information Service (IS)  
+      
+      3GPP TS 28.620 
+      Umbrella Information Model (UIM)";
+
+   revision 2019-06-17 {
+     description "Initial revision";
+   }
+ 
+  feature MeasurementsUnderManagedElement {
+    description "The MeasurementSubtree shall be contained under ManageElement";
+  }
+  
+  grouping ManagedElement_Grp {
+    description "Abstract class representing telecommunications resources.
+      An ME communicates with a manager (directly or indirectly) for the 
+      purpose of being monitored and/or controlled. MEs may perform element 
+      management functionality.  
+      An ME (and its contained Function_(s)) may or may not be geographically 
+      distributed. An ME (and its contained Function_(s)) is often referred 
+      to as a Network Element";
+    
+    leaf dnPrefix {
+      description "Provides naming context that allows the Managed 
+        Elements to be partitioned into logical domains. 
+        A Distingushed Name(DN) is defined by 3GPP TS 32.300,
+        which splits the DN into a DN Prefix and Local DN";
+      type types3gpp:DistinguishedName;
+    }
+    
+    leaf userLabel {
+      description "A user-friendly (and user assignable) name of this object.";
+      type string;
+    }
+    
+    leaf locationName {
+      description "The physical location (e.g. an address) of an entity 
+        represented by a (derivative of) ManagedElement_. It may contain no 
+        information to support the case where the derivative of 
+        ManagedElement_ needs to represent a distributed multi-location NE.";
+      config false;
+      type string;
+    }
+    
+    leaf-list managedBy {
+      description "Relates to the role played by ManagementSystem_ in the 
+        between ManagedSystem_ and ManagedElement_. This attribute contains 
+        a list of the DN(s) of the related subclasses of 
+        ManagementSystem_ instance(s).";
+
+      config false;
+      type types3gpp:DistinguishedName;
+    }
+    
+    leaf-list managedElementTypeList {
+      description "The type of functionality provided by the ManagedElement.
+        It may represent one ME functionality or a combination of 
+        more than one functionality. 
+        1) The allowed values of this attribute are the names of the IOC(s) 
+        that are (a) derived/subclassed from ManagedFunction and (b) directly 
+        name-contained by ManagedElement IOC (on the first level below 
+        ManagedElement), but with the string ’Function’ excluded. 
+        2) If a ManagedElement contains multiple instances of a ManagedFunction 
+        this attribute will not contain repeated values.
+        3) The capitalisation (usage of upper/lower case) of characters in this 
+        attribute is insignificant.  Thus, the NodeB should be case insensitive 
+        when reading these values.
+        4) Two examples of allowed values are: 
+        -  NodeB;
+        -  HLR, VLR.";
+
+      config false;
+      min-elements 1;
+      type string;
+    }    
+  }
+  
+  grouping ManagedElementGrp {
+    description "Represents telecommunications equipment or 
+      TMN entities within the telecommunications network providing support 
+      and/or service to the subscriber.";
+     
+    uses ManagedElement_Grp;
+    uses meas3gpp:Measurements {
+      if-feature MeasurementsUnderManagedElement ;
+    }
+         
+    leaf vendorName {
+      config false;
+      type string;
+    }
+      
+    leaf userDefinedState {
+      type string;
+      description "An operator defined state for operator specific usage";
+    }
+          
+    leaf swVersion {
+      config false;
+      type string;
+    }
+          
+    leaf priorityLabel {
+      type uint32;
+      mandatory true;
+    }      
+  }
+
+  list ManagedElement {
+    description "Represents telecommunications equipment or 
+      TMN entities within the telecommunications network providing support 
+      and/or service to the subscriber. 
+      An ME communicates with a manager (directly or indirectly) over one or 
+      more management interfaces for the purpose of being monitored and/or 
+      controlled. MEs may or may not additionally perform element management 
+      functionality. 
+      An ME contains equipment that may or may not be geographically 
+      distributed. An ME is often referred to as a Network Element. 
+      A telecommunication equipment has software and hardware components. 
+      The IOC described above represents the case when the software component 
+      is designed to run on dedicated hardware component. In the case when the 
+      software is designed to run on ETSI NFV defined NFVI [15], the IOC 
+      description would exclude the NFVI component supporting the above 
+      mentioned subject software. A ManagedElement may be contained in either 
+      a SubNetwork or in a MeContext instance. A single ManagedElement may also 
+      exist stand-alone with no parent at all. 
+      The ManagedElement IOC may be used to represent combined ME functionalit
+      y (as indicated by the managedElementType attribute and the contained 
+      instances of different functional IOCs).";
+
+    key id;   // TODO: should this have a min-element/max-elements?
+    uses top3gpp:Top_Grp;
+    container attributes {
+      uses ManagedElementGrp;
+    }
+    
+    uses meas3gpp:MeasurementSubtree {
+      if-feature MeasurementsUnderManagedElement ;
+    }
+  }    
+}

@@ -65,9 +65,9 @@ uninstall:
 	for i in $(SUBDIRS); \
 	do (cd $$i; $(MAKE) $(MFLAGS) $@)||exit 1; done
 
-docker:
-	(cd docker; $(MAKE) $(MFLAGS) $@)
-	echo "make push to push images to dockerhub"
+#docker:
+#	(cd docker; $(MAKE) $(MFLAGS) $@)
+#	echo "make push to push images to dockerhub"
 
 push:
 	(cd docker; $(MAKE) $(MFLAGS) $@)

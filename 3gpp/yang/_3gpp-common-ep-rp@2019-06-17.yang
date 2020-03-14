@@ -1,0 +1,65 @@
+module _3gpp-common-ep-rp {
+  yang-version 1.1;  
+  namespace "urn:3gpp:sa5:_3gpp-common-ep-rp";
+  prefix "eprp3gpp";
+
+  import _3gpp-common-yang-types { prefix types3gpp ; }
+  import ietf-inet-types { prefix inet; }
+  import _3gpp-common-measurements { prefix meas3gpp; }
+
+  organization "3GPP SA5";
+  description "Common/basic class/grouping to be inherited/reused. 
+    This IOC represents an end point of a link used across a reference 
+    point between two network entities.";
+  reference 
+    "3GPP TS 28.622 
+    Generic Network Resource Model (NRM)
+    Integration Reference Point (IRP);
+    Information Service (IS)
+    
+    3GPP TS 28.620 
+    Umbrella Information Model (UIM)";
+
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+  
+  grouping EP_RPGrp {
+    description "Abstract class, represents an end point of a link used 
+      across a reference point between two network entities. 
+      
+      For naming the subclasses of EP_RP, the following rules shall apply: 
+      -	The name of the subclassed IOC shall have the form ’EP_<rp>’, 
+      where <rp> is a string that represents the name of the reference point. 
+      Thus, two valid examples of EP_RP subclassed IOC names would be: 
+      EP_S1 and EP_X2.";
+    
+    leaf userLabel {
+        type string;
+        description "A user-friendly (and user assignable) name of this object.";
+    }
+    
+    leaf farEndEntity {
+      config false;
+      type types3gpp:DistinguishedName;
+    }
+  }
+
+  grouping EP_Common {
+    uses EP_RPGrp;
+    uses meas3gpp:Measurements;
+    list localAddress {
+      description "Local IP address and VLAN ID.";
+      key "ipAddress vlanId";
+      min-elements 1;
+      max-elements 1;
+      uses types3gpp:AddressWithVlan;
+    }
+
+    leaf remoteAddress {
+      description "Remote IP address.";
+      mandatory true;
+      type inet:ip-address;
+    }
+  }
+}

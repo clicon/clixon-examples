@@ -1,0 +1,521 @@
+module _3gpp-common-yang-types {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-common-yang-types";
+  prefix "types3gpp";
+  
+  import ietf-inet-types { prefix inet; }
+  import ietf-yang-types { prefix yang; }
+
+  organization "3GPP SA5";
+  description "The model defines a YANG mapping of the top level 
+    information classes used for management of 5G networks and 
+    network slicing.";
+  reference "3GPP TS 28.541";
+
+  revision 2019-10-25 {
+    description "Added ManagedNFProfile.";
+    reference "S5-194457";
+  }
+
+  revision 2019-10-16 {
+    description "Added SAP and usageState.";
+    reference "S5-193518";
+  }
+
+  revision 2019-06-23 {
+    description "Initial version.";
+  }
+
+  grouping ManagedNFProfile {
+    description "Defines profile for managed NF";
+    reference "3GPP TS 23.501";
+    
+    leaf idx { type uint32 ; }
+    
+    leaf nfInstanceID {
+      config false;
+      mandatory true;
+      type yang:uuid ;
+      description "This parameter defines profile for managed NF. 
+        The format of the NF Instance ID shall be a 
+        Universally Unique Identifier (UUID) version 4, 
+        as described in IETF RFC 4122 " ;
+    }
+    
+    leaf-list nfType {
+      config false;
+      min-elements 1;
+      type NfType;
+      description "Type of the Network Function" ;
+    }
+    
+    leaf hostAddr {
+      mandatory true;
+      type inet:host ;
+      description "Host address of a NF";
+    }
+    
+    leaf authzInfo {
+      type string ;
+      description "This parameter defines NF Specific Service authorization 
+        information. It shall include the NF type (s) and NF realms/origins 
+        allowed to consume NF Service(s) of NF Service Producer.";
+      reference "See TS 23.501" ;
+    }
+    
+    leaf location {
+      type string ;
+      description "Information about the location of the NF instance 
+        (e.g. geographic location, data center) defined by operator";
+      reference "TS 29.510" ;
+    }
+    
+    leaf capacity {
+      mandatory true;
+      type uint16 ;
+      description "This parameter defines static capacity information 
+        in the range of 0-65535, expressed as a weight relative to other 
+        NF instances of the same type; if capacity is also present in the 
+        nfServiceList parameters, those will have precedence over this value.";
+      reference "TS 29.510" ;
+    }
+      
+    leaf nFSrvGroupId {
+      when '../nfType = "UDM" or ../nfType = "AUSF" or ../nfType = "UDR"';
+      mandatory true;
+      type string ;
+      description "This parameter defines identity of the group that is 
+        served by the NF instance.
+        May be config false or true depending on the ManagedFunction. 
+        Config=true for Udrinfo. Config=false for UdmInfo and AusfInfo.";
+      reference "TS 29.510" ;
+    }
+    
+    leaf-list supportedDataSetIds {
+      when '../nfType = "UDR"';
+      type enumeration {
+        enum SUBSCRIPTION;
+        enum POLICY;
+        enum EXPOSURE;
+        enum APPLICATION;
+      }
+      description "List of supported data sets in the UDR instance.";
+      reference "TS 29.510" ;
+    }
+    
+    leaf-list smfServingAreas {
+      when '../nfType = "UPF"';
+      min-elements 1;
+      type string ;
+      description "Defines the SMF service area(s) the UPF can serve.";
+      reference "TS 29.510" ;
+    }
+    
+    leaf priority {
+      when '../nfType = "AMF"';
+      mandatory true;
+      type uint16;
+      description "This parameter defines Priority (relative to other NFs 
+        of the same type) in the range of 0-65535, to be used for NF selection; 
+        lower values indicate a higher priority. If priority is also present 
+        in the nfServiceList parameters, those will have precedence over 
+        this value ";
+      reference "TS 29.510" ;
+    }
+  }
+  
+  typedef usageState {
+    type enumeration {
+      enum IDLE;
+      enum ACTIVE;
+      enum BUSY;
+    }
+    description "It describes whether or not the resource is actively in 
+      use at a specific instant, and if so, whether or not it has spare 
+      capacity for additional users at that instant. The value is READ-ONLY.";
+    reference "ITU T Recommendation X.731";
+  }
+  
+  grouping SAP {
+    leaf host {
+      type inet:host;
+      mandatory true;
+    }
+    leaf port {
+      type inet:port-number;
+      mandatory true;
+    }
+    description "Service access point.";
+    reference "TS 28.622";
+  }
+  
+  typedef Mcc {
+    description "The mobile country code consists of three decimal digits, 
+      The first digit of the mobile country code identifies the geographic 
+      region (the digits 1 and 8 are not used):";
+    type string {
+      pattern '[02-79][0-9][0-9]';
+    }
+    reference "3GPP TS 23.003 subclause 2.2 and 12.1";
+  }
+
+  typedef Mnc {
+    description "The mobile network code consists of two or three 
+      decimal digits (for example: MNC of 001 is not the same as MNC of 01)";
+    type string {
+      pattern '[0-9][0-9][0-9]|[0-9][0-9]';
+    }
+    reference "3GPP TS 23.003 subclause 2.2 and 12.1";
+  }
+
+  grouping PLMNId {
+    leaf mcc {
+      mandatory true;
+      type Mcc;
+    }
+    leaf mnc {
+      mandatory true;
+      type Mnc;
+    }
+    reference "TS 23.658";
+  }
+  
+  typedef Nci {
+    description "NR Cell Identity. The NCI shall be of fixed length of 36 bits 
+      and shall be coded using full hexadecimal representation. 
+      The exact coding of the NCI is the responsibility of each PLMN operator";
+    reference "TS 23.003";
+    type union {
+      type string {
+        length 36;
+        pattern '[01]+';
+      }
+      type string {
+        length 9;
+        pattern '[a-fA-F0-9]*';
+      }
+    }
+  }
+    
+  typedef OperationalState {
+    reference "3GPP TS 28.625 and ITU-T X.731";
+    type enumeration {
+      enum DISABLED {
+        value 0;
+        description "The resource is totally inoperable.";
+      }
+
+      enum ENABLED {
+        value 1;
+        description "The resource is partially or fully operable.";
+      }
+
+    }
+  }
+  
+  typedef AdministrativeState {
+    reference "3GPP TS 28.625 and ITU-T X.731";
+    type enumeration {
+      enum LOCKED {
+        value 0;
+        description "The resource is administratively prohibited from performing
+                 services for its users.";
+      }
+
+      enum UNLOCKED {
+        value 1;
+        description "The resource is administratively permitted to perform
+          services for its users. This is independent of its inherent
+          operability.";
+      }
+
+      enum SHUTTINGDOWN {
+        value 2;
+        description "Use of the resource is administratively permitted to
+          existing instances of use only. While the system remains in
+          the shutting down state the manager or the managed element 
+          may at any time cause the resource to transition to the 
+          locked state.";
+      }
+    }
+  }
+  
+  typedef AvailabilityStatus {
+      type enumeration {
+          enum IN_TEST;
+          enum FAILED;                           
+          enum POWER_OFF;                           
+          enum OFF_LINE;                           
+          enum OFF_DUTY;                           
+          enum DEPENDENCY;                           
+          enum DEGRADED;                           
+          enum NOT_INSTALLED;                           
+          enum LOG_FULL;                           
+       }
+  }
+  
+  typedef CellState {
+      type enumeration {
+        enum IDLE;
+        enum INACTIVE;              
+        enum ACTIVE;              
+     }
+  }
+
+  typedef SNssai {
+    type union {
+      type uint8;
+      type uint32;
+    }
+    description "Single Network Slice Selection Assistance Information.";
+    reference "TS 23.501 clause 5.15.2";
+  }
+  
+  typedef Sst {
+    type uint8;
+  }
+  
+  typedef Nrpci {
+    type uint32;
+    description "Physical Cell Identity (PCI) of the NR cell.";
+    reference "TS 36.211 subclause 6.11";
+  }
+
+  typedef Tac {
+    type int32 {
+      range 0..16777215 ;
+    }
+    description "Tracking Area Code";
+    reference "TS 23.003 clause 19.4.2.3";
+  }
+
+  typedef AmfRegionId {
+    type union { 
+      type uint8 ;
+      type string {
+        length 8;
+        pattern '[01]*';
+      }
+    }
+    reference "clause 2.10.1 of 3GPP TS 23.003";
+  }
+
+  typedef AmfSetId {
+    type union { 
+      type uint16 {
+        range '0..1023';
+      }
+      type string {
+        length 8;
+        pattern '[01]*';
+      }
+    }
+    reference "clause 2.10.1 of 3GPP TS 23.003";
+  }
+
+  typedef AmfPointer {
+    type union { 
+      type uint8 {
+        range '0..63';
+      }
+      type string {
+        length 6;
+        pattern '[01]*';
+      }
+    }
+    reference "clause 2.10.1 of 3GPP TS 23.003";
+  }
+        
+  grouping AmfIdentifier {        
+    leaf amfRegionId {
+      type AmfRegionId;
+    }
+    leaf amfSetId {
+      type AmfSetId;
+    }
+    leaf amfPointer {
+      type AmfPointer;
+    } 
+    description "The AMFI is constructed from an AMF Region ID, 
+      an AMF Set ID and an AMF Pointer. 
+      The AMF Region ID identifies the region, 
+      the AMF Set ID uniquely identifies the AMF Set within the AMF Region, and 
+      the AMF Pointer uniquely identifies the AMF within the AMF Set. "; 
+  }    
+
+// type definitions especially for core NFs
+
+  typedef NfType {
+    type enumeration {
+      enum NRF;
+      enum UDM;
+      enum AMF;
+      enum SMF;
+      enum AUSF;
+      enum NEF;
+      enum PCF;
+      enum SMSF;
+      enum NSSF;
+      enum UDR;
+      enum LMF;
+      enum GMLC;
+      enum 5G_EIR;
+      enum SEPP;
+      enum UPF;
+      enum N3IWF;
+      enum AF;
+      enum UDSF;
+      enum BSF;
+      enum CHF;
+    }          
+  }
+  
+  typedef NotificationType {
+    type enumeration {
+      enum N1_MESSAGES;
+      enum N2_INFORMATION;
+      enum LOCATION_NOTIFICATION;
+    }      
+  }
+  
+  typedef Load {
+    description "Latest known load information of the NF, percentage ";
+    type uint8 {
+      range 0..100;
+    }
+  }
+
+  typedef N1MessageClass {
+    type enumeration {
+      enum 5GMM;
+      enum SM;
+      enum LPP;
+      enum SMS; 
+    }      
+  }
+  
+  typedef N2InformationClass {
+    type enumeration {
+      enum SM;
+      enum NRPPA;
+      enum PWS;
+      enum PWS_BCAL;
+      enum PWS_RF;
+    }              
+  }
+  
+  grouping DefaultNotificationSubscription {
+    
+    leaf notificationType {
+      type NotificationType;
+    }
+    
+    leaf callbackUri {
+      type inet:uri;
+    }
+    
+    leaf n1MessageClass {
+      type N1MessageClass;
+    }
+    
+    leaf n2InformationClass {
+      type N2InformationClass;
+    }    
+  }  
+        
+  grouping Ipv4AddressRange {
+  leaf start {
+    type inet:ipv4-address;
+    }
+  leaf end {
+    type inet:ipv4-address;
+    }    
+  }
+    
+  grouping Ipv6PrefixRange {
+  leaf start {
+    type inet:ipv6-prefix;
+    }
+  leaf end {
+    type inet:ipv6-prefix;
+    }    
+  }
+     
+  typedef NsiId {
+    type string;
+  }
+    
+  typedef UeMobilityLevel {
+    type enumeration {
+      enum STATIONARY;
+      enum NOMADIC;
+      enum RESTRICTED_MOBILITY;
+      enum FULLY_MOBILITY;
+    }
+  }
+      
+  typedef ResourceSharingLevel {
+      type enumeration {
+        enum SHARED;
+        enum NOT_SHARED;
+      }
+  }
+      
+  typedef TxDirection {
+      type enumeration {
+        enum DL;
+        enum UL;
+        enum DL_AND_UL;
+      }
+  }
+      
+  grouping AddressWithVlan {
+    leaf ipAddress {
+      type inet:ip-address;   
+    }
+    leaf vlanId {
+       type uint16;
+    }  
+  }
+  
+  typedef DistinguishedName {    // TODO is this equivalent to TS 32.300 ?
+    type string {
+	pattern '([a-zA-Z][a-zA-Z0-9-])';
+	/* XXX
+      pattern '([a-zA-Z][a-zA-Z0-9-]*=(\\( |#|\\|>|<|;|"|\+|,|[a-fA-F0-9]{2})|[^\\><;"+,# ])'
+        + '((\\( |#|\\|>|<|;|"|\+|,|[a-fA-F0-9]{2})|[^\\><;"+,])*'
+        + '(\\( |#|\\|>|<|;|"|\+|,|[a-fA-F0-9]{2})|[^\\><;"+, ]))?'
+        + '[,\+])*[a-zA-Z][a-zA-Z0-9-]*=(\\( |#|\\|>|<|;|"|\+|,|[a-fA-F0-9]{2})|[^\\><;"+,# ])'
+        + '((\\( |#|\\|>|<|;|"|\+|,|[a-fA-F0-9]{2})'
+        + '|[^\\><;"+,])*(\\( |#|\\|>|<|;|"|\+|,|[a-fA-F0-9]{2})|[^\\><;"+, ]))?';  
+	*/
+    }
+    description "Represents the international standard for the representation 
+      of Distinguished Name (RFC 4512). 
+      The format of the DistinguishedName REGEX is:
+      {AttributeType = AttributeValue}   
+
+      AttributeType consists of alphanumeric and hyphen (OIDs not allowed). 
+      All other characters are restricted.
+      The Attribute value cannot contain control characters or the 
+        following characters : \\ > < ; \" + , (Comma) and White space
+      The Attribute value can contain the following characters if they 
+        are excaped : \\ > < ; \" + , (Comma) and White space
+      The Attribute value can contain control characters if its an escaped 
+        double digit hex number.
+        Examples could be 
+          UID=nobody@example.com,DC=example,DC=com
+            CN=John Smith,OU=Sales,O=ACME Limited,L=Moab,ST=Utah,C=US";
+    reference  "RFC 4512 Lightweight Directory Access Protocol (LDAP):
+                      Directory Information Models";
+  } // recheck regexp it doesn't handle posix [:cntrl:]
+ 
+  typedef QOffsetRange  {
+    type int8 { 
+      range "-24 | -22 | -20 | -18 | -16 | -14 | -12 | -10 | -8 | -6 | " +
+        " -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | " +
+        " 12 | 14 | 16 | 18 | 20 | 22 | 24"; 
+    }
+    units dB;
+  }
+}

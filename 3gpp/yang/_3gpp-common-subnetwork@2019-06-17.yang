@@ -1,0 +1,129 @@
+module _3gpp-common-subnetwork {
+  yang-version 1.1;
+  namespace "urn:3gpp:sa5:_3gpp-common-subnetwork";
+  prefix "subnet3gpp";
+    
+  import _3gpp-common-yang-types { prefix types3gpp; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import _3gpp-common-measurements { prefix meas3gpp; }
+  import ietf-yang-schema-mount { prefix yangmnt; }
+
+  organization "3GPP SA5";
+    
+  description "Defines basic SubNetwork which will be augmented by other IOCs";
+  reference "3GPP TS 28.622
+      Generic Network Resource Model (NRM)
+      Integration Reference Point (IRP);
+      Information Service (IS)  
+      
+      3GPP TS 28.620 
+      Umbrella Information Model (UIM)";
+  
+  revision 2019-06-17 {
+    description "Initial revision";
+  }
+
+  feature ExternalsUnderSubNetwork {
+    description "Classes representing external entities like EUtranFrequency, 
+      ExternalGNBCUCPFunction, ExternalENBFunction 
+      are contained under a Subnetwork list/class.";
+  }
+  
+  feature MeasurementsUnderSubNetwork {
+    description "The MeasurementSubtree shall be contained under SubNetwork";
+  }
+  
+  grouping Domain_Grp {
+    description "A domain is a partition of instances of managed entities 
+      such that : 
+      -  the group represents a topological structure which describes the 
+      potential for connectivity
+      -  Subject to common administration
+      -  With common characteristics";
+    
+    leaf dnPrefix {
+      type types3gpp:DistinguishedName;
+      reference "Annex C of 32.300 ";
+    }
+    
+    leaf userLabel {
+        type string;
+        description "A user-friendly (and user assignable) name of this object.";
+    }
+    
+    leaf userDefinedNetworkType {
+      type string;
+      description "Textual information indicating network type, e.g. 'UTRAN'.";
+    }    
+  }
+
+  grouping SubNetworkGrp {
+    uses Domain_Grp;
+    uses meas3gpp:Measurements;
+      
+    leaf-list setOfMcc {
+      description "Set of Mobile Country Code (MCC). 
+        The MCC uniquely identifies the country of domicile 
+        of the mobile subscriber. MCC is part of the IMSI (3GPP TS 23.003)
+
+        This list contains all the MCC values in subordinate object 
+        instances to this SubNetwork instance.
+
+        See clause 2.3 of 3GPP TS 23.003 for MCC allocation principles.
+
+        It shall be supported if there is more than one value in setOfMcc 
+        of the SubNetwork. Otherwise the support is optional.";            
+      type types3gpp:Mcc;
+    }
+
+    leaf priorityLabel {
+      mandatory true;
+      type uint32;
+    }
+    
+  }    
+
+  list SubNetwork {
+    key id;
+    description "Represents a set of managed entities";
+
+    uses top3gpp:Top_Grp;
+    container attributes {    
+      uses SubNetworkGrp;
+      leaf-list parents {
+        description "Reference to all containg SubNetwork instances 
+          in strict order from the root subnetwork down to the immediate 
+          parent subnetwork.
+          If subnetworks form a containment hierarchy this is 
+          modeled using references between the child SubNetwork and the parent 
+          SubNetworks. 
+          This reference MUST NOT be present for the top level SubNetwork and 
+          MUST be present for other SubNetworks.";
+        type leafref {
+          path "../../../SubNetwork/id";  
+        } 
+      }
+      
+      leaf-list containedChildren{
+        description "Reference to all directly contained SubNetwork instances.
+          If subnetworks form a containment hierarchy this is 
+          modeled using references between the child SubNetwork and the parent 
+          SubNetwork.";
+        type leafref {
+          path "../../../SubNetwork/id";  
+        } 
+      }
+    }
+        
+    uses meas3gpp:MeasurementSubtree {
+      if-feature MeasurementsUnderSubNetwork ;
+    }
+
+    yangmnt:mount-point children-of-SubNetwork {
+      description "Mountpoint for ManagedElement";
+      reference "RFC8528 YANG Schema Mount";
+    }
+    
+    // augment external parts here
+  }
+} 

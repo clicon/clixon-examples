@@ -14,9 +14,9 @@ openconfig/yang/Makefile
 openconfig/src/Makefile
 openconfig/docker/Makefile
 openconfig/docker/src
-nrm/Makefile
-nrm/yang/Makefile
-nrm/src/Makefile
-nrm/docker/Makefile
-nrm/docker/src
-nrm/docker/yang
+3gpp/Makefile
+3gpp/yang/Makefile
+3gpp/src/Makefile
+3gpp/docker/Makefile
+3gpp/docker/src
+3gpp/docker/yang

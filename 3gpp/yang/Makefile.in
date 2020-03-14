@@ -48,13 +48,17 @@ INSTALLFLAGS  	= @INSTALLFLAGS@
 YANG_INSTALLDIR  = @YANG_INSTALLDIR@/3gpp
 
 # Local yang files to install
-YANGSPECS  = _3gpp-5gc-nrm-affunction@2019-10-28.yang
+# IETF
+YANGSPECS  = ietf-yang-schema-mount@2019-01-14.yang
+
+# 28541-g30
+YANGSPECS += _3gpp-5gc-nrm-affunction@2019-10-28.yang
 YANGSPECS += _3gpp-5gc-nrm-amffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-amfregion@2019-10-28.yang
 YANGSPECS += _3gpp-5gc-nrm-amfset@2019-10-28.yang
 YANGSPECS += _3gpp-5gc-nrm-ausffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-dnfunction@2019-10-28.yang
-YANGSPECS += _3gpp-5gc-nrm-ep@2019-05-31.yang
+YANGSPECS += _3gpp-5gc-nrm-ep@2019-11-18.yang
 YANGSPECS += _3gpp-5gc-nrm-externalnrffunction@2019-10-28.yang
 YANGSPECS += _3gpp-5gc-nrm-externalnssffunction@2019-10-28.yang
 YANGSPECS += _3gpp-5gc-nrm-externalseppfunction@2019-11-17.yang
@@ -69,7 +73,7 @@ YANGSPECS += _3gpp-5gc-nrm-nssffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-nwdaffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-pcffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-scpfunction@2019-10-20.yang
-YANGSPECS += _3gpp-5gc-nrm-seppfunction@2019-05-15.yang
+YANGSPECS += _3gpp-5gc-nrm-seppfunction@2019-11-17.yang
 YANGSPECS += _3gpp-5gc-nrm-smffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-smsffunction@2019-10-25.yang
 YANGSPECS += _3gpp-5gc-nrm-udmfunction@2019-10-25.yang
@@ -104,6 +108,18 @@ YANGSPECS += _3gpp-nr-nrm-nrfreqrelation@2019-10-28.yang
 YANGSPECS += _3gpp-nr-nrm-nrfrequency@2019-10-28.yang
 YANGSPECS += _3gpp-nr-nrm-nrnetwork@2019-06-17.yang
 YANGSPECS += _3gpp-nr-nrm-nrsectorcarrier@2019-10-28.yang
+
+# 28623-g20
+YANGSPECS += _3gpp-common-ep-rp@2019-06-17.yang
+YANGSPECS += _3gpp-common-managed-element@2019-06-17.yang
+YANGSPECS += _3gpp-common-managed-function@2019-11-21.yang
+YANGSPECS += _3gpp-common-measurements@2019-11-21.yang
+YANGSPECS += _3gpp-common-subnetwork@2019-06-17.yang
+YANGSPECS += _3gpp-common-subscription-control@2019-11-29.yang
+YANGSPECS += _3gpp-common-top@2019-06-17.yang
+YANGSPECS += _3gpp-common-yang-extensions@2019-06-23.yang
+YANGSPECS += _3gpp-common-yang-types@2019-10-25.yang
+
 
 .PHONY: all clean distclean install uninstall depend
 
