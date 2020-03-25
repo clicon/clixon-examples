@@ -7,7 +7,7 @@ This directory contains code for running, building, and pushing the clixon 3GPP 
 The following shows a simple example of how to run the example
 application. First, the container is started with the backend running:
 ```
-  $ sudo docker run --rm --name 3gpp -d clixon/3gpp clixon_backend -Fs init
+  $ sudo docker run --rm --name 3gpp -d clixon/3gpp
 ```
 Then a CLI is started, and finally the container is removed:
 ```
@@ -15,6 +15,27 @@ Then a CLI is started, and finally the container is removed:
   cli> set ?
   > q
   $ sudo docker kill 3gpp
+```
+
+You can also use netconf via stdin/stdout:
+```
+  $ sudo docker exec -it openconfig clixon_netconf
+  <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
+  <rpc-reply><data><system xmlns="http://openconfig.net/yang/system"><clock><config><timezone-name>Europe/Stockholm</timezone-name></config></clock></system></data></rpc-reply>]]>]]>
+```
+
+Or using restconf using curl on exposed port 8080:
+```
+  $ curl -G http://localhost:8080/restconf/data/openconfig-system:system
+{
+    "openconfig-system:system": {
+      "clock": {
+        "config": {
+          "timezone-name": "Europe/Stockholm"
+        }
+      }
+    }
+  }
 ```
 
 ## Build and push

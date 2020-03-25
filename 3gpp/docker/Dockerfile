@@ -81,7 +81,11 @@ COPY src/3gpp.xml /clixon/build/etc/clixon.xml
 COPY src/3gpp_cli.cli /clixon/build/lib/3gpp/clispec/
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
-COPY yang /clixon/build/share/clixon
+RUN mkdir /clixon/build/share/clixon/3gpp
+COPY yang /clixon/build/share/clixon/3gpp
+
+# Copy startscript for starting backend and restconf
+COPY startsystem.sh /clixon/build/bin/
 
 #
 # Stage 2
@@ -112,6 +116,8 @@ COPY --from=0 /www-data /www-data
 RUN chown www-data /www-data
 RUN chgrp www-data /www-data
 
-RUN apk add --update gdb
+# For debug
+#RUN apk add --update gdb
 
-
+# Start the backend and restconf deamons
+CMD /usr/local/bin/startsystem.sh
