@@ -4,38 +4,56 @@ This directory contains code for running, building, and pushing the clixon 3GPP 
 
 ## Example run
 
-The following shows a simple example of how to run the example
-application. First, the container is started with the backend running:
+First, the container is started with a backend and a restconf listening on port 8080:
 ```
-  $ sudo docker run --rm --name 3gpp -d clixon/3gpp
-```
-Then a CLI is started, and finally the container is removed:
-```
-  $ sudo docker exec -it 3gpp clixon_cli
-  cli> set ?
-  > q
-  $ sudo docker kill 3gpp
+  $ sudo docker run --rm -p 8080:80 --name 3gpp -d clixon/3gpp
 ```
 
-You can also use netconf via stdin/stdout:
+You can start a CLI with some example commands:
 ```
-  $ sudo docker exec -it openconfig clixon_netconf
-  <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
-  <rpc-reply><data><system xmlns="http://openconfig.net/yang/system"><clock><config><timezone-name>Europe/Stockholm</timezone-name></config></clock></system></data></rpc-reply>]]>]]>
+  $ sudo docker exec -it 3gpp clixon_cli
+  3gpp> set ?
+  EUtraNetwork          A subnetwork containing gNB external E-UTRAN entities.
+  ManagedElement        Represents telecommunications equipment or 
+                        ...
+  NRNetwork             A subnetwork containing gNB external NR entities.
+  SubNetwork            Represents a set of managed entities
+  3gpp> set NRNetwork 22 attributes dnPrefix er
+  3gpp> set NRNetwork 22 attributes priorityLabel 1
+  3gpp> set ManagedElement 42 UDMFunction 23 
+  3gpp> show configuration
+  NRNetwork {
+    id 22;
+    attributes {
+        dnPrefix er;
+        priorityLabel 1;
+    }
+  }
+  3gpp> commit
+  3gpp> quit
 ```
 
 Or using restconf using curl on exposed port 8080:
 ```
-  $ curl -G http://localhost:8080/restconf/data/openconfig-system:system
-{
-    "openconfig-system:system": {
-      "clock": {
-        "config": {
-          "timezone-name": "Europe/Stockholm"
+  $ curl -X GET http://localhost:8080/restconf/data/_3gpp-nr-nrm-nrnetwork:NRNetwork=22
+  {
+    "_3gpp-nr-nrm-nrnetwork:NRNetwork": [
+      {
+        "id": "22",
+        "attributes": {
+          "dnPrefix": "er",
+          "priorityLabel": 1
         }
       }
-    }
+    ]
   }
+```
+
+You can also use netconf via stdin/stdout:
+```
+  $ sudo docker exec -it 3gpp clixon_netconf
+  <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
+  <rpc-reply><data><NRNetwork xmlns="urn:3gpp:sa5:_3gpp-nr-nrm-nrnetwork"><id>22</id><attributes><dnPrefix>er</dnPrefix><priorityLabel>1</priorityLabel></attributes></NRNetwork></data></rpc-reply>]]>]]>
 ```
 
 ## Build and push
