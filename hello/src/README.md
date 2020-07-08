@@ -10,12 +10,10 @@
 ## Content
 
 This directory contains a Clixon example which includes a simple example. It contains the following files:
-* `hello.xml`       The configuration file. See [yang/clixon-config@<date>.yang](../../yang/clixon-config@2019-03-05.yang) for the documentation of all available fields.
-* `clixon-hello@2019-04-17.yang` The yang spec of the example.
-* `hello_cli.cli`                CLIgen specification.
-* `Makefile.in`                  Example makefile where plugins are built and installed
-* `README.md`                    This file
-
+* `hello.xml` the XML configuration file
+* `clixon-hello@2019-04-17.yang <../yang/clixon-hello@2019-04-17.yang>`_: the YANG spec
+* `hello_cli.cli`: the CLIgen spec
+* `Makefile`: where plugins are built and installed
 
 ## Compile and run
 

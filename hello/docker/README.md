@@ -17,19 +17,20 @@ You can start a CLI with some example commands:
   cli> set hello world 
   cli> show configuration 
   hello world;
+  cli> commit
   cli> q
   $ sudo docker kill hello
 ```
 
 You can also use netconf via stdin/stdout:
 ```
-  $ sudo docker exec -it openconfig clixon_netconf
+  $ sudo docker exec -it hello clixon_netconf
   <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
 ```
 
 Or using restconf using curl on exposed port 8080:
 ```
-  $ curl -G http://localhost:8080/restconf/data/hello:system
+  $ curl -X GET http://localhost:8080/restconf/data/clixon-hello:hello
  ```
 
 ## Build and push
