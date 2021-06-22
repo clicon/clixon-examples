@@ -39,59 +39,20 @@
 # See also Dockerfile of the example
 # Log msg, see with docker logs
 
+set -ux # e but clixon_backend may fail if test is run in parallell
+
 >&2 echo "$0"
 
+# If set, enable debugging (of backend and restconf daemons)
 DBG=${DBG:-0}
-
-WWWUSER=${WWWUSER:-www-data}
-
->&2 echo "Write nginx config files"
-# nginx site config file
-cat <<EOF > /etc/nginx/conf.d/default.conf
-#
-server {
-        listen 80 default_server;
-        listen localhost:80 default_server;
-        listen [::]:80 default_server;
-	server_name localhost;
-	server_name _;
-	location / {
-	    fastcgi_pass unix:/www-data/fastcgi_restconf.sock;
-	    include fastcgi_params;
-        }
-	location /restconf {
-	    fastcgi_pass unix:/www-data/fastcgi_restconf.sock;
-	    include fastcgi_params;
-        }
-	location /streams {
-	    fastcgi_pass unix:/www-data/fastcgi_restconf.sock;
-	    include fastcgi_params;
- 	    proxy_http_version 1.1;
-	    proxy_set_header Connection "";
-        }
-}
-EOF
 
 # Workaround for this error output:
 # sudo: setrlimit(RLIMIT_CORE): Operation not permitted
 echo "Set disable_coredump false" > /etc/sudo.conf
 
-if [ ! -d /run/nginx ]; then
-    mkdir /run/nginx
-fi
-
-# Start nginx
-#/usr/sbin/nginx -g 'daemon off;' -c /etc/nginx/nginx.conf
-/usr/sbin/nginx -c /etc/nginx/nginx.conf
->&2 echo "nginx started"
-
-# Start clixon_restconf
-su -c "/www-data/clixon_restconf -l f/www-data/restconf.log -D $DBG" -s /bin/sh $WWWUSER &
->&2 echo "clixon_restconf started"
-
 # Start clixon backend
 >&2 echo "start clixon_backend:"
-/usr/local/sbin/clixon_backend -FD $DBG -s init -l e # logs on docker logs
+/usr/local/sbin/clixon_backend -FD $DBG -f /usr/local/etc/clixon.xml -s startup -l e # logs on docker logs
 
 # Alt: let backend be in foreground, but then you cannot restart
 /bin/sleep 100000000

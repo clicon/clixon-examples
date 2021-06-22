@@ -13,6 +13,7 @@ This directory contains a Clixon example which includes a simple example. It con
 * `hello.xml` the XML configuration file
 * `clixon-hello@2019-04-17.yang <../yang/clixon-hello@2019-04-17.yang>`_: the YANG spec
 * `hello_cli.cli`: the CLIgen spec
+* `startup_db`: The startup datastore containing restconf port configuration
 * `Makefile`: where plugins are built and installed
 
 ## Compile and run
@@ -25,7 +26,7 @@ Before you start,
 ```
 Start backend in the background:
 ```
-    sudo clixon_backend
+    sudo clixon_backend -f /usr/local/etc/hello.xml
 ```
 Start cli:
 ```
@@ -102,8 +103,5 @@ streams, authentication and authorization. The [main example](../main)
 contains examples for such capabilities.
 
 There are also [container examples](../../docker) and lots more.
-
-
-
 
 

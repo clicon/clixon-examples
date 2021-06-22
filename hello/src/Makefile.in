@@ -74,10 +74,12 @@ install: $(CLISPECS) $(APPNAME).xml
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
 	install -m 0644 $(CLISPECS) $(DESTDIR)$(libdir)/$(APPNAME)/clispec
 	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
+	install -m 0644 startup_db $(DESTDIR)$(localstatedir)/$(APPNAME)/
 
 uninstall: 
 	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
 	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
+	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
 
 depend:
 	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend

@@ -25,7 +25,11 @@ You can start a CLI with some example commands:
 You can also use netconf via stdin/stdout:
 ```
   $ sudo docker exec -it hello clixon_netconf
-  <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
+  <?xml version="1.0" encoding="UTF-8"?>
+  <hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+     <capabilities><capability>urn:ietf:params:netconf:base:1.1</capability></capabilities>
+   </hello>]]>]]>
+  <rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"><get-config><source><running/></source></get-config></rpc>]]>]]>
 ```
 
 Or using restconf using curl on exposed port 8080:
@@ -40,3 +44,4 @@ Perform the build by `make docker`. This copies the latest committed clixon code
 You may also do `make push` if you want to push the image, but you may then consider changing the image name (in the Makefile:s).
 
 (You may have to login for push with sudo docker login -u <username>)
+
