@@ -47,7 +47,7 @@ RUN git clone https://github.com/olofhagsand/cligen.git
 
 # Build cligen
 WORKDIR /clixon/cligen
-RUN ./configure --prefix=/clixon/build
+RUN ./configure --enable-debug --prefix=/clixon/build
 RUN make
 RUN make install
 
@@ -62,7 +62,7 @@ RUN git clone https://github.com/clicon/clixon.git
 
 # Configure, build and install clixon
 WORKDIR /clixon/clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-wwwuser=www-data --enable-debug
+RUN ./configure --enable-debug --prefix=/clixon/build --with-cligen=/clixon/build --with-wwwuser=www-data --enable-debug
 RUN make
 RUN make install
 RUN make install-include
@@ -117,7 +117,7 @@ RUN chown www-data /www-data
 RUN chgrp www-data /www-data
 
 # For debug
-#RUN apk add --update gdb
+RUN apk add --update gdb
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

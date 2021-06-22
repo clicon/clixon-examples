@@ -10,10 +10,11 @@ hello/docker/Makefile
 hello/docker/src
 hello/docker/yang
 openconfig/Makefile
-openconfig/yang/Makefile
-openconfig/src/Makefile
 openconfig/docker/Makefile
 openconfig/docker/src
+wifi/Makefile
+wifi/docker/Makefile
+wifi/docker/src
 3gpp/Makefile
 3gpp/yang/Makefile
 3gpp/src/Makefile

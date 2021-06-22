@@ -51,13 +51,17 @@ $ sudo docker kill
 You can also use netconf via stdin/stdout:
 ```
   $ sudo docker exec -it openconfig clixon_netconf
+  <?xml version="1.0" encoding="UTF-8"?>
+  <hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+     <capabilities><capability>urn:ietf:params:netconf:base:1.1</capability></capabilities>
+   </hello>]]>]]>
   <rpc><get-config><source><running/></source></get-config></rpc>]]>]]>
   <rpc-reply><data><system xmlns="http://openconfig.net/yang/system"><clock><config><timezone-name>Europe/Stockholm</timezone-name></config></clock></system></data></rpc-reply>]]>]]>
 ```
 
 Or using restconf using curl on exposed port 8080:
 ```
-  $ curl -G http://localhost:8080/restconf/data/openconfig-system:system
+  $ curl -X GET http://localhost:8080/restconf/data/openconfig-system:system
 {
     "openconfig-system:system": {
       "clock": {

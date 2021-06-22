@@ -1,0 +1,24 @@
+module clixon-wifi{
+    yang-version 1.1;
+    namespace "urn:example:wifi";
+    prefix wifi;
+    import openconfig-access-points {
+	description "Top level WiFi model for a list of Access Points
+                     Adds the following top-level config objects:
+                       access-points, components, joined-aps, messages,
+                       provision-aps, radios, ssids, system ";
+	prefix access-points;
+	}
+    import openconfig-ap-manager {
+	description 
+	    "Top level configuration and state data for a system which manages
+             Access Points.
+             Adds the following top-level config objects:
+               joined-aps               provision-aps";
+	prefix ap-manager;
+    }
+    revision 2021-06-22 {
+	description
+	    "Initial top-level wifi openconfig version";
+    }
+}

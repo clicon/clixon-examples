@@ -84,19 +84,24 @@ RUN make
 RUN make install
 RUN make install-include
 
+# Clone openconfig YANGs from git repo
+RUN mkdir /clixon/build/share/openconfig
+WORKDIR /clixon/build/share/openconfig
+RUN git clone https://github.com/openconfig/public
+
 # Create paths locally (copied to /usr/local in stage 2)
-# Paths are according to hello.xml config file.
+# Paths are according to wifi.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
 RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/hello
-RUN mkdir /clixon/build/lib/hello
-RUN mkdir /clixon/build/lib/hello/clispec
+RUN mkdir /clixon/build/var/wifi
+RUN mkdir /clixon/build/lib/wifi
+RUN mkdir /clixon/build/lib/wifi/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/hello.xml /clixon/build/etc/clixon.xml
-COPY src/hello_cli.cli /clixon/build/lib/hello/clispec/
-COPY src/startup_db /clixon/build/var/hello/startup_db
+COPY src/wifi.xml /clixon/build/etc/clixon.xml
+COPY src/wifi_cli.cli /clixon/build/lib/wifi/clispec/
+COPY src/startup_db /clixon/build/var/wifi/startup_db
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
 COPY yang /clixon/build/share/clixon
@@ -132,6 +137,7 @@ COPY --from=0 /clixon/build/ /usr/local/
 COPY --from=0 /usr/local/lib/libevhtp.so* /usr/local/lib/
 
 # Manually created
+RUN mkdir /www-data
 RUN chown clicon /www-data
 RUN chgrp clicon /www-data
 

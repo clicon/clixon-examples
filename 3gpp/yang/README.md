@@ -1,11 +1,22 @@
 # 3GPP 28541 and 28623
 
 Sources are word documents. The specs have been manually copied and pasted:
-* http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g30.zip
+* http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g30.zip (v16.0)
 * http://www.3gpp.org/ftp//Specs/archive/28_series/28.623/28623-g20.zip
 
+Except the following taken from 28.541 v15.2.0:
+  NetworkSlice@2018-08-09.yang
+  NetworkSliceSubnet@2018-08-09.yang
+  ServiceProfile@2018-08-09.yang
+  SliceProfile@2018-08-09.yang
+  perfReq@2018-08-10.yang
+  Top@2018-07-31.yang
+  SubNetwork@2018-07-31.yang
+  VsDataContainer@2018-07-31.yang
+  perfReq@2018-08-10.yang
+  nrm-types-3gpp@2018-07-31.yang
+  
 Modifications:
-
 
 
 diff --git a/3gpp/yang/_3gpp-5gc-nrm-ausffunction@2019-10-25.yang b/3gpp/yang/_3gpp-5gc-nrm-ausffunction@2019-10-25.yang

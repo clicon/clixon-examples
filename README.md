@@ -12,13 +12,12 @@ To start with, the examples are generated OAM modules from YANG, but
 lacking backend semantics. You can configure, using generated CLI,
 Netconf or Restconf, but nothing "happens".
 
-The examples include a local install and docker build (which can run directly from dockerhub.
+The examples include a local install and docker build (which can run directly from dockerhub).
 
 - [Hello world](hello)
 - [Openconfig-system](openconfig) from: [openconfig-system](https://github.com/openconfig/public)
+- [Openconfig-wifi](wifi) Openconfig wifi module
 - [3GPP](3gpp): 5G Network Resource Model from [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g30.zip)
-
-
 
 ## Build and install:
 ```

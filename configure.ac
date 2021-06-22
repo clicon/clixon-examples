@@ -1,7 +1,7 @@
 #
 # ***** BEGIN LICENSE BLOCK *****
 # 
-# Copyright (C) 2020 Olof Hagsand and Rubicon Communications, LLC
+# Copyright (C) 2020-2021 Olof Hagsand and Rubicon Communications, LLC
 #
 # This file is part of CLIXON
 #
@@ -158,6 +158,8 @@ AC_OUTPUT([Makefile
   	  hello/src/Makefile
 	  hello/yang/Makefile
     	  hello/docker/Makefile
+  	  wifi/Makefile
+    	  wifi/docker/Makefile
   	  openconfig/Makefile
     	  openconfig/docker/Makefile
 	  3gpp/Makefile

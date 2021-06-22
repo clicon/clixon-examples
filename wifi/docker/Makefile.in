@@ -1,9 +1,7 @@
-#!/bin/sh
-
+#
 # ***** BEGIN LICENSE BLOCK *****
 # 
-# Copyright (C) 2017-2019 Olof Hagsand
-# Copyright (C) 202-20210 Olof Hagsand and Rubicon Communications, LLC
+# Copyright (C) 2020-2021 Olof Hagsand and Rubicon Communications, LLC
 #
 # This file is part of CLIXON
 #
@@ -31,29 +29,40 @@
 # the terms of any one of the Apache License version 2 or the GPL.
 #
 # ***** END LICENSE BLOCK *****
+#
 
-# This script is copied into the container on build time and runs
-# _inside_ the container at start in runtime. It gets environment variables
-# from the start.sh script.
-# It starts a backend, a restconf daemon and a nginx daemon and exposes ports
-# for restconf.
-# See also Dockerfile of the example
-# Log msg, see with docker logs
+srcdir  	= .
+top_srcdir  	= ../..
 
-set -ux # e but clixon_backend may fail if test is run in parallell
+# docker.hub image. CHANGE THIS IF YOU PUSH YOUR OWN
+IMG   = clixon/wifi-system
 
->&2 echo "$0"
+.PHONY: all clean distclean docker push depend install uninstall
 
-# If set, enable debugging (of backend and restconf daemons)
-DBG=${DBG:-0}
+all:	
+	echo "Run make docker to build docker image"
 
-# Workaround for this error output:
-# sudo: setrlimit(RLIMIT_CORE): Operation not permitted
-echo "Set disable_coredump false" > /etc/sudo.conf
+clean:
+	rm -rf yang src
 
-# Start clixon backend
->&2 echo "start clixon_backend:"
-/usr/local/sbin/clixon_backend -FD $DBG -f /usr/local/etc/clixon.xml -s startup -l e # logs on docker logs
+distclean: clean
+	rm -f Makefile *~ .depend
 
-# Alt: let backend be in foreground, but then you cannot restart
-/bin/sleep 100000000
+yang:
+	cp -R ${srcdir}/../$@ .
+
+src:
+	cp -R ${srcdir}/../$@ .
+
+docker: Dockerfile yang src
+	sudo docker build -t $(IMG) .  # --no-cache
+
+push:
+	sudo docker push $(IMG)
+
+depend:
+
+install: 
+
+uninstall:
+

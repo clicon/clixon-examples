@@ -1,7 +1,7 @@
 #
 # ***** BEGIN LICENSE BLOCK *****
 # 
-# Copyright (C) 2009-2020 Olof Hagsand
+# Copyright (C) 2009-2021 Olof Hagsand
 #
 # This file is part of CLIXON
 #
@@ -35,15 +35,33 @@ FROM alpine
 MAINTAINER Olof Hagsand <olof@hagsand.se>
 
 # For clixon and cligen
-RUN apk add --update git make build-base gcc flex bison fcgi-dev curl-dev
+RUN apk add --update git make build-base gcc flex bison curl-dev
 
 # Create a directory to hold source-code, dependencies etc
 RUN mkdir /clixon
+
+# evhtp dependencies
+RUN apk add --update libevent libevent-dev
+
+# nghttp2 dependencies
+RUN apk add --update nghttp2
+
+# clone libevhtp
+WORKDIR /clixon
+
+RUN git clone https://github.com/clicon/clixon-libevhtp.git
+WORKDIR /clixon/clixon-libevhtp
+RUN ./configure
+
+RUN make
+RUN mkdir /usr/local/include
+RUN make install
+
 RUN mkdir /clixon/build
 WORKDIR /clixon
 
 # Clone cligen
-RUN git clone https://github.com/olofhagsand/cligen.git
+RUN git clone https://github.com/clicon/cligen.git
 
 # Build cligen
 WORKDIR /clixon/cligen
@@ -51,18 +69,17 @@ RUN ./configure --prefix=/clixon/build
 RUN make
 RUN make install
 
-# For nginx and RESTCONF: Need to add www user manually
-RUN adduser -D -H www-data
-# nginx adds group www-data
-RUN apk add --update nginx
+# Need to add www user manually
+RUN adduser -D -H -G www-data www-data
 
 # Clone clixon
 WORKDIR /clixon
 RUN git clone https://github.com/clicon/clixon.git
+WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-WORKDIR /clixon/clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-wwwuser=www-data
+RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --enable-optyangs --with-restconf=native --enable-nghttp2 --enable-evhtp
+
 RUN make
 RUN make install
 RUN make install-include
@@ -79,6 +96,7 @@ RUN mkdir /clixon/build/lib/openconfig/clispec
 # Copy src file from local: config file and standard clispec file
 COPY src/openconfig.xml /clixon/build/etc/clixon.xml
 COPY src/openconfig_cli.cli /clixon/build/lib/openconfig/clispec/
+COPY src/startup_db /clixon/build/var/openconfig/startup_db
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
 RUN mkdir /clixon/build/share/openconfig
@@ -90,33 +108,35 @@ COPY startsystem.sh /clixon/build/bin/
 
 #
 # Stage 2
-#
+# The second step skips the development environment and builds a runtime system
 FROM alpine
 MAINTAINER Olof Hagsand <olof@hagsand.se>
 
 # For clixon and cligen
-RUN apk add --update flex bison fcgi-dev 
+RUN apk add --update flex bison
 
 # need to add www user manually
-RUN adduser -D -H www-data
-# nginx adds group www-data
-RUN apk add --update nginx
+RUN adduser -D -H -G www-data www-data
+# for libevtp
+RUN apk add --update openssl libevent
 
-# Expose nginx port for restconf
-EXPOSE 80
+# nghttp2 dependencies
+RUN apk add --update nghttp2
+
+# Expose http port for restconf
+EXPOSE 80/tcp
+# EXPOSE 443/tcp
 
 # Create clicon user and group
 RUN adduser -D -H clicon
-RUN adduser nginx clicon
-RUN adduser www-data clicon
 
 COPY --from=0 /clixon/build/ /usr/local/
-COPY --from=0 /www-data /www-data
+COPY --from=0 /usr/local/lib/libevhtp.so* /usr/local/lib/
 
 # Manually created
-RUN chown www-data /www-data
-RUN chgrp www-data /www-data
+RUN mkdir /www-data
+RUN chown clicon /www-data
+RUN chgrp clicon /www-data
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh
-
