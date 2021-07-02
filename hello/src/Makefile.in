@@ -51,6 +51,12 @@ INSTALLFLAGS  	= @INSTALLFLAGS@
 INCLUDES 	= -I$(includedir) @INCLUDES@ 
 CPPFLAGS  	= @CPPFLAGS@ -fPIC
 
+# Here is where example yang appears
+YANG_INSTALLDIR  = @YANG_INSTALLDIR@
+
+# Local yang files to install
+YANGSPECS	 = clixon-hello@2019-04-17.yang
+
 .PHONY: all clean depend install 
 
 all:
@@ -75,11 +81,15 @@ install: $(CLISPECS) $(APPNAME).xml
 	install -m 0644 $(CLISPECS) $(DESTDIR)$(libdir)/$(APPNAME)/clispec
 	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
 	install -m 0644 startup_db $(DESTDIR)$(localstatedir)/$(APPNAME)/
+	install -d -m 0755 $(DESTDIR)$(YANG_INSTALLDIR)
+	install -m 0644 $(YANGSPECS) $(DESTDIR)$(YANG_INSTALLDIR)
 
 uninstall: 
 	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
 	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
 	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
+	for i in $(YANGSPEC) ; \
+	do rm $(DESTDIR)$(YANG_INSTALLDIR)/$$i; done
 
 depend:
 	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend

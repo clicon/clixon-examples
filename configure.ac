@@ -156,7 +156,6 @@ AC_DEFINE_UNQUOTED(WWWUSER, "$wwwuser", [WWW user for restconf daemon])
 AC_OUTPUT([Makefile
 	  hello/Makefile
   	  hello/src/Makefile
-	  hello/yang/Makefile
     	  hello/docker/Makefile
   	  wifi/Makefile
     	  wifi/docker/Makefile

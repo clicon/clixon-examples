@@ -44,7 +44,19 @@ You can also use netconf via stdin/stdout:
 Or using restconf using curl on exposed port 8080:
 ```
   $ curl -X GET http://localhost:8080/restconf/data/openconfig-ap-manager:provision-aps
-{"openconfig-ap-manager:provision-aps":{"provision-ap":[{"mac":"01:02:03:04:05:06","config":{"mac":"01:02:03:04:05:06","hostname":"ap1"}}]}}
+{
+    "openconfig-ap-manager:provision-aps": {
+      "provision-ap": [
+        {
+          "mac": "01:02:03:04:05:06",
+          "config": {
+            "mac": "01:02:03:04:05:06",
+            "hostname": "ap1"
+          }
+        }
+      ]
+    }
+  }
 ```
 
 ## Build and push
