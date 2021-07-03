@@ -16,6 +16,19 @@ This directory contains a Clixon example which includes a simple example. It con
 * `startup_db`: The startup datastore containing restconf port configuration
 * `Makefile`: where plugins are built and installed
 
+Notes:
+hello.xml may not follow the way you set --prefix, --sysconfdir and others, you may need to hand-edit them to the values you used in the ./configure call. This could partly be acheived by using a hello.xml.in meta-file, but not quite since autotools uses variables not evaluated by XML.
+
+For example, in hello.xml.in:
+```
+  <CLICON_CONFIGFILE>@sysconfdir@/hello.xml</CLICON_CONFIGFILE>
+```
+may evaluate to, in hello.xml:
+```
+  <CLICON_CONFIGFILE>${prefix}/etc/hello.xml</CLICON_CONFIGFILE>
+```
+where `${prefix}` is a variable that is not evaluated in XML. One could add a second shell evaluating step but it gets complex.
+
 ## Compile and run
 
 Before you start,

@@ -1,4 +1,5 @@
 <clixon-config xmlns="http://clicon.org/config">
+  <!-- NOTE: hello.xml may not follow the way you set -\-prefix, -\-sysconfdir and others, you may need to hand-edit them to the values you used in the ./configure call. -->
   <CLICON_CONFIGFILE>/usr/local/etc/hello.xml</CLICON_CONFIGFILE>
   <CLICON_FEATURE>ietf-netconf:startup</CLICON_FEATURE>
   <CLICON_FEATURE>clixon-restconf:allow-auth-none</CLICON_FEATURE>
