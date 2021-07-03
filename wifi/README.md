@@ -1,9 +1,8 @@
 # Clixon wifi openconfig build
 
-Sub-part of openconfig wifi
+Openconfig YANGs from: [openconfig-system](https://github.com/openconfig/public)
 
-From: [openconfig-system](https://github.com/openconfig/public)
-
+* [Local host build](src)
 * [Docker container build](docker)
 
 

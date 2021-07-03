@@ -41,8 +41,8 @@ LIBS    	= @LIBS@
 SHELL	= /bin/sh
 
 # No local install - yang files are not installed,...
-#SUBDIRS  = src
-SUBDIRS = docker
+SUBDIRS  = src
+SUBDIRS += docker
 
 .PHONY: all clean depend install push $(SUBDIRS)
 

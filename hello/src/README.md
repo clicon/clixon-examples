@@ -9,12 +9,12 @@
   
 ## Content
 
-This directory contains a Clixon example which includes a simple example. It contains the following files:
+This directory contains a simple Clixon helloworld host example. It contains the following files:
 * `hello.xml` the XML configuration file
 * `clixon-hello@2019-04-17.yang <../yang/clixon-hello@2019-04-17.yang>`_: the YANG spec
 * `hello_cli.cli`: the CLIgen spec
 * `startup_db`: The startup datastore containing restconf port configuration
-* `Makefile`: where plugins are built and installed
+* `Makefile.in`: where plugins are built and installed
 
 Notes:
 hello.xml may not follow the way you set --prefix, --sysconfdir and others, you may need to hand-edit them to the values you used in the ./configure call. This could partly be acheived by using a hello.xml.in meta-file, but not quite since autotools uses variables not evaluated by XML.
@@ -32,15 +32,17 @@ where `${prefix}` is a variable that is not evaluated in XML. One could add a se
 ## Compile and run
 
 Before you start,
-* Make [group setup](../../doc/FAQ.md#do-i-need-to-setup-anything-important)
+* Make [group setup](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
 
 ```
     make && sudo make install
 ```
 Start backend in the background:
 ```
-    sudo clixon_backend -f /usr/local/etc/hello.xml
+    sudo clixon_backend -f /usr/local/etc/hello.xml -s startup
 ```
+Note: use `-s init` instead if you want to start Clixon without the preconfigured restconf daemon
+
 Start cli:
 ```
     clixon_cli
@@ -52,7 +54,7 @@ The example CLI allows you to modify and view the data model using `set`, `delet
 
 The following example shows how to add a very simple configuration `hello world` using the generated CLI. The config is added to the candidate database, shown, committed to running, and then deleted.
 ```
-   olof@vandal> clixon_cli
+   olof@vandal> clixon_cli -f /usr/local/etc/hello.xml
    cli> set <?>
      hello                 
    cli> set hello world 
@@ -73,7 +75,7 @@ The following example shows how to add a very simple configuration `hello world`
 
 Clixon also provides a Netconf interface. The following example starts a netconf client form the shell, adds the hello world config, commits it, and shows it:
 ```
-   olof@vandal> clixon_netconf -q
+   olof@vandal> clixon_netconf -qf /usr/local/etc/hello.xml
    <rpc><edit-config><target><candidate/></target><config><hello xmlns="urn:example:hello"><world/></hello></config></edit-config></rpc>]]>]]>
    <rpc-reply><ok/></rpc-reply>]]>]]>
    <rpc><commit/></rpc>]]>]]>
@@ -85,14 +87,11 @@ olof@vandal>
 
 ## Restconf
 
-Clixon also provides a Restconf interface. A reverse proxy needs to be configured. There are [instructions how to setup Nginx](../../doc/FAQ.md#how-do-i-use-restconf) for Clixon.
+Clixon also provides a Restconf interface. See [documentation on RESTCONF](https://clixon-docs.readthedocs.io/en/latest/restconf.html).
 
-Start restconf daemon
-```
-   sudo su -c "/www-data/clixon_restconf" -s /bin/sh www-data &
-```
+The example startup datastore contains config for a pre-configured restconf server listening on port 80. Edit `startup_db` if you want to change options or start the backend without it using `-s init` if you dont want restconf.
 
-Start sending restconf commands (using Curl):
+Send restconf commands (using Curl):
 ```
    olof@vandal> curl -X POST http://localhost/restconf/data -H "Content-Type: application/yang-data+json" -d '{"clixon-hello:hello":{"world":null}}'
    olof@vandal> curl -X GET http://localhost/restconf/data 

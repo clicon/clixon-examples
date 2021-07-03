@@ -158,6 +158,7 @@ AC_OUTPUT([Makefile
   	  hello/src/Makefile
     	  hello/docker/Makefile
   	  wifi/Makefile
+    	  wifi/src/Makefile
     	  wifi/docker/Makefile
   	  openconfig/Makefile
     	  openconfig/docker/Makefile
