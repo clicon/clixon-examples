@@ -48,7 +48,7 @@ CC		= @CC@
 CFLAGS  	= @CFLAGS@ -fPIC 
 INSTALLFLAGS  	= @INSTALLFLAGS@ 
 
-INCLUDES 	= -I$(includedir) @INCLUDES@ 
+INCLUDES 	= @INCLUDES@ 
 CPPFLAGS  	= @CPPFLAGS@ -fPIC
 
 # Here is where example yang appears
