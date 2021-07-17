@@ -11,6 +11,7 @@
 This directory contains a Clixon openconfig wifi host example. It contains the following files:
 * `wifi.xml` the XML configuration file
 * `clixon-wifi@2021-06-22<clixon-wifi@2021-06-22.yang>`_: a top-level cusomized YANG files importing relevant wifi config files
+* `wifi_backend_plugin.c`: a backend plugin
 * `wifi_cli.cli`: the CLIgen spec
 * `startup_db`: The startup datastore containing restconf port configuration
 * `Makefile.in`: where plugins are built and installed
@@ -33,7 +34,6 @@ where `${prefix}` is a variable that is not evaluated in XML. One could add a se
 Before you start,
 * Make [group setup](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
 * Checkout openconfig: https://github.com/openconfig/public, this config assumes it to be checked out at: '/usr/local/share`
-
 
 ```
     make && sudo make install

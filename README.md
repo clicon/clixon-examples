@@ -30,3 +30,4 @@ The examples include a local install and docker build (which can run directly fr
 
 See instructions on how to run the examples as locally installed or as docker containers in [the clixon docs quick start](https://clixon-docs.readthedocs.io/en/latest/quickstart.html) or in the specific example documentation
 
+Example of a plugin is in the [wifi example](wifi/src)

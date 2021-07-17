@@ -97,14 +97,14 @@ RUN mkdir /clixon/build/var
 RUN mkdir /clixon/build/var/wifi
 RUN mkdir /clixon/build/lib/wifi
 RUN mkdir /clixon/build/lib/wifi/clispec
+RUN mkdir /clixon/build/lib/wifi/backend
 
 # Copy src file from local: config file and standard clispec file
 COPY src/wifi.xml /clixon/build/etc/clixon.xml
 COPY src/wifi_cli.cli /clixon/build/lib/wifi/clispec/
 COPY src/startup_db /clixon/build/var/wifi/startup_db
-
-# Copy yang files from local. Paths are according to openconfig.xml config file.
-COPY yang /clixon/build/share/clixon
+COPY src/clixon-*.yang /clixon/build/share/clixon/
+COPY src/*_backend_plugin.so /clixon/build/lib/wifi/backend/
 
 # Copy startscript for starting backend and restconf
 COPY startsystem.sh /clixon/build/bin/

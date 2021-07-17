@@ -1,10 +1,13 @@
+*.o
+*.so.*
+*.so
+*.depend
 autom4te.cache/
 config.log
 config.status
 TAGS
 Makefile
 hello/Makefile
-hello/yang/Makefile
 hello/src/Makefile
 hello/docker/Makefile
 hello/docker/src

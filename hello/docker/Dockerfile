@@ -97,9 +97,7 @@ RUN mkdir /clixon/build/lib/hello/clispec
 COPY src/hello.xml /clixon/build/etc/clixon.xml
 COPY src/hello_cli.cli /clixon/build/lib/hello/clispec/
 COPY src/startup_db /clixon/build/var/hello/startup_db
-
-# Copy yang files from local. Paths are according to openconfig.xml config file.
-COPY yang /clixon/build/share/clixon
+COPY src/clixon-hello@*.yang /clixon/build/share/clixon
 
 # Copy startscript for starting backend and restconf
 COPY startsystem.sh /clixon/build/bin/
@@ -132,6 +130,7 @@ COPY --from=0 /clixon/build/ /usr/local/
 COPY --from=0 /usr/local/lib/libevhtp.so* /usr/local/lib/
 
 # Manually created
+RUN mkdir /www-data
 RUN chown clicon /www-data
 RUN chgrp clicon /www-data
 
