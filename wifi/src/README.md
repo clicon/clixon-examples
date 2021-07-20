@@ -32,8 +32,9 @@ where `${prefix}` is a variable that is not evaluated in XML. One could add a se
 ## Compile and run
 
 Before you start,
-* Make [group setup](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
-* Checkout openconfig: https://github.com/openconfig/public, this config assumes it to be checked out at: '/usr/local/share`
+* Install [cligen and clixon](https://clixon-docs.readthedocs.io/en/latest/install.html)
+* Stup [groups](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
+* Checkout openconfig: git clone https://github.com/openconfig/public, this config assumes it to be checked out at: '/usr/local/share`
 
 ```
     make && sudo make install

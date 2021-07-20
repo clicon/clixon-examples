@@ -20,9 +20,34 @@ The examples include a local install and docker build (which can run directly fr
 - [3GPP](3gpp): 5G Network Resource Model from [3GPP 5G](http://www.3gpp.org/ftp//Specs/archive/28_series/28.541/28541-g30.zip)
 
 ## Build and install:
+
+### Single native installation example
+
+Example: wifi host installation
+
 ```
 > ./configure
+> cd wifi/src
 > make
+> sudo make install  # Install example applications locally
+```
+
+### Single docker example
+
+Example: wifi docker installation
+
+```
+> ./configure
+> cd wifi/docker
+> make docker
+```
+
+### All examples
+
+Install all examples
+```
+> ./configure
+> make 
 > sudo make install  # Install example applications locally
 > make docker        # Build example docker containers
 > make push          # Push docker containers to github (requires changing target)
