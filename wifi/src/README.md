@@ -47,7 +47,7 @@ Note: use `-s init` instead if you want to start Clixon without the preconfigure
 
 Start cli:
 ```
-    clixon_cli
+    clixon_cli -f /usr/local/etc/wifi.xml
 ```
 
 ## Using the CLI

@@ -37,7 +37,7 @@
 
 /* Clicon library functions. */
 #include <clixon/clixon.h>
-kalleballe/42
+
 /* These include signatures for plugin and transaction callbacks. */
 #include <clixon/clixon_backend.h> 
 
