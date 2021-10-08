@@ -16,19 +16,6 @@ This directory contains a simple Clixon helloworld host example. It contains the
 * `startup_db`: The startup datastore containing restconf port configuration
 * `Makefile.in`: where plugins are built and installed
 
-Notes:
-hello.xml may not follow the way you set --prefix, --sysconfdir and others, you may need to hand-edit them to the values you used in the ./configure call. This could partly be acheived by using a hello.xml.in meta-file, but not quite since autotools uses variables not evaluated by XML.
-
-For example, in hello.xml.in:
-```
-  <CLICON_CONFIGFILE>@sysconfdir@/hello.xml</CLICON_CONFIGFILE>
-```
-may evaluate to, in hello.xml:
-```
-  <CLICON_CONFIGFILE>${prefix}/etc/hello.xml</CLICON_CONFIGFILE>
-```
-where `${prefix}` is a variable that is not evaluated in XML. One could add a second shell evaluating step but it gets complex.
-
 ## Compile and run
 
 Before you start,
@@ -39,9 +26,8 @@ Before you start,
 ```
 Start backend in the background:
 ```
-    sudo clixon_backend -f /usr/local/etc/hello.xml -s startup
+    sudo clixon_backend -f /usr/local/etc/hello.xml -s init
 ```
-Note: use `-s init` instead if you want to start Clixon without the preconfigured restconf daemon
 
 Start cli:
 ```
@@ -106,6 +92,7 @@ Send restconf commands (using Curl):
 
 ## Next steps
 
+
 The hello world example only has a Yang spec and a template CLI
 spec. For more advanced applications, customized backend, cli, netconf
 and restconf code callbacks becomes necessary.
@@ -116,4 +103,26 @@ contains examples for such capabilities.
 
 There are also [container examples](../../docker) and lots more.
 
+## Notes
+
+### Restconf datastore config 
+
+You can use the config of restconf in the startup datastore as an alternative:
+```
+    sudo clixon_backend -f /usr/local/etc/hello.xml -s startup
+```
+
+### Installdirs
+
+hello.xml may not follow the way you set --prefix, --sysconfdir and others, you may need to hand-edit them to the values you used in the ./configure call. This could partly be acheived by using a hello.xml.in meta-file, but not quite since autotools uses variables not evaluated by XML.
+
+For example, in hello.xml.in:
+```
+  <CLICON_CONFIGFILE>@sysconfdir@/hello.xml</CLICON_CONFIGFILE>
+```
+may evaluate to, in hello.xml:
+```
+  <CLICON_CONFIGFILE>${prefix}/etc/hello.xml</CLICON_CONFIGFILE>
+```
+where `${prefix}` is a variable that is not evaluated in XML. One could add a second shell evaluating step but it gets complex.
 
