@@ -76,7 +76,7 @@ The following example shows how to add a very simple configuration `hello world`
 Clixon also provides a Netconf interface. The following example starts a netconf client form the shell, adds the hello world config, commits it, and shows it:
 ```
    olof@vandal> clixon_netconf -qf /usr/local/etc/hello.xml
-   <rpc><edit-config><target><candidate/></target><config><hello xmlns="urn:example:hello"><world/></hello></config></edit-config></rpc>]]>]]>
+   <rpc message-id="42" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"><edit-config><target><candidate/></target><config><hello xmlns="urn:example:hello"><world/></hello></config></edit-config></rpc>]]>]]>
    <rpc-reply><ok/></rpc-reply>]]>]]>
    <rpc><commit/></rpc>]]>]]>
    <rpc-reply><ok/></rpc-reply>]]>]]>
