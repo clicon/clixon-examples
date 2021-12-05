@@ -104,7 +104,6 @@ COPY src/wifi.xml /clixon/build/etc/clixon.xml
 COPY src/wifi_cli.cli /clixon/build/lib/wifi/clispec/
 COPY src/startup_db /clixon/build/var/wifi/startup_db
 COPY src/clixon-*.yang /clixon/build/share/clixon/
-COPY src/*_backend_plugin.so /clixon/build/lib/wifi/backend/
 
 # Copy startscript for starting backend and restconf
 COPY startsystem.sh /clixon/build/bin/
