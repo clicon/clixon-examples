@@ -18,6 +18,12 @@ jobs:
       run: (git clone https://github.com/clicon/cligen.git && cd cligen && ./configure && make && sudo make install)
     - name: configure
       run: ./configure
+    - name: install libevent, ssl and nghttp2
+      run: sudo apt install -y libevent-dev libssl-dev libnghttp2-dev
+    - name: install libevhtp
+      run: (git clone https://github.com/clicon/clixon-libevhtp.git && cd clixon-libevhtp && ./configure && make && sudo make install)
+    - name: install clixon
+      run: (git clone https://github.com/clicon/clixon.git && cd clixon && ./configure && make && sudo make install)
 # hello world
     - name: build hello world
       run: (cd hello/docker; make docker)
