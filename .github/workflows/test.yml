@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+# checkout and compile natively
+    - name: install cligen
+      run: (git clone https://github.com/clicon/cligen.git && cd cligen && ./configure && make && sudo make install)
     - name: configure
       run: ./configure
 # hello world
