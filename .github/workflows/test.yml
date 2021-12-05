@@ -13,17 +13,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-# checkout and compile natively
+# checkout and compile natively (really dont need native build for docker examples)
     - name: install cligen
       run: (git clone https://github.com/clicon/cligen.git && cd cligen && ./configure && make && sudo make install)
-    - name: configure
-      run: ./configure
     - name: install libevent, ssl and nghttp2
       run: sudo apt install -y libevent-dev libssl-dev libnghttp2-dev
     - name: install libevhtp
       run: (git clone https://github.com/clicon/clixon-libevhtp.git && cd clixon-libevhtp && ./configure && make && sudo make install)
     - name: install clixon
       run: (git clone https://github.com/clicon/clixon.git && cd clixon && ./configure && make && sudo make install)
+    - name: configure
+      run: ./configure
 # hello world
     - name: build hello world
       run: (cd hello/docker; make docker)
