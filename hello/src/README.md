@@ -10,11 +10,11 @@
 ## Content
 
 This directory contains a simple Clixon helloworld host example. It contains the following files:
-* `hello.xml` the XML configuration file
+* `hello.xml`: the XML configuration file
 * `clixon-hello@2019-04-17.yang <../yang/clixon-hello@2019-04-17.yang>`_: the YANG spec
 * `hello_cli.cli`: the CLIgen spec
 * `startup_db`: The startup datastore containing restconf port configuration
-* `Makefile.in`: where plugins are built and installed
+* `Makefile.in`: install of specs, normally compile of plugins
 
 ## Compile and run
 

@@ -1,0 +1,29 @@
+name: Clixon-examples CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: ./configure
+# hello world
+    - name: build hello world
+      run: (cd hello/docker; make docker)
+# openconfig
+    - name: build openconfig
+      run: (cd openconfig/docker; make docker)
+# wifi
+    - name: build openconfig wifi
+      run: (cd wifi/docker; make docker)
+# 3gpp
+    - name: build 3gpp
+      run: (cd 3gpp/docker; make docker)

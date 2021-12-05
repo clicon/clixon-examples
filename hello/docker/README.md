@@ -2,6 +2,13 @@
 
 This directory contains code for running, building, and pushing the clixon hello world docker container. 
 
+## Build
+
+Build the docker:
+```
+  $ make docker
+```
+
 ## Example run
 
 First, the container is started with a backend and a restconf listening on port 8080:

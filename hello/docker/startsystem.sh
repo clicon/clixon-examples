@@ -35,7 +35,7 @@
 # This script is copied into the container on build time and runs
 # _inside_ the container at start in runtime. It gets environment variables
 # from the start.sh script.
-# It starts a backend, a restconf daemon and a nginx daemon and exposes ports
+# It starts a backend, and a restconf daemon and exposes ports
 # for restconf.
 # See also Dockerfile of the example
 # Log msg, see with docker logs

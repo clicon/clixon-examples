@@ -37,14 +37,14 @@ MAINTAINER Olof Hagsand <olof@hagsand.se>
 # For clixon and cligen
 RUN apk add --update git make build-base gcc flex bison curl-dev
 
-# Create a directory to hold source-code, dependencies etc
-RUN mkdir /clixon
-
 # evhtp dependencies
 RUN apk add --update libevent libevent-dev
 
 # nghttp2 dependencies
 RUN apk add --update nghttp2
+
+# Create a directory to hold source-code, dependencies etc
+RUN mkdir /clixon
 
 # clone libevhtp
 WORKDIR /clixon
@@ -78,7 +78,7 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --enable-optyangs --with-restconf=native --enable-nghttp2 --enable-evhtp
+RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2 --enable-evhtp
 
 RUN make
 RUN make install
@@ -128,11 +128,6 @@ RUN adduser -D -H clicon
 
 COPY --from=0 /clixon/build/ /usr/local/
 COPY --from=0 /usr/local/lib/libevhtp.so* /usr/local/lib/
-
-# Manually created
-RUN mkdir /www-data
-RUN chown clicon /www-data
-RUN chgrp clicon /www-data
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh
