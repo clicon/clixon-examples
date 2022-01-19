@@ -3,7 +3,7 @@
 # ***** BEGIN LICENSE BLOCK *****
 # 
 # Copyright (C) 2017-2019 Olof Hagsand
-# Copyright (C) 202-20210 Olof Hagsand and Rubicon Communications, LLC
+# Copyright (C) 2020-2022 Olof Hagsand and Rubicon Communications, LLC
 #
 # This file is part of CLIXON
 #

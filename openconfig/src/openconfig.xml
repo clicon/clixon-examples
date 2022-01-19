@@ -4,9 +4,6 @@
   <CLICON_FEATURE>clixon-restconf:allow-auth-none</CLICON_FEATURE>
   <CLICON_YANG_DIR>/usr/local/share/clixon</CLICON_YANG_DIR>
   <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models</CLICON_YANG_DIR>
-  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models/system</CLICON_YANG_DIR>
-  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models/types</CLICON_YANG_DIR>
-  <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models/platform</CLICON_YANG_DIR>
   <CLICON_YANG_MODULE_MAIN>openconfig-system</CLICON_YANG_MODULE_MAIN>
   <CLICON_CLI_MODE>openconfig</CLICON_CLI_MODE>
   <CLICON_CLISPEC_DIR>/usr/local/lib/openconfig/clispec</CLICON_CLISPEC_DIR>
@@ -15,6 +12,13 @@
   <CLICON_BACKEND_RESTCONF_PROCESS>true</CLICON_BACKEND_RESTCONF_PROCESS>
   <CLICON_XMLDB_DIR>/usr/local/var/openconfig</CLICON_XMLDB_DIR>
   <CLICON_STARTUP_MODE>init</CLICON_STARTUP_MODE>
-  <CLICON_CLI_AUTOCLI_EXCLUDE>clixon-restconf</CLICON_CLI_AUTOCLI_EXCLUDE>
   <CLICON_MODULE_LIBRARY_RFC7895>false</CLICON_MODULE_LIBRARY_RFC7895>
+  <autocli>
+     <module-default>false</module-default>
+     <rule>
+        <name>include openconfig</name>
+        <operation>enable</operation>
+        <module-name>openconfig*</module-name>
+     </rule>
+  </autocli>
 </clixon-config>

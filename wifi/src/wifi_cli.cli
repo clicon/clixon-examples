@@ -46,7 +46,7 @@ show("Show a particular state of the system"){
 	        @datamodel, cli_show_auto("candidate", "xml");		   
 	    }
 	    cli("Show configuration as CLI commands"), cli_show_config("candidate", "cli", "/");{
-	        @datamodel, cli_show_auto("candidate", "cli");
+	        @datamodel, cli_show_auto("candidate", "cli", "set");
 	    }
 	    netconf("Show configuration as netconf edit-config operation"), cli_show_config("candidate", "netconf", "/");{
 	        @datamodel, cli_show_auto("candidate", "netconf");

@@ -33,7 +33,7 @@ where `${prefix}` is a variable that is not evaluated in XML. One could add a se
 
 Before you start,
 * Install [cligen and clixon](https://clixon-docs.readthedocs.io/en/latest/install.html)
-* Stup [groups](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
+* Create groups [groups](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
 * Checkout openconfig: git clone https://github.com/openconfig/public, this config assumes it to be checked out at: '/usr/local/share`
 
 ```
