@@ -32,6 +32,18 @@
   ***** END LICENSE BLOCK *****
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <string.h>
+#include <errno.h>
+#include <signal.h>
+#include <unistd.h>
+#include <syslog.h>
+#include <fcntl.h>
+#include <sys/time.h>
+
 /* clicon */
 #include <cligen/cligen.h>
 
@@ -59,8 +71,3 @@ clixon_plugin_api *
 clixon_plugin_init(clicon_handle h) {
     return &api;
 }
-
-
-
-
-

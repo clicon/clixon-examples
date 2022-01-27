@@ -124,14 +124,14 @@ if test "${with_clixon}"; then
   echo "Using Clixon here: ${with_clixon}"
   CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
   LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
-  test -d "$with_clixon" && CLIXON_PREFIX="$with_cligen"
+  test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
 fi
 
 AC_CHECK_HEADERS(cligen/cligen.h,, AC_MSG_ERROR(cligen missing. Try: git clone https://github.com/olofhagsand/cligen.git))
 
 AC_CHECK_LIB(cligen, cligen_init,, AC_MSG_ERROR([CLIgen missing. Try: git clone https://github.com/olofhagsand/cligen.git]))
 
-AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <cligen/cligen.h>]])
+AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <cligen/cligen.h>]])
 AC_CHECK_LIB(clixon, clicon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
 
 # This is where local yangs are installed

@@ -3908,7 +3908,7 @@ if test "${with_clixon}"; then
   echo "Using Clixon here: ${with_clixon}"
   CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
   LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
-  test -d "$with_clixon" && CLIXON_PREFIX="$with_cligen"
+  test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
 fi
 
 
@@ -4244,7 +4244,7 @@ if test "x$ac_cv_header_clixon_clixon_h" = xyes; then :
 _ACEOF
 
 else
-  as_fn_error $? "clixon missing. Try: git clone https://github.com/clicon/clixon.git" "$LINENO" 5
+  as_fn_error $? "Clixon missing. Try: git clone https://github.com/clicon/clixon.git" "$LINENO" 5
 fi
 
 done
