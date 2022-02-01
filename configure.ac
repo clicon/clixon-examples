@@ -131,7 +131,8 @@ AC_CHECK_HEADERS(cligen/cligen.h,, AC_MSG_ERROR(cligen missing. Try: git clone h
 
 AC_CHECK_LIB(cligen, cligen_init,, AC_MSG_ERROR([CLIgen missing. Try: git clone https://github.com/olofhagsand/cligen.git]))
 
-AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <cligen/cligen.h>]])
+AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <signal.h>
+#include <cligen/cligen.h>]])
 AC_CHECK_LIB(clixon, clicon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
 
 # This is where local yangs are installed
@@ -150,8 +151,9 @@ if test "${with_wwwuser}"; then
    wwwuser=${with_wwwuser}
 
 fi
-AC_MSG_RESULT(www user is $wwwuser)	
-AC_DEFINE_UNQUOTED(WWWUSER, "$wwwuser", [WWW user for restconf daemon])
+
+# Dummy to disable native language support (nls) to remove warnings in buildroot
+AC_ARG_ENABLE(nls)
 
 AC_OUTPUT([Makefile
 	  hello/Makefile
