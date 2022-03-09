@@ -22,16 +22,16 @@ Before you start,
 * Make [group setup](https://github.com/clicon/clixon/blob/master/doc/FAQ.md#do-i-need-to-setup-anything)
 
 ```
-    make && sudo make install
+    sudo make install
 ```
 Start backend in the background:
 ```
-    sudo clixon_backend -f /usr/local/etc/hello.xml -s init
+    sudo clixon_backend -f /usr/local/etc/hello.xml -s startup
 ```
 
 Start cli:
 ```
-    clixon_cli
+    clixon_cli -f /usr/local/etc/hello.xml
 ```
 
 ## Using the CLI
@@ -91,7 +91,6 @@ Send restconf commands (using Curl):
 ```
 
 ## Next steps
-
 
 The hello world example only has a Yang spec and a template CLI
 spec. For more advanced applications, customized backend, cli, netconf

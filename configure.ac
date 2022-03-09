@@ -75,9 +75,6 @@ AC_SUBST(INSTALLFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(SH_SUFFIX)
 
-AC_SUBST(wwwdir,/www-data)
-AC_SUBST(wwwuser,www-data)
-
 #
 AC_PROG_CC()
 AC_PROG_CPP
@@ -112,7 +109,7 @@ fi
 # This is for cligen
 AC_ARG_WITH(cligen,  [  --with-cligen=dir       Use CLIGEN here ] )
 if test "${with_cligen}"; then
-  echo "Using CLIGEN here: ${with_cligen}"
+  echo "Using CLIgen here: ${with_cligen}"
   CPPFLAGS="-I${with_cligen}/include ${CPPFLAGS}"
   LDFLAGS="-L${with_cligen}/lib ${LDFLAGS}"
   test -d "$with_cligen" && CLIGEN_PREFIX="$with_cligen"
@@ -143,14 +140,6 @@ AC_ARG_WITH(yang-installdir,
 	    )
 AC_SUBST(YANG_INSTALLDIR)
 AC_MSG_RESULT(Clixon yang files are installed in ${YANG_INSTALLDIR})	
-
-# This is for changing web user default www-data
-AC_ARG_WITH([wwwuser],
-            [AS_HELP_STRING([--with-wwwuser=<user>],[Set www user different from www-data])])
-if test "${with_wwwuser}"; then
-   wwwuser=${with_wwwuser}
-
-fi
 
 # Dummy to disable native language support (nls) to remove warnings in buildroot
 AC_ARG_ENABLE(nls)

@@ -3893,7 +3893,7 @@ if test "${with_cligen+set}" = set; then :
 fi
 
 if test "${with_cligen}"; then
-  echo "Using CLIGEN here: ${with_cligen}"
+  echo "Using CLIgen here: ${with_cligen}"
   CPPFLAGS="-I${with_cligen}/include ${CPPFLAGS}"
   LDFLAGS="-L${with_cligen}/lib ${LDFLAGS}"
   test -d "$with_cligen" && CLIGEN_PREFIX="$with_cligen"
