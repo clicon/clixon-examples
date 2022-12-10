@@ -16,10 +16,8 @@ jobs:
 # checkout and compile natively (really dont need native build for docker examples)
     - name: install cligen native
       run: (git clone https://github.com/clicon/cligen.git && cd cligen && ./configure && make && sudo make install)
-    - name: install libevent, ssl and nghttp2
-      run: sudo apt install -y libevent-dev libssl-dev libnghttp2-dev
-    - name: install libevhtp
-      run: (git clone https://github.com/clicon/clixon-libevhtp.git && cd clixon-libevhtp && ./configure && make && sudo make install)
+    - name: install ssl and nghttp2
+      run: sudo apt install -y libssl-dev libnghttp2-dev
     - name: install clixon native
       run: (git clone https://github.com/clicon/clixon.git && cd clixon && ./configure && make && sudo make install)
     - name: configure

@@ -37,25 +37,11 @@ MAINTAINER Olof Hagsand <olof@hagsand.se>
 # For clixon and cligen
 RUN apk add --update git make build-base gcc flex bison curl-dev
 
-# evhtp dependencies
-RUN apk add --update libevent libevent-dev
-
 # nghttp2 dependencies
 RUN apk add --update nghttp2
 
 # Create a directory to hold source-code, dependencies etc
 RUN mkdir /clixon
-
-# clone libevhtp
-WORKDIR /clixon
-
-RUN git clone https://github.com/clicon/clixon-libevhtp.git
-WORKDIR /clixon/clixon-libevhtp
-RUN ./configure
-
-RUN make
-RUN mkdir /usr/local/include
-RUN make install
 
 RUN mkdir /clixon/build
 WORKDIR /clixon
@@ -78,7 +64,7 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2 --enable-evhtp
+RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
 
 RUN make
 RUN make install
@@ -117,8 +103,8 @@ RUN apk add --update flex bison
 
 # need to add www user manually
 RUN adduser -D -H -G www-data www-data
-# for libevtp
-RUN apk add --update openssl libevent
+
+RUN apk add --update openssl 
 
 # nghttp2 dependencies
 RUN apk add --update nghttp2
@@ -131,7 +117,6 @@ EXPOSE 80/tcp
 RUN adduser -D -H clicon
 
 COPY --from=0 /clixon/build/ /usr/local/
-COPY --from=0 /usr/local/lib/libevhtp.so* /usr/local/lib/
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh
