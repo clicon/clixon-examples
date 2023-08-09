@@ -13,7 +13,6 @@
   <CLICON_BACKEND_RESTCONF_PROCESS>true</CLICON_BACKEND_RESTCONF_PROCESS>
   <CLICON_XMLDB_DIR>/usr/local/var/openconfig</CLICON_XMLDB_DIR>
   <CLICON_STARTUP_MODE>init</CLICON_STARTUP_MODE>
-  <CLICON_MODULE_LIBRARY_RFC7895>false</CLICON_MODULE_LIBRARY_RFC7895>
   <autocli>
      <module-default>false</module-default>
      <rule>
