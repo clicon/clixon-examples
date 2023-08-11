@@ -1,5 +1,6 @@
 <clixon-config xmlns="http://clicon.org/config">
-  <CLICON_CONFIGFILE>/usr/local/etc/3gpp.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGFILE>/usr/local/etc/clixon/3gpp.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGDIR>/usr/local/etc/clixon/3gpp</CLICON_CONFIGDIR>
   <CLICON_FEATURE>*:*</CLICON_FEATURE>
   <CLICON_YANG_DIR>/usr/local/share/clixon</CLICON_YANG_DIR>
   <CLICON_YANG_MAIN_DIR>/usr/local/share/clixon/3gpp</CLICON_YANG_MAIN_DIR>

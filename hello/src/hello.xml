@@ -1,6 +1,7 @@
 <clixon-config xmlns="http://clicon.org/config">
   <!-- NOTE: hello.xml may not follow the way you set -\-prefix, -\-sysconfdir and others, you may need to hand-edit them to the values you used in the ./configure call. -->
-  <CLICON_CONFIGFILE>/usr/local/etc/hello.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGFILE>/usr/local/etc/clixon/hello.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGDIR>/usr/local/etc/clixon/hello</CLICON_CONFIGDIR>
   <CLICON_FEATURE>ietf-netconf:startup</CLICON_FEATURE>
   <CLICON_FEATURE>clixon-restconf:allow-auth-none</CLICON_FEATURE>
   <CLICON_YANG_DIR>/usr/local/share/clixon</CLICON_YANG_DIR>
@@ -16,25 +17,4 @@
   <CLICON_NETCONF_HELLO_OPTIONAL>true</CLICON_NETCONF_HELLO_OPTIONAL>
   <CLICON_RESTCONF_USER>clicon</CLICON_RESTCONF_USER>
   <CLICON_RESTCONF_PRIVILEGES>drop_perm</CLICON_RESTCONF_PRIVILEGES>
-  <restconf>
-      <enable>true</enable>
-      <auth-type>none</auth-type>
-      <pretty>false</pretty>
-      <debug>0</debug>
-      <log-destination>file</log-destination>
-      <socket>
-         <namespace>default</namespace>
-	 <address>0.0.0.0</address>
-	 <port>80</port>
-	 <ssl>false</ssl>
-      </socket>
-   </restconf>
-  <autocli>
-    <module-default>false</module-default>
-     <rule>
-        <name>include hello yang</name>
-        <operation>enable</operation>
-        <module-name>clixon-hello*</module-name>
-     </rule>
-  </autocli>
 </clixon-config>

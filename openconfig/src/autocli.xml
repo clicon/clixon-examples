@@ -1,0 +1,10 @@
+<clixon-config xmlns="http://clicon.org/config">
+  <autocli>
+    <module-default>false</module-default>
+    <rule>
+      <name>include openconfig</name>
+      <operation>enable</operation>
+      <module-name>openconfig*</module-name>
+    </rule>
+  </autocli>
+</clixon-config>

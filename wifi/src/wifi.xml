@@ -1,5 +1,6 @@
 <clixon-config xmlns="http://clicon.org/config">
-  <CLICON_CONFIGFILE>/usr/local/etc/wifi.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGFILE>/usr/local/etc/clixon/wifi.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGDIR>/usr/local/etc/clixon/wifi</CLICON_CONFIGDIR>
   <CLICON_FEATURE>ietf-netconf:startup</CLICON_FEATURE>
   <CLICON_FEATURE>clixon-restconf:allow-auth-none</CLICON_FEATURE>
   <CLICON_YANG_DIR>/usr/local/share/clixon</CLICON_YANG_DIR>
@@ -20,27 +21,4 @@
   <CLICON_RESTCONF_USER>clicon</CLICON_RESTCONF_USER>
   <CLICON_RESTCONF_PRIVILEGES>drop_perm</CLICON_RESTCONF_PRIVILEGES>
   <CLICON_RESTCONF_INSTALLDIR>/usr/local/sbin</CLICON_RESTCONF_INSTALLDIR>
-  <autocli>
-     <module-default>false</module-default>
-     <list-keyword-default>kw-nokey</list-keyword-default>
-     <treeref-state-default>true</treeref-state-default>
-     <rule>
-        <name>include openconfig</name>
-        <operation>enable</operation>
-        <module-name>openconfig*</module-name>
-     </rule>
-     <rule>
-        <name>compress</name>
-        <operation>compress</operation>
-	<yang-keyword>container</yang-keyword>
-	<yang-keyword-child>list</yang-keyword-child>
-     </rule>
-     <rule>
-        <name>openconfig compress</name>
-	<operation>compress</operation>
-	<yang-keyword>container</yang-keyword>
-	<schema-nodeid>config</schema-nodeid>
-	<module-name>openconfig*</module-name>
-     </rule>
-  </autocli>
 </clixon-config>

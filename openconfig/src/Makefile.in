@@ -1,7 +1,7 @@
 #
 # ***** BEGIN LICENSE BLOCK *****
 # 
-# Copyright (C) 2020, 2023 Olof Hagsand and Rubicon Communications, LLC
+# Copyright (C) 2023 Olof Hagsand and Rubicon Communications, LLC
 #
 # This file is part of CLIXON
 #
@@ -42,7 +42,7 @@ datarootdir	= @datarootdir@
 localstatedir   = @localstatedir@
 libdir          = @exec_prefix@/lib
 
-APPNAME	        = 3gpp
+APPNAME	        = openconfig
 
 CC		= @CC@
 CFLAGS  	= @CFLAGS@ -fPIC 
@@ -68,19 +68,23 @@ clean:
 distclean: clean
 	rm -f Makefile *~ .depend
 
-install: $(CLISPECS) $(APPNAME).xml
+install: $(CLISPECS) $(APPNAME).xml autocli.xml
 	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon
 	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	install -m 0644 $(APPNAME).xml $(DESTDIR)$(sysconfdir)/clixon
+	install -m 0644 autocli.xml $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
 	install -m 0644 $(CLISPECS) $(DESTDIR)$(libdir)/$(APPNAME)/clispec
+	install -d -m 0755 $(DESTDIR)$(localstatedir)
 	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
+	install -m 0644 startup_db $(DESTDIR)$(localstatedir)/$(APPNAME)/
 
 uninstall: 
 	rm -f $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
 	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME)
 	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
+	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
 
 depend:
 	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend

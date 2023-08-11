@@ -1,0 +1,10 @@
+<clixon-config xmlns="http://clicon.org/config">
+  <autocli>
+    <module-default>false</module-default>
+     <rule>
+        <name>include hello yang</name>
+        <operation>enable</operation>
+        <module-name>clixon-hello*</module-name>
+     </rule>
+  </autocli>
+</clixon-config>
