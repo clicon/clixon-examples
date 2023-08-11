@@ -4782,7 +4782,7 @@ then :
 fi
 
 
-ac_config_files="$ac_config_files Makefile hello/Makefile hello/src/Makefile hello/docker/Makefile wifi/Makefile wifi/src/Makefile wifi/docker/Makefile openconfig/Makefile openconfig/docker/Makefile 3gpp/Makefile 3gpp/src/Makefile 3gpp/yang/Makefile 3gpp/docker/Makefile"
+ac_config_files="$ac_config_files Makefile hello/Makefile hello/src/Makefile hello/docker/Makefile wifi/Makefile wifi/src/Makefile wifi/docker/Makefile openconfig/Makefile openconfig/src/Makefile openconfig/docker/Makefile 3gpp/Makefile 3gpp/src/Makefile 3gpp/yang/Makefile 3gpp/docker/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5493,6 +5493,7 @@ do
     "wifi/src/Makefile") CONFIG_FILES="$CONFIG_FILES wifi/src/Makefile" ;;
     "wifi/docker/Makefile") CONFIG_FILES="$CONFIG_FILES wifi/docker/Makefile" ;;
     "openconfig/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/Makefile" ;;
+    "openconfig/src/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/src/Makefile" ;;
     "openconfig/docker/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/docker/Makefile" ;;
     "3gpp/Makefile") CONFIG_FILES="$CONFIG_FILES 3gpp/Makefile" ;;
     "3gpp/src/Makefile") CONFIG_FILES="$CONFIG_FILES 3gpp/src/Makefile" ;;

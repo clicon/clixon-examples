@@ -1,0 +1,25 @@
+<clixon-config xmlns="http://clicon.org/config">
+  <autocli>
+    <module-default>false</module-default>
+    <list-keyword-default>kw-nokey</list-keyword-default>
+    <treeref-state-default>true</treeref-state-default>
+    <rule>
+      <name>include openconfig</name>
+      <operation>enable</operation>
+      <module-name>openconfig*</module-name>
+    </rule>
+    <rule>
+      <name>compress</name>
+      <operation>compress</operation>
+        <yang-keyword>container</yang-keyword>
+        <yang-keyword-child>list</yang-keyword-child>
+    </rule>
+    <rule>
+      <name>openconfig compress</name>
+      <operation>compress</operation>
+      <yang-keyword>container</yang-keyword>
+      <schema-nodeid>config</schema-nodeid>
+      <module-name>openconfig*</module-name>
+    </rule>
+  </autocli>
+</clixon-config>
