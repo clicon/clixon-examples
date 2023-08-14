@@ -147,15 +147,19 @@ AC_ARG_ENABLE(nls)
 AC_CONFIG_FILES([Makefile
 	  hello/Makefile
   	  hello/src/Makefile
+  	  hello/src/hello.xml
     	  hello/docker/Makefile
   	  wifi/Makefile
     	  wifi/src/Makefile
+    	  wifi/src/wifi.xml
     	  wifi/docker/Makefile
   	  openconfig/Makefile
   	  openconfig/src/Makefile
+  	  openconfig/src/openconfig.xml
     	  openconfig/docker/Makefile
 	  3gpp/Makefile
   	  3gpp/src/Makefile
+  	  3gpp/src/3gpp.xml
 	  3gpp/yang/Makefile
     	  3gpp/docker/Makefile
 ])
