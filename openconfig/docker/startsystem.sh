@@ -51,9 +51,14 @@ DBG=${DBG:-0}
 # sudo: setrlimit(RLIMIT_CORE): Operation not permitted
 echo "Set disable_coredump false" > /etc/sudo.conf
 
+chown noc:noc /home/noc
+
 # Start clixon backend
 >&2 echo "start clixon_backend:"
-/usr/local/sbin/clixon_backend -FD $DBG -s startup -l e # logs on docker logs
+/usr/local/sbin/clixon_backend -D $DBG -s startup -l e # logs on docker logs
+
+ssh-keygen -A
+exec /usr/sbin/sshd -D -e "$@"
 
 # Alt: let backend be in foreground, but then you cannot restart
-/bin/sleep 100000000
+#/bin/sleep 100000000
