@@ -51,9 +51,9 @@ RUN git clone https://github.com/clicon/cligen.git
 
 # Build cligen
 WORKDIR /clixon/cligen
-RUN ./configure --prefix=/clixon/build
+RUN ./configure --prefix=/usr/local
 RUN make
-RUN make install
+RUN make DESTDIR=/clixon/build install
 
 # Need to add www user manually
 RUN adduser -D -H -G www-data www-data
@@ -64,20 +64,18 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
+RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
 
 RUN make
-RUN make install
-RUN make install-include
+RUN make DESTDIR=/clixon/build install
+RUN make DESTDIR=/clixon/build install-include
 
 # Create paths locally (copied to /usr/local in stage 2)
 # Paths are according to openconfig.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
-RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/openconfig
-RUN mkdir /clixon/build/lib/openconfig
-RUN mkdir /clixon/build/lib/openconfig/clispec
+RUN mkdir -p /clixon/build/var/openconfig
+RUN mkdir -p /clixon/build/lib/openconfig/clispec
 
 # Copy src file from local: config file and standard clispec file
 COPY src/openconfig.xml /clixon/build/etc/clixon.xml
@@ -85,7 +83,7 @@ COPY src/openconfig_cli.cli /clixon/build/lib/openconfig/clispec/
 COPY src/startup_db /clixon/build/var/openconfig/startup_db
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
-RUN mkdir /clixon/build/share/openconfig
+RUN mkdir -p /clixon/build/share/openconfig
 WORKDIR /clixon/build/share/openconfig
 RUN git clone https://github.com/openconfig/public
 

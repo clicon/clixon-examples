@@ -42,9 +42,7 @@ RUN apk add --update git make build-base gcc flex bison curl-dev
 RUN apk add --update nghttp2
 
 # Create a directory to hold source-code, dependencies etc
-RUN mkdir /clixon
-
-RUN mkdir /clixon/build
+RUN mkdir -p /clixon/build
 WORKDIR /clixon
 
 # Clone cligen
@@ -52,9 +50,9 @@ RUN git clone https://github.com/clicon/cligen.git
 
 # Build cligen
 WORKDIR /clixon/cligen
-RUN ./configure --prefix=/clixon/build
+RUN ./configure --prefix=/usr/local
 RUN make
-RUN make install
+RUN make DESTDIR=/clixon/build install
 
 # Need to add www user manually
 RUN adduser -D -H -G www-data www-data
@@ -65,20 +63,18 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
+RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
 
 RUN make
-RUN make install
-RUN make install-include
+RUN make DESTDIR=/clixon/build install
+RUN make DESTDIR=/clixon/build install-include
 
 # Create paths locally (copied to /usr/local in stage 2)
 # Paths are according to hello.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
-RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/hello
-RUN mkdir /clixon/build/lib/hello
-RUN mkdir /clixon/build/lib/hello/clispec
+RUN mkdir -p /clixon/build/var/hello
+RUN mkdir -p /clixon/build/lib/hello/clispec
 
 # Copy src file from local: config file and standard clispec file
 COPY src/hello.xml /clixon/build/etc/clixon.xml

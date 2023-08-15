@@ -41,9 +41,7 @@ RUN apk add --update git make build-base gcc flex bison curl-dev
 RUN apk add --update nghttp2
 
 # Create a directory to hold source-code, dependencies etc
-RUN mkdir /clixon
-
-RUN mkdir /clixon/build
+RUN mkdir -p /clixon/build
 WORKDIR /clixon
 
 # Clone cligen
@@ -51,9 +49,9 @@ RUN git clone https://github.com/clicon/cligen.git
 
 # Build cligen
 WORKDIR /clixon/cligen
-RUN ./configure --prefix=/clixon/build
+RUN ./configure --prefix=/usr/local
 RUN make
-RUN make install
+RUN make DESTDIR=/clixon/build install
 
 # Need to add www user manually
 RUN adduser -D -H -G www-data www-data
@@ -64,27 +62,25 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
+RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
 
 RUN make
-RUN make install
-RUN make install-include
+RUN make DESTDIR=/clixon/build install
+RUN make DESTDIR=/clixon/build install-include
 
 # Create paths locally (copied to /usr/local in stage 2)
 # Paths are according to 3gpp.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
-RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/3gpp
-RUN mkdir /clixon/build/lib/3gpp
-RUN mkdir /clixon/build/lib/3gpp/clispec
+RUN mkdir -p /clixon/build/var/3gpp
+RUN mkdir -p /clixon/build/lib/3gpp/clispec
 
 # Copy src file from local: config file and standard clispec file
 COPY src/3gpp.xml /clixon/build/etc/clixon.xml
 COPY src/3gpp_cli.cli /clixon/build/lib/3gpp/clispec/
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
-RUN mkdir /clixon/build/share/clixon/3gpp
+RUN mkdir -p /clixon/build/share/clixon/3gpp
 COPY yang /clixon/build/share/clixon/3gpp
 
 # Copy startscript for starting backend and restconf

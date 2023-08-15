@@ -41,8 +41,7 @@ RUN apk add --update git make build-base gcc flex bison curl-dev
 RUN apk add --update nghttp2
 
 # Create a directory to hold source-code, dependencies etc
-RUN mkdir /clixon
-
+RUN mkdir -p /clixon/build
 WORKDIR /clixon
 
 # Clone cligen
@@ -50,9 +49,9 @@ RUN git clone https://github.com/clicon/cligen.git
 
 # Build cligen
 WORKDIR /clixon/cligen
-RUN ./configure --prefix=/clixon/build
+RUN ./configure --prefix=/usr/local
 RUN make
-RUN make install
+RUN make DESTDIR=/clixon/build install
 
 # Need to add www user manually
 RUN adduser -D -H -G www-data www-data
@@ -63,26 +62,19 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/clixon/build --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
+RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
 
 RUN make
-RUN make install
-RUN make install-include
-
-# Clone openconfig YANGs from git repo
-RUN mkdir /clixon/build/share/openconfig
-WORKDIR /clixon/build/share/openconfig
-RUN git clone https://github.com/openconfig/public
+RUN make DESTDIR=/clixon/build install
+RUN make DESTDIR=/clixon/build install-include
 
 # Create paths locally (copied to /usr/local in stage 2)
 # Paths are according to wifi.xml config file.
 # To make this adaptive, an installation script inside the container can be made, but now
 # the hardcoded paths are used.
-RUN mkdir /clixon/build/var
-RUN mkdir /clixon/build/var/wifi
-RUN mkdir /clixon/build/lib/wifi
-RUN mkdir /clixon/build/lib/wifi/clispec
-RUN mkdir /clixon/build/lib/wifi/backend
+RUN mkdir -p /clixon/build/var/wifi
+RUN mkdir -p /clixon/build/lib/wifi/clispec
+RUN mkdir -p /clixon/build/lib/wifi/backend
 
 # Copy src file from local: config file and standard clispec file
 COPY src/wifi.xml /clixon/build/etc/clixon.xml
