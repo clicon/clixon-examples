@@ -77,10 +77,10 @@ RUN mkdir -p /clixon/build/var/hello
 RUN mkdir -p /clixon/build/lib/hello/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/hello.xml /clixon/build/etc/clixon.xml
-COPY src/hello_cli.cli /clixon/build/lib/hello/clispec/
-COPY src/startup_db /clixon/build/var/hello/startup_db
-COPY src/clixon-hello@*.yang /clixon/build/share/clixon
+COPY src/hello.xml /clixon/build/usr/local/etc/clixon.xml
+COPY src/hello_cli.cli /clixon/build/usr/local/lib/hello/clispec/
+COPY src/startup_db /clixon/build/usr/local/var/hello/startup_db
+COPY src/clixon-hello@*.yang /clixon/build/usr/local/share/clixon
 
 # Copy startscript for starting backend and restconf
 WORKDIR /clixon
@@ -112,9 +112,6 @@ EXPOSE 80/tcp
 RUN adduser -D -H clicon
 
 COPY --from=0 /clixon/build/ /
-
-# Create symlink so you can run clixon without -f arg
-RUN ln -s /etc/clixon.xml /usr/local/etc/clixon.xml 
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

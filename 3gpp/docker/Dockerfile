@@ -76,12 +76,12 @@ RUN mkdir -p /clixon/build/var/3gpp
 RUN mkdir -p /clixon/build/lib/3gpp/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/3gpp.xml /clixon/build/etc/clixon.xml
-COPY src/3gpp_cli.cli /clixon/build/lib/3gpp/clispec/
+COPY src/3gpp.xml /clixon/build/usr/local/etc/clixon.xml
+COPY src/3gpp_cli.cli /clixon/build/usr/local/lib/3gpp/clispec/
 
 # Copy yang files from local. Paths are according to openconfig.xml config file.
 RUN mkdir -p /clixon/build/share/clixon/3gpp
-COPY yang /clixon/build/share/clixon/3gpp
+COPY yang /clixon/build/usr/local/share/clixon/3gpp
 
 # Copy startscript for starting backend and restconf
 WORKDIR /clixon
@@ -113,8 +113,6 @@ EXPOSE 80/tcp
 RUN adduser -D -H clicon
 
 COPY --from=0 /clixon/build/ /
-
-RUN ln -s /etc/clixon.xml /usr/local/etc/clixon.xml 
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

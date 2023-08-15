@@ -22,22 +22,24 @@ jobs:
       run: (git clone https://github.com/clicon/clixon.git && cd clixon && ./configure && make && sudo make install)
     - name: configure
       run: ./configure
-# hello world
+    -name: make
+      run: (make; sudo make install)
+# docker hello world
     - name: build hello world docker
       run: (cd hello/docker; make docker)
     - name: start container
       run: (cd hello/docker; sudo docker run --rm -p 8080:80 --name hello -d clixon/hello)
-# openconfig
+# docker openconfig
     - name: build openconfig docker
       run: (cd openconfig/docker; make docker)
     - name: start container
       run: (cd openconfig/docker; sudo docker run --rm -p 8081:80 --name openconfig -d clixon/openconfig)
-# wifi
+# docker wifi
     - name: build openconfig wifi docker
       run: (cd wifi/docker; make docker)
     - name: start container
       run: (cd wifi/docker; sudo docker run --rm -p 8082:80 --name wifi -d clixon/wifi)
-# 3gpp
+# docker 3gpp
     - name: build 3gpp docker
       run: (cd 3gpp/docker; make docker)
     - name: start container

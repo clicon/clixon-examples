@@ -34,11 +34,24 @@
 FROM alpine
 MAINTAINER Olof Hagsand <olof@hagsand.se>
 
-# For clixon and cligen
-RUN apk add --update git make build-base gcc flex bison curl-dev
+# Dependencies
+RUN apk add --update git make build-base gcc flex bison curl-dev nghttp2
 
-# nghttp2 dependencies
-RUN apk add --update nghttp2
+# Checkut YANG models
+RUN mkdir -p /usr/local/share/yang
+WORKDIR /usr/local/share/yang
+RUN git config --global init.defaultBranch master
+RUN git init;
+RUN git remote add -f origin https://github.com/YangModels/yang;
+RUN git config core.sparseCheckout true
+RUN echo "standard/ietf" >> .git/info/sparse-checkout
+RUN echo "standard/iana" >> .git/info/sparse-checkout
+RUN git pull origin main
+
+# Checkut Openconfig models
+RUN mkdir -p /usr/local/share/openconfig/public
+WORKDIR /usr/local/share/openconfig/public
+RUN git clone https://github.com/openconfig/public
 
 # Create a directory to hold source-code, dependencies etc
 RUN mkdir /clixon
@@ -78,14 +91,9 @@ RUN mkdir -p /clixon/build/var/openconfig
 RUN mkdir -p /clixon/build/lib/openconfig/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/openconfig.xml /clixon/build/etc/clixon.xml
-COPY src/openconfig_cli.cli /clixon/build/lib/openconfig/clispec/
-COPY src/startup_db /clixon/build/var/openconfig/startup_db
-
-# Copy yang files from local. Paths are according to openconfig.xml config file.
-RUN mkdir -p /clixon/build/share/openconfig
-WORKDIR /clixon/build/share/openconfig
-RUN git clone https://github.com/openconfig/public
+COPY src/openconfig.xml /clixon/build/usr/local/etc/clixon.xml
+COPY src/openconfig_cli.cli /clixon/build/usr/local/lib/openconfig/clispec/
+COPY src/startup_db /clixon/build/usr/local/var/openconfig/startup_db
 
 # Copy startscript for starting backend and restconf
 WORKDIR /clixon
@@ -116,10 +124,10 @@ EXPOSE 80/tcp
 # Create clicon user and group
 RUN adduser -D -H clicon
 
+# Copy from stage 1
 COPY --from=0 /clixon/build/ /
-
-# Create symlink so you can run clixon without -f arg
-RUN ln -s /etc/clixon.xml /usr/local/etc/clixon.xml
+COPY --from=0 /usr/local/share/openconfig/* /usr/local/share/openconfig/
+COPY --from=0 /usr/local/share/yang/ /usr/local/share/yang/
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

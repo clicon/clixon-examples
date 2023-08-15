@@ -36,7 +36,7 @@
 # in the directory containing this script.
 #
 
-AC_INIT(clixon-example, 0.1)
+AC_INIT([clixon-example],[0.1])
 
 # Default CFLAGS and INSTALLFLAGS unless set by environment
 : ${CFLAGS="-O2 -Wall"}
@@ -144,7 +144,7 @@ AC_MSG_RESULT(Clixon yang files are installed in ${YANG_INSTALLDIR})
 # Dummy to disable native language support (nls) to remove warnings in buildroot
 AC_ARG_ENABLE(nls)
 
-AC_OUTPUT([Makefile
+AC_CONFIG_FILES([Makefile
 	  hello/Makefile
   	  hello/src/Makefile
     	  hello/docker/Makefile
@@ -158,3 +158,4 @@ AC_OUTPUT([Makefile
 	  3gpp/yang/Makefile
     	  3gpp/docker/Makefile
 ])
+AC_OUTPUT

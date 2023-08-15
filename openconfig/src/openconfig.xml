@@ -4,6 +4,7 @@
   <CLICON_FEATURE>clixon-restconf:allow-auth-none</CLICON_FEATURE>
   <CLICON_YANG_DIR>/usr/local/share/clixon</CLICON_YANG_DIR>
   <CLICON_YANG_DIR>/usr/local/share/openconfig/public/release/models</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>/usr/local/share/yang/standard</CLICON_YANG_DIR>
   <CLICON_YANG_MODULE_MAIN>openconfig-system</CLICON_YANG_MODULE_MAIN>
   <CLICON_CLI_MODE>openconfig</CLICON_CLI_MODE>
   <CLICON_CLISPEC_DIR>/usr/local/lib/openconfig/clispec</CLICON_CLISPEC_DIR>
