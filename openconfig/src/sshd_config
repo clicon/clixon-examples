@@ -1,0 +1,12 @@
+AuthorizedKeysFile	.ssh/authorized_keys
+AllowTcpForwarding no
+GatewayPorts no
+X11Forwarding no
+Subsystem	sftp	internal-sftp
+PasswordAuthentication yes
+PubkeyAuthentication yes
+Subsystem netconf /usr/local/bin/clixon_netconf -f /usr/local/etc/clixon.xml
+Port 22
+Port 830
+Match LocalPort 830
+  ForceCommand /usr/local/bin/clixon_netconf -f /usr/local/etc/clixon.xml

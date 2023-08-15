@@ -117,6 +117,19 @@ EXPOSE 80/tcp
 # Create clicon user and group
 RUN adduser -D -H clicon
 
+# Add ssh daemon and user account with password
+EXPOSE 22/tcp
+EXPOSE 830/tcp
+
+RUN apk add --no-cache openssh
+COPY src/sshd_config /etc/ssh/sshd_config
+
+RUN adduser -h /home/noc -s /bin/sh -D noc
+RUN adduser noc clicon
+RUN echo -n 'noc:noc' | chpasswd
+
+RUN rm /etc/motd && echo "Clixon OpenConfig Demo" > /etc/motd
+
 # Copy from stage 1
 COPY --from=0 /clixon/build/ /
 COPY --from=0 /usr/local/share/openconfig/* /usr/local/share/openconfig/
