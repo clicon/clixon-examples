@@ -22,8 +22,8 @@ jobs:
       run: (git clone https://github.com/clicon/clixon.git && cd clixon && ./configure && make && sudo make install)
     - name: configure
       run: ./configure
-    -name: make
-      run: (make; sudo make install)
+    - name: make
+      run: make
 # docker hello world
     - name: build hello world docker
       run: (cd hello/docker; make docker)
