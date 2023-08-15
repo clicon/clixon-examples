@@ -35,7 +35,7 @@ srcdir  	= .
 top_srcdir  	= ../..
 
 # docker.hub image. CHANGE THIS IF YOU PUSH YOUR OWN
-IMG   = clixon/openconfig-system
+IMG   = clixon/openconfig
 
 .PHONY: all clean distclean docker push depend install uninstall
 

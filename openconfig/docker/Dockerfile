@@ -88,7 +88,9 @@ WORKDIR /clixon/build/share/openconfig
 RUN git clone https://github.com/openconfig/public
 
 # Copy startscript for starting backend and restconf
-COPY startsystem.sh /clixon/build/bin/
+WORKDIR /clixon
+COPY startsystem.sh startsystem.sh 
+RUN install startsystem.sh /clixon/build/usr/local/bin/
 
 #
 # Stage 2
@@ -114,7 +116,10 @@ EXPOSE 80/tcp
 # Create clicon user and group
 RUN adduser -D -H clicon
 
-COPY --from=0 /clixon/build/ /usr/local/
+COPY --from=0 /clixon/build/ /
+
+# Create symlink so you can run clixon without -f arg
+RUN ln -s /etc/clixon.xml /usr/local/etc/clixon.xml
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

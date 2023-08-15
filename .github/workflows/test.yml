@@ -25,12 +25,21 @@ jobs:
 # hello world
     - name: build hello world docker
       run: (cd hello/docker; make docker)
+    - name: start container
+      run: (cd hello/docker; sudo docker run --rm -p 8080:80 --name hello -d clixon/hello)
 # openconfig
     - name: build openconfig docker
       run: (cd openconfig/docker; make docker)
+    - name: start container
+      run: (cd openconfig/docker; sudo docker run --rm -p 8081:80 --name openconfig -d clixon/openconfig)
 # wifi
     - name: build openconfig wifi docker
       run: (cd wifi/docker; make docker)
+    - name: start container
+      run: (cd wifi/docker; sudo docker run --rm -p 8082:80 --name wifi -d clixon/wifi)
 # 3gpp
     - name: build 3gpp docker
       run: (cd 3gpp/docker; make docker)
+    - name: start container
+      run: (cd 3gpp/docker; sudo docker run --rm -p 8083:80 --name 3gpp -d clixon/3gpp)
+      
