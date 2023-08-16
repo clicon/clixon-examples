@@ -12,7 +12,7 @@
   <CLICON_CLI_TAB_MODE>0</CLICON_CLI_TAB_MODE>
   <CLICON_CLISPEC_DIR>@libexecdir@/wifi/clispec</CLICON_CLISPEC_DIR>
   <CLICON_BACKEND_DIR>@libexecdir@/wifi/backend</CLICON_BACKEND_DIR>
-  <CLICON_SOCK>@dlocalstatedir@/wifi.sock</CLICON_SOCK>
+  <CLICON_SOCK>@localstatedir@/wifi.sock</CLICON_SOCK>
   <CLICON_BACKEND_PIDFILE>@localstatedir@/wifi.pidfile</CLICON_BACKEND_PIDFILE>
   <CLICON_BACKEND_RESTCONF_PROCESS>true</CLICON_BACKEND_RESTCONF_PROCESS>
   <CLICON_XMLDB_DIR>@localstatedir@/wifi</CLICON_XMLDB_DIR>
