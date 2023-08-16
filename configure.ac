@@ -47,12 +47,13 @@ AC_CONFIG_AUX_DIR(aux)
 
 # Check CLIgen
 if test "$prefix" = "NONE"; then
-	CLIGEN_PREFIX="$ac_default_prefix"
-	CLIXON_PREFIX="$ac_default_prefix"
-else
-	CLIGEN_PREFIX="$prefix"
-	CLIXON_PREFIX="$prefix"
+     prefix=${ac_default_prefix}
 fi
+if test "$exec_prefix" = "NONE"; then
+     exec_prefix=${prefix}
+fi
+CLIGEN_PREFIX="$prefix"
+CLIXON_PREFIX="$prefix"
 
 AC_CHECK_LIB(m, main)
 
@@ -78,7 +79,6 @@ AC_SUBST(SH_SUFFIX)
 AC_SUBST(SYSCONFDIR)
 AC_SUBST(DATADIR)
 AC_SUBST(LIBDIR)
-AC_SUBST(LIBEXECDIR)
 AC_SUBST(LOCALSTATEDIR)
 AC_SUBST(SBINDIR)
 
@@ -113,6 +113,21 @@ if test "$prefix" = "NONE"; then
      prefix=${ac_default_prefix}
 fi
 
+AC_ARG_WITH([native-compile],
+	    AS_HELP_STRING([--without-native-compile],[Disable compiling native cligen and clixon]))
+
+# This is for native-compile
+AC_ARG_ENABLE(native-compile,
+             AS_HELP_STRING([--disable-native-compile], [Disable compiling native cligen and clixon]),
+             [if test "$enableval" = no; then
+                   enable_native_compile=no
+              else	      
+                   enable_native_compile=yes
+              fi],
+  [ enable_native_compile=yes])
+AC_MSG_RESULT(checking native-compile: $enable_native_compile)
+
+if test "$enable_native_compile" = "yes"; then
 # This is for cligen
 AC_ARG_WITH(cligen,  [  --with-cligen=dir       Use CLIGEN here ] )
 if test "${with_cligen}"; then
@@ -158,6 +173,8 @@ AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone h
 #include <cligen/cligen.h>]])
 AC_CHECK_LIB(clixon, clicon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
 
+fi # native-compile
+
 # This is where local yangs are installed
 AC_ARG_WITH(yang-installdir,
             [  --with-yang-installdir=DIR  Install yang files here (default: ${prefix}/share/clixon) ],
@@ -173,12 +190,12 @@ AC_ARG_ENABLE(nls)
 # Expand for easy replacement in hello/src/hello.xml.in
 # Special case is $libdir, which is composed from $exec_prefix
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
-SYSCONFDIR=`eval echo $sysconfdir`
-DATADIR=`eval echo $datadir`
-LIBDIR=`eval echo $libdir`
-LIBEXECDIR=`eval echo $libexecdir`
-LOCALSTATEDIR=`eval echo $localstatedir`
-SBINDIR=`eval echo $sbindir`
+SYSCONFDIR=$(eval echo $sysconfdir)
+datadir1=$(eval echo $datadir) # double eval needed since $datadir->$datarootdir
+DATADIR=$(eval echo $datadir1)
+LIBDIR=$(eval echo $libdir)
+LOCALSTATEDIR=$(eval echo $localstatedir)
+SBINDIR=$(eval echo $sbindir)
 
 AC_CONFIG_FILES([Makefile
 	  hello/Makefile
@@ -188,10 +205,12 @@ AC_CONFIG_FILES([Makefile
   	  wifi/Makefile
     	  wifi/src/Makefile
     	  wifi/src/wifi.xml
+	  wifi/yang/Makefile
     	  wifi/docker/Makefile
   	  openconfig/Makefile
   	  openconfig/src/Makefile
   	  openconfig/src/openconfig.xml
+	  openconfig/yang/Makefile
     	  openconfig/docker/Makefile
 	  3gpp/Makefile
   	  3gpp/src/Makefile

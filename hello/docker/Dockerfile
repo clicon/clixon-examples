@@ -77,7 +77,9 @@ RUN mkdir -p /clixon/build/var/hello
 RUN mkdir -p /clixon/build/lib/hello/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/hello.xml /clixon/build/usr/local/etc/clixon.xml
+COPY src/hello.xml /clixon/build/usr/local/etc/clixon/
+COPY src/autocli.xml /clixon/build/usr/local/etc/clixon/hello/
+COPY src/restconf.xml /clixon/build/usr/local/etc/clixon/hello/
 COPY src/hello_cli.cli /clixon/build/usr/local/lib/hello/clispec/
 COPY src/startup_db /clixon/build/usr/local/var/hello/startup_db
 COPY src/clixon-hello@*.yang /clixon/build/usr/local/share/clixon
@@ -112,6 +114,9 @@ EXPOSE 80/tcp
 RUN adduser -D -H clicon
 
 COPY --from=0 /clixon/build/ /
+
+# Avoid using -f
+RUN ln -s /usr/local/etc/clixon/hello.xml /usr/local/etc/clixon.xml
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

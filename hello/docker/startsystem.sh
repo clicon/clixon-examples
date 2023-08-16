@@ -53,7 +53,7 @@ echo "Set disable_coredump false" > /etc/sudo.conf
 
 # Start clixon backend
 >&2 echo "start clixon_backend:"
-/usr/local/sbin/clixon_backend -FD $DBG -f /usr/local/etc/clixon.xml -s startup -l e # logs on docker logs
+/usr/local/sbin/clixon_backend -FD $DBG -s startup -l e # logs on docker logs
 
 # Alt: let backend be in foreground, but then you cannot restart
 /bin/sleep 100000000

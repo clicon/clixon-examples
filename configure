@@ -652,7 +652,6 @@ CLICON_USER
 CPP
 SBINDIR
 LOCALSTATEDIR
-LIBEXECDIR
 LIBDIR
 DATADIR
 SYSCONFDIR
@@ -727,6 +726,8 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_debug
+with_native_compile
+enable_native_compile
 with_cligen
 with_clixon
 with_clicon_user
@@ -1367,11 +1368,15 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-debug          Build with debug symbols, default: no
+  --disable-native-compile
+                          Disable compiling native cligen and clixon
 
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --without-native-compile
+                          Disable compiling native cligen and clixon
   --with-cligen=dir       Use CLIGEN here
   --with-clixon=dir       Use Clixon here
   --with-clicon-user=user Run as this user in configuration files
@@ -2415,12 +2420,13 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 # Check CLIgen
 if test "$prefix" = "NONE"; then
-	CLIGEN_PREFIX="$ac_default_prefix"
-	CLIXON_PREFIX="$ac_default_prefix"
-else
-	CLIGEN_PREFIX="$prefix"
-	CLIXON_PREFIX="$prefix"
+     prefix=${ac_default_prefix}
 fi
+if test "$exec_prefix" = "NONE"; then
+     exec_prefix=${prefix}
+fi
+CLIGEN_PREFIX="$prefix"
+CLIXON_PREFIX="$prefix"
 
 
 
@@ -3697,7 +3703,6 @@ test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 
 
-
 #
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -4601,6 +4606,31 @@ if test "$prefix" = "NONE"; then
      prefix=${ac_default_prefix}
 fi
 
+
+# Check whether --with-native-compile was given.
+if test ${with_native_compile+y}
+then :
+  withval=$with_native_compile;
+fi
+
+
+# This is for native-compile
+# Check whether --enable-native-compile was given.
+if test ${enable_native_compile+y}
+then :
+  enableval=$enable_native_compile; if test "$enableval" = no; then
+                   enable_native_compile=no
+              else
+                   enable_native_compile=yes
+              fi
+else $as_nop
+   enable_native_compile=yes
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: checking native-compile: $enable_native_compile" >&5
+printf "%s\n" "checking native-compile: $enable_native_compile" >&6; }
+
+if test "$enable_native_compile" = "yes"; then
 # This is for cligen
 
 # Check whether --with-cligen was given.
@@ -4810,6 +4840,8 @@ else $as_nop
 fi
 
 
+fi # native-compile
+
 # This is where local yangs are installed
 
 # Check whether --with-yang-installdir was given.
@@ -4836,14 +4868,14 @@ fi
 # Expand for easy replacement in hello/src/hello.xml.in
 # Special case is $libdir, which is composed from $exec_prefix
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
-SYSCONFDIR=`eval echo $sysconfdir`
-DATADIR=`eval echo $datadir`
-LIBDIR=`eval echo $libdir`
-LIBEXECDIR=`eval echo $libexecdir`
-LOCALSTATEDIR=`eval echo $localstatedir`
-SBINDIR=`eval echo $sbindir`
+SYSCONFDIR=$(eval echo $sysconfdir)
+datadir1=$(eval echo $datadir) # double eval needed since $datadir->$datarootdir
+DATADIR=$(eval echo $datadir1)
+LIBDIR=$(eval echo $libdir)
+LOCALSTATEDIR=$(eval echo $localstatedir)
+SBINDIR=$(eval echo $sbindir)
 
-ac_config_files="$ac_config_files Makefile hello/Makefile hello/src/Makefile hello/src/hello.xml hello/docker/Makefile wifi/Makefile wifi/src/Makefile wifi/src/wifi.xml wifi/docker/Makefile openconfig/Makefile openconfig/src/Makefile openconfig/src/openconfig.xml openconfig/docker/Makefile 3gpp/Makefile 3gpp/src/Makefile 3gpp/src/3gpp.xml 3gpp/yang/Makefile 3gpp/docker/Makefile"
+ac_config_files="$ac_config_files Makefile hello/Makefile hello/src/Makefile hello/src/hello.xml hello/docker/Makefile wifi/Makefile wifi/src/Makefile wifi/src/wifi.xml wifi/yang/Makefile wifi/docker/Makefile openconfig/Makefile openconfig/src/Makefile openconfig/src/openconfig.xml openconfig/yang/Makefile openconfig/docker/Makefile 3gpp/Makefile 3gpp/src/Makefile 3gpp/src/3gpp.xml 3gpp/yang/Makefile 3gpp/docker/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5554,10 +5586,12 @@ do
     "wifi/Makefile") CONFIG_FILES="$CONFIG_FILES wifi/Makefile" ;;
     "wifi/src/Makefile") CONFIG_FILES="$CONFIG_FILES wifi/src/Makefile" ;;
     "wifi/src/wifi.xml") CONFIG_FILES="$CONFIG_FILES wifi/src/wifi.xml" ;;
+    "wifi/yang/Makefile") CONFIG_FILES="$CONFIG_FILES wifi/yang/Makefile" ;;
     "wifi/docker/Makefile") CONFIG_FILES="$CONFIG_FILES wifi/docker/Makefile" ;;
     "openconfig/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/Makefile" ;;
     "openconfig/src/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/src/Makefile" ;;
     "openconfig/src/openconfig.xml") CONFIG_FILES="$CONFIG_FILES openconfig/src/openconfig.xml" ;;
+    "openconfig/yang/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/yang/Makefile" ;;
     "openconfig/docker/Makefile") CONFIG_FILES="$CONFIG_FILES openconfig/docker/Makefile" ;;
     "3gpp/Makefile") CONFIG_FILES="$CONFIG_FILES 3gpp/Makefile" ;;
     "3gpp/src/Makefile") CONFIG_FILES="$CONFIG_FILES 3gpp/src/Makefile" ;;

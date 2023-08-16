@@ -43,15 +43,18 @@ all:
 	echo "Run make docker to build docker image"
 
 clean:
-	rm -rf src
+	rm -rf src yang
 
 distclean: clean
 	rm -f Makefile *~ .depend
 
+yang:
+	cp -R ${srcdir}/../$@ .
+
 src:
 	cp -R ${srcdir}/../$@ .
 
-docker: Dockerfile src
+docker: Dockerfile src yang
 	sudo docker build -t $(IMG) .  # --no-cache
 
 push:

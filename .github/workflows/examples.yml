@@ -1,0 +1,72 @@
+name: Clixon-examples CI
+
+on:
+  push:
+    branches:
+       - master
+       - test-actions
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '00 4 * * 6'     # Run every Saturday morning
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+# NATIVE BUILD and TEST
+    - name: install cligen native
+      run: (git clone https://github.com/clicon/cligen.git && cd cligen && ./configure && make && sudo make install)
+    - name: install ssl and nghttp2
+      run: sudo apt install -y libssl-dev libnghttp2-dev
+    - name: install clixon native
+      run: (git clone https://github.com/clicon/clixon.git && cd clixon && ./configure && make && sudo make install)
+    - name: configure
+      run: ./configure
+    - name: make and install on host
+      run: make && sudo make install && sudo ldconfig
+    - name: add clicon group
+      run: sudo useradd -M -U clicon
+    - name: start hello backend
+      run: sudo clixon_backend -f /usr/local/etc/clixon/hello.xml
+    - name: test hello cli
+      run: clixon_cli -f /usr/local/etc/clixon/hello.xml -1 show version
+    - name: install openconfig natively
+      run: (sudo mkdir -p /usr/local/share/openconfig && cd /usr/local/share/openconfig && sudo git clone https://github.com/openconfig/public)
+    - name: start wifi backend
+      run: sudo clixon_backend -f /usr/local/etc/clixon/wifi.xml
+    - name: test wifi cli
+      run: clixon_cli -f /usr/local/etc/clixon/wifi.xml -1 show version
+    - name: start openconfig backend
+      run: sudo clixon_backend -f /usr/local/etc/clixon/openconfig.xml
+    - name: test openconfig cli
+      run: clixon_cli -f /usr/local/etc/clixon/openconfig.xml -1 show version
+# DOCKER TESTS
+# docker hello world
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: ./configure --disable-native-compile
+    - name: build hello world docker
+      run: (cd hello/docker; make docker)
+    - name: start hello container
+      run: sudo docker run --rm -p 8081:80 --name hello -d clixon/hello
+    - name: test hello container
+      run: sudo docker exec -t hello clixon_cli -1 show version
+# docker wifi
+    - name: build wifi docker
+      run: (cd wifi/docker; make docker)
+    - name: start wifi container
+      run: sudo docker run --rm -p 8083:80 --name wifi -d clixon/wifi
+    - name: test wifi container
+      run: sudo docker exec -t wifi clixon_cli -1 show version
+# docker openconfig
+    - name: build openconfig docker
+      run: (cd openconfig/docker; make docker)
+    - name: start openconfig container
+      run: sudo docker run --rm -p 8082:80 --name openconfig -d clixon/openconfig
+    - name: test openconfig container
+      run: sudo docker exec -t wifi clixon_cli -1 show version

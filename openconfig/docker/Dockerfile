@@ -37,17 +37,6 @@ MAINTAINER Olof Hagsand <olof@hagsand.se>
 # Dependencies
 RUN apk add --update git make build-base gcc flex bison curl-dev nghttp2
 
-# Checkut YANG models
-RUN mkdir -p /usr/local/share/yang
-WORKDIR /usr/local/share/yang
-RUN git config --global init.defaultBranch master
-RUN git init;
-RUN git remote add -f origin https://github.com/YangModels/yang;
-RUN git config core.sparseCheckout true
-RUN echo "standard/ietf" >> .git/info/sparse-checkout
-RUN echo "standard/iana" >> .git/info/sparse-checkout
-RUN git pull origin main
-
 # Checkut Openconfig models
 RUN mkdir -p /usr/local/share/openconfig/public
 WORKDIR /usr/local/share/openconfig/public
@@ -91,9 +80,13 @@ RUN mkdir -p /clixon/build/var/openconfig
 RUN mkdir -p /clixon/build/lib/openconfig/clispec
 
 # Copy src file from local: config file and standard clispec file
-COPY src/openconfig.xml /clixon/build/usr/local/etc/clixon.xml
+COPY src/openconfig.xml /clixon/build/usr/local/etc/clixon/
+COPY src/autocli.xml /clixon/build/usr/local/etc/clixon/openconfig/
+COPY src/restconf.xml /clixon/build/usr/local/etc/clixon/openconfig/
+
 COPY src/openconfig_cli.cli /clixon/build/usr/local/lib/openconfig/clispec/
 COPY src/startup_db /clixon/build/usr/local/var/openconfig/startup_db
+COPY yang/*.yang /clixon/build/usr/local/share/clixon/
 
 # Copy startscript for starting backend and restconf
 WORKDIR /clixon
@@ -127,7 +120,9 @@ RUN adduser -D -H clicon
 # Copy from stage 1
 COPY --from=0 /clixon/build/ /
 COPY --from=0 /usr/local/share/openconfig/* /usr/local/share/openconfig/
-COPY --from=0 /usr/local/share/yang/ /usr/local/share/yang/
+
+# Avoid using -f
+RUN ln -s /usr/local/etc/clixon/openconfig.xml /usr/local/etc/clixon.xml
 
 # Start the backend and restconf deamons
 CMD /usr/local/bin/startsystem.sh

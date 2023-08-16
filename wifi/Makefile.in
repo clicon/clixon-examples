@@ -42,6 +42,7 @@ SHELL	= /bin/sh
 
 # No local install - yang files are not installed,...
 SUBDIRS  = src
+SUBDIRS += yang
 SUBDIRS += docker
 
 .PHONY: all clean depend install push $(SUBDIRS)

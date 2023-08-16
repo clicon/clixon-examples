@@ -51,12 +51,6 @@ INSTALLFLAGS  	= @INSTALLFLAGS@
 INCLUDES 	= @INCLUDES@ 
 CPPFLAGS  	= @CPPFLAGS@ -fPIC
 
-# Here is where example yang appears
-YANG_INSTALLDIR  = @YANG_INSTALLDIR@
-
-# Local yang files to install
-YANGSPECS	 = clixon-wifi@2021-06-22.yang
-
 # Example backend plugin
 # There may also be restconf/cli/netconf plugins which are not covered here, see
 # eg clixon main example
@@ -84,11 +78,11 @@ clean:
 distclean: clean
 	rm -f Makefile *~ .depend
 
-install: $(CLISPECS) $(APPNAME).xml autocli.xml $(PLUGIN)
+install: $(CLISPECS) $(APPNAME).xml autocli.xml restconf.xml $(PLUGIN) 
 	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon
 	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	install -m 0644 $(APPNAME).xml $(DESTDIR)$(sysconfdir)/clixon
-	install -m 0644 autocli.xml $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
+	install -m 0644 autocli.xml restconf.xml $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/backend
@@ -96,17 +90,13 @@ install: $(CLISPECS) $(APPNAME).xml autocli.xml $(PLUGIN)
 	install -d -m 0755 $(DESTDIR)$(localstatedir)
 	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
 	install -m 0644 startup_db $(DESTDIR)$(localstatedir)/$(APPNAME)/
-	install -d -m 0755 $(DESTDIR)$(YANG_INSTALLDIR)
-	install -m 0644 $(YANGSPECS) $(DESTDIR)$(YANG_INSTALLDIR)
 	install -m 0644 $(INSTALLFLAGS) $(PLUGIN) $(DESTDIR)$(libdir)/$(APPNAME)/backend
 
 uninstall: 
 	rm -f $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
-	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME)
+	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME)/clixon
 	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
 	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
-	for i in $(YANGSPEC) ; \
-	do rm $(DESTDIR)$(YANG_INSTALLDIR)/$$i; done
 
 depend:
 	$(CC) $(DEPENDFLAGS) $(INCLUDES) $(CFLAGS) -MM $(SRC) > .depend

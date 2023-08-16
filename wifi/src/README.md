@@ -41,13 +41,13 @@ Before you start,
 ```
 Start backend in the background:
 ```
-    sudo clixon_backend -f /usr/local/etc/wifi.xml -s startup
+    sudo clixon_backend -f /usr/local/etc/clixon/wifi.xml -s startup
 ```
 Note: use `-s init` instead if you want to start Clixon without the preconfigured restconf daemon
 
 Start cli:
 ```
-    clixon_cli -f /usr/local/etc/wifi.xml
+    clixon_cli -f /usr/local/etc/clixon/wifi.xml
 ```
 
 ## Using the CLI
@@ -56,7 +56,7 @@ The example CLI allows you to modify and view the data model using `set`, `delet
 
 The following example shows how to add a very simple configuration `hello world` using the generated CLI. The config is added to the candidate database, shown, committed to running, and then deleted.
 ```
-   olof@vandal> clixon_cli -f /usr/local/etc/wifi.xml
+   olof@vandal> clixon_cli -f /usr/local/etc/clixon/wifi.xml
 wifi> mode provision-aps provision-ap 01:02:03:04:05:06
 wifi> set config mac 01:02:03:04:05:06
 wifi> set config hostname ap1

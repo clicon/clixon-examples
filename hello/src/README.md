@@ -26,12 +26,12 @@ Before you start,
 ```
 Start backend in the background:
 ```
-    sudo clixon_backend -f /usr/local/etc/hello.xml -s startup
+    sudo clixon_backend -f /usr/local/etc/clixon/hello.xml -s startup
 ```
 
 Start cli:
 ```
-    clixon_cli -f /usr/local/etc/hello.xml
+    clixon_cli -f /usr/local/etc/clixon/hello.xml
 ```
 
 ## Using the CLI
@@ -40,7 +40,7 @@ The example CLI allows you to modify and view the data model using `set`, `delet
 
 The following example shows how to add a very simple configuration `hello world` using the generated CLI. The config is added to the candidate database, shown, committed to running, and then deleted.
 ```
-   olof@vandal> clixon_cli -f /usr/local/etc/hello.xml
+   olof@vandal> clixon_cli -f /usr/local/etc/clixon/hello.xml
    cli> set <?>
      hello                 
    cli> set hello world 
@@ -108,7 +108,7 @@ There are also [container examples](../../docker) and lots more.
 
 You can use the config of restconf in the startup datastore as an alternative:
 ```
-    sudo clixon_backend -f /usr/local/etc/hello.xml -s startup
+    sudo clixon_backend -f /usr/local/etc/clixon/hello.xml -s startup
 ```
 
 ### Installdirs

@@ -52,7 +52,8 @@ INSTALL		= @INSTALL@
 INCLUDES 	= -I. -I@srcdir@ @INCLUDES@
 SHELL		= /bin/sh
 
-SUBDIRS = hello wifi openconfig 3gpp
+SUBDIRS = hello wifi openconfig
+#SUBDIRS += 3gpp #obsolete
 
 .PHONY:	all clean depend $(SUBDIRS) install uninstall docker push TAGS .config.status
 

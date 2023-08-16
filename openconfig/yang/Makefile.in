@@ -1,7 +1,7 @@
 #
 # ***** BEGIN LICENSE BLOCK *****
 # 
-# Copyright (C) 2020-2023 Olof Hagsand and Rubicon Communications, LLC
+# Copyright (C) 2020 Olof Hagsand and Rubicon Communications, LLC
 #
 # This file is part of CLIXON
 #
@@ -42,57 +42,30 @@ datarootdir	= @datarootdir@
 localstatedir   = @localstatedir@
 libdir          = @exec_prefix@/lib
 
-APPNAME	        = hello
-
-CC		= @CC@
-CFLAGS  	= @CFLAGS@ -fPIC 
 INSTALLFLAGS  	= @INSTALLFLAGS@ 
 
-INCLUDES 	= @INCLUDES@ 
-CPPFLAGS  	= @CPPFLAGS@ -fPIC
-
 # Here is where example yang appears
-YANG_INSTALLDIR  = @YANG_INSTALLDIR@
+YANG_INSTALLDIR  = @YANG_INSTALLDIR@/3gpp
 
 # Local yang files to install
-YANGSPECS	 = clixon-hello@2019-04-17.yang
+# IETF
+YANGSPECS += ietf-interfaces@2018-02-20.yang
+YANGSPECS += iana-if-type@2023-01-26.yang
 
-.PHONY: all clean depend install 
+.PHONY: all clean distclean install uninstall depend
 
 all:
-
-.SUFFIXES: .c .o
-
-# implicit rule
-.c.o:
-	$(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -c $<
-
-CLISPECS = $(APPNAME)_cli.cli
 
 clean:
 
 distclean: clean
 	rm -f Makefile *~ .depend
 
-install: $(CLISPECS) $(APPNAME).xml autocli.xml restconf.xml
-	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon
-	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
-	install -m 0644 $(APPNAME).xml $(DESTDIR)$(sysconfdir)/clixon
-	install -m 0644 autocli.xml restconf.xml $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
-	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)
-	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
-	install -m 0644 $(CLISPECS) $(DESTDIR)$(libdir)/$(APPNAME)/clispec
-	install -d -m 0755 $(DESTDIR)$(localstatedir)
-	install -d -m 0755 $(DESTDIR)$(localstatedir)/$(APPNAME)
-	install -m 0644 startup_db $(DESTDIR)$(localstatedir)/$(APPNAME)/
+install: $(YANGSPECS)
 	install -d -m 0755 $(DESTDIR)$(YANG_INSTALLDIR)
 	install -m 0644 $(YANGSPECS) $(DESTDIR)$(YANG_INSTALLDIR)
 
 uninstall: 
-	rm -f $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
-	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME)/clixon
-	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
-	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
 	for i in $(YANGSPEC) ; \
 	do rm $(DESTDIR)$(YANG_INSTALLDIR)/$$i; done
 
