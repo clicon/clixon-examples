@@ -124,6 +124,25 @@ if test "${with_clixon}"; then
   test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
 fi
 
+# who we run as
+CLICON_USER="clicon"
+AC_ARG_WITH([clicon-user], [AS_HELP_STRING([--with-clicon-user=user], [Run as this user in configuration files])], [
+  CLICON_USER="$withval"
+])
+AC_SUBST(CLICON_USER)
+if test -n "${CLICON_USER}"; then
+    echo "Using CLICON_USER here: ${CLICON_USER}"
+fi
+
+CLICON_GROUP="clicon"
+AC_ARG_WITH([clicon-group], [AS_HELP_STRING([--with-clicon-group=group], [Run as this group in configuration files])], [
+  CLICON_GROUP="$withval"
+])
+AC_SUBST(CLICON_GROUP)
+if test -n "${CLICON_GROUP}"; then
+    echo "Using CLICON_GROUP here: ${CLICON_GROUP}"
+fi
+
 AC_CHECK_HEADERS(cligen/cligen.h,, AC_MSG_ERROR(cligen missing. Try: git clone https://github.com/olofhagsand/cligen.git))
 
 AC_CHECK_LIB(cligen, cligen_init,, AC_MSG_ERROR([CLIgen missing. Try: git clone https://github.com/olofhagsand/cligen.git]))
