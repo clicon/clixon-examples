@@ -647,6 +647,8 @@ ac_header_c_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 YANG_INSTALLDIR
+CLICON_GROUP
+CLICON_USER
 CPP
 SH_SUFFIX
 INSTALLFLAGS
@@ -721,6 +723,8 @@ enable_option_checking
 enable_debug
 with_cligen
 with_clixon
+with_clicon_user
+with_clicon_group
 with_yang_installdir
 enable_nls
 '
@@ -1364,6 +1368,9 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-cligen=dir       Use CLIGEN here
   --with-clixon=dir       Use Clixon here
+  --with-clicon-user=user Run as this user in configuration files
+  --with-clicon-group=group
+                          Run as this group in configuration files
   --with-yang-installdir=DIR  Install yang files here (default: ${prefix}/share/clixon)
 
 Some influential environment variables:
@@ -4609,6 +4616,37 @@ if test "${with_clixon}"; then
   CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
   LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
   test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
+fi
+
+# who we run as
+CLICON_USER="clicon"
+
+# Check whether --with-clicon-user was given.
+if test ${with_clicon_user+y}
+then :
+  withval=$with_clicon_user;
+  CLICON_USER="$withval"
+
+fi
+
+
+if test -n "${CLICON_USER}"; then
+    echo "Using CLICON_USER here: ${CLICON_USER}"
+fi
+
+CLICON_GROUP="clicon"
+
+# Check whether --with-clicon-group was given.
+if test ${with_clicon_group+y}
+then :
+  withval=$with_clicon_group;
+  CLICON_GROUP="$withval"
+
+fi
+
+
+if test -n "${CLICON_GROUP}"; then
+    echo "Using CLICON_GROUP here: ${CLICON_GROUP}"
 fi
 
 ac_header= ac_cache=
