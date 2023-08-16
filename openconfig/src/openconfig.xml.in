@@ -1,17 +1,17 @@
 <clixon-config xmlns="http://clicon.org/config">
-  <CLICON_CONFIGFILE>@sysconfdir@/clixon/openconfig.xml</CLICON_CONFIGFILE>
-  <CLICON_CONFIGDIR>@sysconfdir@/clixon/openconfig</CLICON_CONFIGDIR>
+  <CLICON_CONFIGFILE>@SYSCONFDIR@/clixon/openconfig.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGDIR>@SYSCONFDIR@/clixon/openconfig</CLICON_CONFIGDIR>
   <CLICON_FEATURE>ietf-netconf:startup</CLICON_FEATURE>
   <CLICON_FEATURE>clixon-restconf:allow-auth-none</CLICON_FEATURE>
-  <CLICON_YANG_DIR>@datadir@/clixon</CLICON_YANG_DIR>
-  <CLICON_YANG_DIR>@datadir@/openconfig/public/release/models</CLICON_YANG_DIR>
-  <CLICON_YANG_DIR>@datadir@/yang/standard</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>@DATADIR@/clixon</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>@DATADIR@/openconfig/public/release/models</CLICON_YANG_DIR>
+  <CLICON_YANG_DIR>@DATADIR@/yang/standard</CLICON_YANG_DIR>
   <CLICON_YANG_MODULE_MAIN>openconfig-system</CLICON_YANG_MODULE_MAIN>
   <CLICON_CLI_MODE>openconfig</CLICON_CLI_MODE>
-  <CLICON_CLISPEC_DIR>@libexecdir@/openconfig/clispec</CLICON_CLISPEC_DIR>
-  <CLICON_SOCK>@localstatedir@/openconfig.sock</CLICON_SOCK>
-  <CLICON_BACKEND_PIDFILE>@localstatedir@/openconfig.pidfile</CLICON_BACKEND_PIDFILE>
+  <CLICON_CLISPEC_DIR>@LIBEXECDIR@/openconfig/clispec</CLICON_CLISPEC_DIR>
+  <CLICON_SOCK>@LOCALSTATEDIR@/openconfig.sock</CLICON_SOCK>
+  <CLICON_BACKEND_PIDFILE>@LOCALSTATEDIR@/openconfig.pidfile</CLICON_BACKEND_PIDFILE>
   <CLICON_BACKEND_RESTCONF_PROCESS>true</CLICON_BACKEND_RESTCONF_PROCESS>
-  <CLICON_XMLDB_DIR>@localstatedir@/openconfig</CLICON_XMLDB_DIR>
+  <CLICON_XMLDB_DIR>@LOCALSTATEDIR@/openconfig</CLICON_XMLDB_DIR>
   <CLICON_STARTUP_MODE>init</CLICON_STARTUP_MODE>
 </clixon-config>
