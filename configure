@@ -650,6 +650,12 @@ YANG_INSTALLDIR
 CLICON_GROUP
 CLICON_USER
 CPP
+SBINDIR
+LOCALSTATEDIR
+LIBEXECDIR
+LIBDIR
+DATADIR
+SYSCONFDIR
 SH_SUFFIX
 INSTALLFLAGS
 INSTALL
@@ -3684,6 +3690,13 @@ test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 
 
+# Used in expansion in, e.g., hello/src/hello.xml.in
+
+
+
+
+
+
 
 #
 ac_ext=c
@@ -4819,6 +4832,16 @@ then :
   enableval=$enable_nls;
 fi
 
+
+# Expand for easy replacement in hello/src/hello.xml.in
+# Special case is $libdir, which is composed from $exec_prefix
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+SYSCONFDIR=`eval echo $sysconfdir`
+DATADIR=`eval echo $datadir`
+LIBDIR=`eval echo $libdir`
+LIBEXECDIR=`eval echo $libexecdir`
+LOCALSTATEDIR=`eval echo $localstatedir`
+SBINDIR=`eval echo $sbindir`
 
 ac_config_files="$ac_config_files Makefile hello/Makefile hello/src/Makefile hello/src/hello.xml hello/docker/Makefile wifi/Makefile wifi/src/Makefile wifi/src/wifi.xml wifi/docker/Makefile openconfig/Makefile openconfig/src/Makefile openconfig/src/openconfig.xml openconfig/docker/Makefile 3gpp/Makefile 3gpp/src/Makefile 3gpp/src/3gpp.xml 3gpp/yang/Makefile 3gpp/docker/Makefile"
 
