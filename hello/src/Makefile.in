@@ -37,8 +37,8 @@ prefix 		= @prefix@
 bindir 		= @bindir@
 includedir	= @includedir@
 datarootdir     = @datarootdir@
+datadir         = @datadir@
 sysconfdir      = @sysconfdir@
-datarootdir	= @datarootdir@
 localstatedir   = @localstatedir@
 libdir          = @exec_prefix@/lib
 
@@ -52,7 +52,7 @@ INCLUDES 	= @INCLUDES@
 CPPFLAGS  	= @CPPFLAGS@ -fPIC
 
 # Here is where example yang appears
-YANG_INSTALLDIR  = @YANG_INSTALLDIR@
+YANG_INSTALLDIR  = $(datadir)/clixon/$(APPNAME)
 
 # Local yang files to install
 YANGSPECS	 = clixon-hello@2019-04-17.yang
@@ -89,8 +89,8 @@ install: $(CLISPECS) $(APPNAME).xml autocli.xml restconf.xml
 	install -m 0644 $(YANGSPECS) $(DESTDIR)$(YANG_INSTALLDIR)
 
 uninstall: 
-	rm -f $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
-	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME)/clixon
+	rm -f $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME).xml
+	rm -rf $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
 	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
 	for i in $(YANGSPEC) ; \

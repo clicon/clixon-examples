@@ -38,7 +38,6 @@ bindir 		= @bindir@
 includedir	= @includedir@
 datarootdir     = @datarootdir@
 sysconfdir      = @sysconfdir@
-datarootdir	= @datarootdir@
 localstatedir   = @localstatedir@
 libdir          = @exec_prefix@/lib
 
@@ -93,8 +92,8 @@ install: $(CLISPECS) $(APPNAME).xml autocli.xml restconf.xml $(PLUGIN)
 	install -m 0644 $(INSTALLFLAGS) $(PLUGIN) $(DESTDIR)$(libdir)/$(APPNAME)/backend
 
 uninstall: 
-	rm -f $(DESTDIR)$(sysconfdir)/$(APPNAME).xml
-	rm -rf $(DESTDIR)$(sysconfdir)/$(APPNAME)/clixon
+	rm -f $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME).xml
+	rm -rf $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	rm -rf $(DESTDIR)$(libdir)/$(APPNAME)
 	rm -rf $(DESTDIR)$(localstatedir)/$(APPNAME)
 

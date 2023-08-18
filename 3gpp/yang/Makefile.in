@@ -37,15 +37,17 @@ prefix 		= @prefix@
 bindir 		= @bindir@
 includedir	= @includedir@
 datarootdir     = @datarootdir@
+datadir         = @datadir@
 sysconfdir      = @sysconfdir@
-datarootdir	= @datarootdir@
 localstatedir   = @localstatedir@
 libdir          = @exec_prefix@/lib
 
 INSTALLFLAGS  	= @INSTALLFLAGS@ 
 
+APPNAME	        = 3gpp
+
 # Here is where example yang appears
-YANG_INSTALLDIR  = @YANG_INSTALLDIR@/3gpp
+YANG_INSTALLDIR  = $(datadir)/clixon/$APPNAME
 
 # Local yang files to install
 # IETF

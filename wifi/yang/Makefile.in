@@ -37,15 +37,18 @@ prefix 		= @prefix@
 bindir 		= @bindir@
 includedir	= @includedir@
 datarootdir     = @datarootdir@
+datadir         = @datadir@
 sysconfdir      = @sysconfdir@
-datarootdir	= @datarootdir@
 localstatedir   = @localstatedir@
 libdir          = @exec_prefix@/lib
 
 INSTALLFLAGS  	= @INSTALLFLAGS@ 
+datadir         = @DATADIR@
+
+APPNAME	        = wifi
 
 # Here is where example yang appears
-YANG_INSTALLDIR  = @YANG_INSTALLDIR@/3gpp
+YANG_INSTALLDIR  = $(datadir)/clixon/$(APPNAME)
 
 # Local yang files to install
 YANGSPECS  = clixon-wifi@2021-06-22.yang

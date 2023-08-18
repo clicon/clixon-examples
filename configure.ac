@@ -113,6 +113,9 @@ if test "$prefix" = "NONE"; then
      prefix=${ac_default_prefix}
 fi
 
+# Enable native compile if you want to build the examples on the native host. This is the default.
+# Disable native compile if you only build dockers. Then you do not need to bother with prereqs on
+# the host itself since all compiling is in the docker env.
 AC_ARG_WITH([native-compile],
 	    AS_HELP_STRING([--without-native-compile],[Disable compiling native cligen and clixon]))
 
@@ -128,61 +131,52 @@ AC_ARG_ENABLE(native-compile,
 AC_MSG_RESULT(checking native-compile: $enable_native_compile)
 
 if test "$enable_native_compile" = "yes"; then
-# This is for cligen
-AC_ARG_WITH(cligen,  [  --with-cligen=dir       Use CLIGEN here ] )
-if test "${with_cligen}"; then
-  echo "Using CLIgen here: ${with_cligen}"
-  CPPFLAGS="-I${with_cligen}/include ${CPPFLAGS}"
-  LDFLAGS="-L${with_cligen}/lib ${LDFLAGS}"
-  test -d "$with_cligen" && CLIGEN_PREFIX="$with_cligen"
-fi
+   # This is for cligen
+   AC_ARG_WITH(cligen,  [  --with-cligen=dir       Use CLIGEN here ] )
+   if test "${with_cligen}"; then
+      echo "Using CLIgen here: ${with_cligen}"
+      CPPFLAGS="-I${with_cligen}/include ${CPPFLAGS}"
+      LDFLAGS="-L${with_cligen}/lib ${LDFLAGS}"
+      test -d "$with_cligen" && CLIGEN_PREFIX="$with_cligen"
+   fi
 
-# This is for clixon
-AC_ARG_WITH(clixon,  [  --with-clixon=dir       Use Clixon here ] )
-if test "${with_clixon}"; then
-  echo "Using Clixon here: ${with_clixon}"
-  CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
-  LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
-  test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
-fi
+   # This is for clixon
+   AC_ARG_WITH(clixon,  [  --with-clixon=dir       Use Clixon here ] )
+   if test "${with_clixon}"; then
+      echo "Using Clixon here: ${with_clixon}"
+      CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
+      LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
+      test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
+   fi
 
-# who we run as
-CLICON_USER="clicon"
-AC_ARG_WITH([clicon-user], [AS_HELP_STRING([--with-clicon-user=user], [Run as this user in configuration files])], [
-  CLICON_USER="$withval"
-])
-AC_SUBST(CLICON_USER)
-if test -n "${CLICON_USER}"; then
-    echo "Using CLICON_USER here: ${CLICON_USER}"
-fi
+   # who we run as
+   CLICON_USER="clicon"
+   AC_ARG_WITH([clicon-user], [AS_HELP_STRING([--with-clicon-user=user], [Run as this user in configuration files])], [
+      CLICON_USER="$withval"
+   ])
+   AC_SUBST(CLICON_USER)
+   if test -n "${CLICON_USER}"; then
+      echo "Using CLICON_USER here: ${CLICON_USER}"
+   fi
 
-CLICON_GROUP="clicon"
-AC_ARG_WITH([clicon-group], [AS_HELP_STRING([--with-clicon-group=group], [Run as this group in configuration files])], [
-  CLICON_GROUP="$withval"
-])
-AC_SUBST(CLICON_GROUP)
-if test -n "${CLICON_GROUP}"; then
-    echo "Using CLICON_GROUP here: ${CLICON_GROUP}"
-fi
+   CLICON_GROUP="clicon"
+   AC_ARG_WITH([clicon-group], [AS_HELP_STRING([--with-clicon-group=group], [Run as this group in configuration files])], [
+      CLICON_GROUP="$withval"
+   ])
+   AC_SUBST(CLICON_GROUP)
+   if test -n "${CLICON_GROUP}"; then
+      echo "Using CLICON_GROUP here: ${CLICON_GROUP}"
+   fi
 
-AC_CHECK_HEADERS(cligen/cligen.h,, AC_MSG_ERROR(cligen missing. Try: git clone https://github.com/olofhagsand/cligen.git))
+   AC_CHECK_HEADERS(cligen/cligen.h,, AC_MSG_ERROR(cligen missing. Try: git clone https://github.com/olofhagsand/cligen.git))
 
-AC_CHECK_LIB(cligen, cligen_init,, AC_MSG_ERROR([CLIgen missing. Try: git clone https://github.com/olofhagsand/cligen.git]))
+   AC_CHECK_LIB(cligen, cligen_init,, AC_MSG_ERROR([CLIgen missing. Try: git clone https://github.com/olofhagsand/cligen.git]))
 
-AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <signal.h>
-#include <cligen/cligen.h>]])
-AC_CHECK_LIB(clixon, clicon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
+   AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <signal.h>
+      #include <cligen/cligen.h>]])
+   AC_CHECK_LIB(clixon, clicon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
 
 fi # native-compile
-
-# This is where local yangs are installed
-AC_ARG_WITH(yang-installdir,
-            [  --with-yang-installdir=DIR  Install yang files here (default: ${prefix}/share/clixon) ],
-	    [YANG_INSTALLDIR="$withval"],
-    	    [YANG_INSTALLDIR="${prefix}/share/clixon"]		
-	    )
-AC_SUBST(YANG_INSTALLDIR)
-AC_MSG_RESULT(Clixon yang files are installed in ${YANG_INSTALLDIR})	
 
 # Dummy to disable native language support (nls) to remove warnings in buildroot
 AC_ARG_ENABLE(nls)
@@ -191,8 +185,7 @@ AC_ARG_ENABLE(nls)
 # Special case is $libdir, which is composed from $exec_prefix
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 SYSCONFDIR=$(eval echo $sysconfdir)
-datadir1=$(eval echo $datadir) # double eval needed since $datadir->$datarootdir
-DATADIR=$(eval echo $datadir1)
+DATADIR=$(eval echo $(eval echo $datadir))
 LIBDIR=$(eval echo $libdir)
 LOCALSTATEDIR=$(eval echo $localstatedir)
 SBINDIR=$(eval echo $sbindir)

@@ -646,7 +646,6 @@ ac_includes_default="\
 ac_header_c_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-YANG_INSTALLDIR
 CLICON_GROUP
 CLICON_USER
 CPP
@@ -732,7 +731,6 @@ with_cligen
 with_clixon
 with_clicon_user
 with_clicon_group
-with_yang_installdir
 enable_nls
 '
       ac_precious_vars='build_alias
@@ -1382,7 +1380,6 @@ Optional Packages:
   --with-clicon-user=user Run as this user in configuration files
   --with-clicon-group=group
                           Run as this group in configuration files
-  --with-yang-installdir=DIR  Install yang files here (default: ${prefix}/share/clixon)
 
 Some influential environment variables:
   CC          C compiler command
@@ -4606,6 +4603,9 @@ if test "$prefix" = "NONE"; then
      prefix=${ac_default_prefix}
 fi
 
+# Enable native compile if you want to build the examples on the native host. This is the default.
+# Disable native compile if you only build dockers. Then you do not need to bother with prereqs on
+# the host itself since all compiling is in the docker env.
 
 # Check whether --with-native-compile was given.
 if test ${with_native_compile+y}
@@ -4631,7 +4631,7 @@ fi
 printf "%s\n" "checking native-compile: $enable_native_compile" >&6; }
 
 if test "$enable_native_compile" = "yes"; then
-# This is for cligen
+   # This is for cligen
 
 # Check whether --with-cligen was given.
 if test ${with_cligen+y}
@@ -4639,14 +4639,14 @@ then :
   withval=$with_cligen;
 fi
 
-if test "${with_cligen}"; then
-  echo "Using CLIgen here: ${with_cligen}"
-  CPPFLAGS="-I${with_cligen}/include ${CPPFLAGS}"
-  LDFLAGS="-L${with_cligen}/lib ${LDFLAGS}"
-  test -d "$with_cligen" && CLIGEN_PREFIX="$with_cligen"
-fi
+   if test "${with_cligen}"; then
+      echo "Using CLIgen here: ${with_cligen}"
+      CPPFLAGS="-I${with_cligen}/include ${CPPFLAGS}"
+      LDFLAGS="-L${with_cligen}/lib ${LDFLAGS}"
+      test -d "$with_cligen" && CLIGEN_PREFIX="$with_cligen"
+   fi
 
-# This is for clixon
+   # This is for clixon
 
 # Check whether --with-clixon was given.
 if test ${with_clixon+y}
@@ -4654,45 +4654,45 @@ then :
   withval=$with_clixon;
 fi
 
-if test "${with_clixon}"; then
-  echo "Using Clixon here: ${with_clixon}"
-  CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
-  LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
-  test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
-fi
+   if test "${with_clixon}"; then
+      echo "Using Clixon here: ${with_clixon}"
+      CPPFLAGS="-I${with_clixon}/include ${CPPFLAGS}"
+      LDFLAGS="-L${with_clixon}/lib ${LDFLAGS}"
+      test -d "$with_clixon" && CLIXON_PREFIX="$with_clixon"
+   fi
 
-# who we run as
-CLICON_USER="clicon"
+   # who we run as
+   CLICON_USER="clicon"
 
 # Check whether --with-clicon-user was given.
 if test ${with_clicon_user+y}
 then :
   withval=$with_clicon_user;
-  CLICON_USER="$withval"
+      CLICON_USER="$withval"
 
 fi
 
 
-if test -n "${CLICON_USER}"; then
-    echo "Using CLICON_USER here: ${CLICON_USER}"
-fi
+   if test -n "${CLICON_USER}"; then
+      echo "Using CLICON_USER here: ${CLICON_USER}"
+   fi
 
-CLICON_GROUP="clicon"
+   CLICON_GROUP="clicon"
 
 # Check whether --with-clicon-group was given.
 if test ${with_clicon_group+y}
 then :
   withval=$with_clicon_group;
-  CLICON_GROUP="$withval"
+      CLICON_GROUP="$withval"
 
 fi
 
 
-if test -n "${CLICON_GROUP}"; then
-    echo "Using CLICON_GROUP here: ${CLICON_GROUP}"
-fi
+   if test -n "${CLICON_GROUP}"; then
+      echo "Using CLICON_GROUP here: ${CLICON_GROUP}"
+   fi
 
-ac_header= ac_cache=
+   ac_header= ac_cache=
 for ac_item in $ac_header_c_list
 do
   if test $ac_cache; then
@@ -4734,7 +4734,7 @@ fi
 
 done
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for cligen_init in -lcligen" >&5
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for cligen_init in -lcligen" >&5
 printf %s "checking for cligen_init in -lcligen... " >&6; }
 if test ${ac_cv_lib_cligen_cligen_init+y}
 then :
@@ -4780,10 +4780,10 @@ else $as_nop
 fi
 
 
-       for ac_header in clixon/clixon.h
+          for ac_header in clixon/clixon.h
 do :
   ac_fn_c_check_header_compile "$LINENO" "clixon/clixon.h" "ac_cv_header_clixon_clixon_h" "#include <signal.h>
-#include <cligen/cligen.h>
+      #include <cligen/cligen.h>
 "
 if test "x$ac_cv_header_clixon_clixon_h" = xyes
 then :
@@ -4794,7 +4794,7 @@ else $as_nop
 fi
 
 done
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for clicon_log_init in -lclixon" >&5
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for clicon_log_init in -lclixon" >&5
 printf %s "checking for clicon_log_init in -lclixon... " >&6; }
 if test ${ac_cv_lib_clixon_clicon_log_init+y}
 then :
@@ -4842,21 +4842,6 @@ fi
 
 fi # native-compile
 
-# This is where local yangs are installed
-
-# Check whether --with-yang-installdir was given.
-if test ${with_yang_installdir+y}
-then :
-  withval=$with_yang_installdir; YANG_INSTALLDIR="$withval"
-else $as_nop
-  YANG_INSTALLDIR="${prefix}/share/clixon"
-
-fi
-
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: Clixon yang files are installed in ${YANG_INSTALLDIR}" >&5
-printf "%s\n" "Clixon yang files are installed in ${YANG_INSTALLDIR}" >&6; }
-
 # Dummy to disable native language support (nls) to remove warnings in buildroot
 # Check whether --enable-nls was given.
 if test ${enable_nls+y}
@@ -4869,8 +4854,7 @@ fi
 # Special case is $libdir, which is composed from $exec_prefix
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 SYSCONFDIR=$(eval echo $sysconfdir)
-datadir1=$(eval echo $datadir) # double eval needed since $datadir->$datarootdir
-DATADIR=$(eval echo $datadir1)
+DATADIR=$(eval echo $(eval echo $datadir))
 LIBDIR=$(eval echo $libdir)
 LOCALSTATEDIR=$(eval echo $localstatedir)
 SBINDIR=$(eval echo $sbindir)
