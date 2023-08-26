@@ -4,5 +4,3 @@ Openconfig YANGs from: [openconfig-wifi](https://github.com/openconfig/public/tr
 
 * [Local host build](src)
 * [Docker container build](docker)
-
-

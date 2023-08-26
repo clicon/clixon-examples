@@ -77,11 +77,11 @@ clean:
 distclean: clean
 	rm -f Makefile *~ .depend
 
-install: $(CLISPECS) $(APPNAME).xml autocli.xml restconf.xml $(PLUGIN) 
+install: $(CLISPECS) $(APPNAME).xml autocli.xml $(PLUGIN) 
 	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon
 	install -d -m 0755 $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	install -m 0644 $(APPNAME).xml $(DESTDIR)$(sysconfdir)/clixon
-	install -m 0644 autocli.xml restconf.xml $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
+	install -m 0644 autocli.xml $(DESTDIR)$(sysconfdir)/clixon/$(APPNAME)
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/clispec
 	install -d -m 0755 $(DESTDIR)$(libdir)/$(APPNAME)/backend

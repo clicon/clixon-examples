@@ -1,10 +1,18 @@
 <clixon-config xmlns="http://clicon.org/config">
   <autocli>
     <module-default>false</module-default>
+    <list-keyword-default>kw-nokey</list-keyword-default>
+    <treeref-state-default>true</treeref-state-default>
+    <grouping-treeref>true</grouping-treeref>
     <rule>
-      <name>include openconfig</name>
+      <name>include openconfig system</name>
       <operation>enable</operation>
-      <module-name>openconfig*</module-name>
+      <module-name>openconfig-system</module-name>
+    </rule>
+    <rule>
+      <name>include openconfig interfaces</name>
+      <operation>enable</operation>
+      <module-name>openconfig-interfaces</module-name>
     </rule>
   </autocli>
 </clixon-config>
