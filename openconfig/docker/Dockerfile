@@ -82,8 +82,6 @@ RUN mkdir -p /clixon/build/lib/openconfig/clispec
 # Copy src file from local: config file and standard clispec file
 COPY src/openconfig.xml /clixon/build/usr/local/etc/clixon/
 COPY src/autocli.xml /clixon/build/usr/local/etc/clixon/openconfig/
-COPY src/restconf.xml /clixon/build/usr/local/etc/clixon/openconfig/
-
 COPY src/openconfig_cli.cli /clixon/build/usr/local/lib/openconfig/clispec/
 COPY src/startup_db /clixon/build/usr/local/var/openconfig/startup_db
 COPY yang/*.yang /clixon/build/usr/local/share/clixon/

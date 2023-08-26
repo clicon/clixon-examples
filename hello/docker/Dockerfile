@@ -79,7 +79,6 @@ RUN mkdir -p /clixon/build/lib/hello/clispec
 # Copy src file from local: config file and standard clispec file
 COPY src/hello.xml /clixon/build/usr/local/etc/clixon/
 COPY src/autocli.xml /clixon/build/usr/local/etc/clixon/hello/
-COPY src/restconf.xml /clixon/build/usr/local/etc/clixon/hello/
 COPY src/hello_cli.cli /clixon/build/usr/local/lib/hello/clispec/
 COPY src/startup_db /clixon/build/usr/local/var/hello/startup_db
 COPY src/clixon-hello@*.yang /clixon/build/usr/local/share/clixon

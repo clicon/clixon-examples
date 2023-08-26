@@ -81,8 +81,6 @@ RUN mkdir -p /clixon/build/lib/wifi/backend
 # Copy src file from local: config file and standard clispec file
 COPY src/wifi.xml /clixon/build/usr/local/etc/clixon/
 COPY src/autocli.xml /clixon/build/usr/local/etc/clixon/wifi/
-COPY src/restconf.xml /clixon/build/usr/local/etc/clixon/wifi/
-
 COPY src/wifi_cli.cli /clixon/build/usr/local/lib/wifi/clispec/
 COPY src/startup_db /clixon/build/usr/local/var/wifi/startup_db
 COPY yang/*.yang /clixon/build/usr/local/share/clixon/
