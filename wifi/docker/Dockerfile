@@ -64,7 +64,7 @@ RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
 
 # Configure, build and install clixon
-RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build --with-restconf=native --enable-nghttp2
+RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build/usr/local --with-restconf=native --enable-nghttp2
 
 RUN make
 RUN make DESTDIR=/clixon/build install
