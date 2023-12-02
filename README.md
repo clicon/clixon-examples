@@ -2,7 +2,7 @@
   <img src="http://www.clicon.org/Clixon_logga_liggande_med-ikon.png" width="400">
 </div>
 
-[![Build Status](https://github.com/clicon/clixon-examples/actions/workflows/test.yml/badge.svg)](https://github.com/clicon/clixon-examples/actions/workflows/test.yml)
+[![Build Status](https://github.com/clicon/clixon-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/clicon/clixon-examples/actions/workflows/ci.yml)
 
 # Examples
 
