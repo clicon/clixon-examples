@@ -54,7 +54,6 @@
 #include <clixon/clixon_backend.h> 
 
 int wifi_commit(clicon_handle h, transaction_data td) {
-    clicon_debug(1, "wifi commit");
     return 0;
 }
 
