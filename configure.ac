@@ -174,7 +174,7 @@ if test "$enable_native_compile" = "yes"; then
 
    AC_CHECK_HEADERS(clixon/clixon.h,, AC_MSG_ERROR(Clixon missing. Try: git clone https://github.com/clicon/clixon.git), [[#include <signal.h>
       #include <cligen/cligen.h>]])
-   AC_CHECK_LIB(clixon, clicon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
+   AC_CHECK_LIB(clixon, clixon_log_init,, AC_MSG_ERROR([Clixon missing. Try: git clone https://github.com/clicon/clixon.git]),)
 
 fi # native-compile
 
