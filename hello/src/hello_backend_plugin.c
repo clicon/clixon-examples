@@ -57,8 +57,14 @@
 /*
  * This file reflects the state of hello world.  If it exists, hello
  * world is set.  If it does not exit, then hello world is not set.
+ * If it exists, it contains the "to" value.
  */
 #define WORLD_FILE "/tmp/world"
+
+struct hello_data {
+    char to[10];
+    enum { HELLO_NOP, HELLO_ADD, HELLO_DEL } op;
+};
 
 /*
  * Allocate an integer for us to store the results of validation in.
@@ -66,7 +72,7 @@
  */
 static int
 hello_begin(clicon_handle h, transaction_data td) {
-    int *data;
+    struct hello_data *data;
     int rv;
 
     printf("*****hello begin*****\n");
@@ -75,7 +81,8 @@ hello_begin(clicon_handle h, transaction_data td) {
 	clixon_err(OE_XML, 0, "Could not allocate memory");
 	return -1;
     }
-    *data = -1;
+    data->op = HELLO_NOP;
+    memset(data->to, 0, sizeof(data->to));
     rv = transaction_arg_set(td, data);
     if (rv) {
 	free(data);
@@ -86,25 +93,31 @@ hello_begin(clicon_handle h, transaction_data td) {
 
 static int
 hello_end(clicon_handle h, transaction_data td) {
-    int *data = transaction_arg(td);
+    struct hello_data *data = transaction_arg(td);
 
     printf("*****hello end*****\n");
     free(data);
     return 0;
 }
 
+static const char *valid_tos[] = { "city", "state", "country", "world", NULL };
+
 /*
  * Validate that the current XML object is of the form:
  *   <hello xmlns="urn:example:hello">
- *     <world/>
+ *     <to>world</to>
  *   </hello>
+ * Returns the contents of "to" in str.
+ *
+ * Return value is 0 for not found, 1 for found, and -1 for error.
  */
 static int
-find_hello_world(cxobj *vec)
+find_hello_to(cxobj *vec, const char **str)
 {
-    bool world_found = false, ns_found = false;
-    cxobj *c;
-    int j;
+    bool to_found = false, ns_found = false;
+    cxobj *c, *c2;
+    int j, k;
+    char *s;
 
     if (strcmp(xml_name(vec), "hello") != 0)
 	return 0;
@@ -131,29 +144,56 @@ find_hello_world(cxobj *vec)
 	    ns_found = true;
 	    continue;
 	}
-	if (strcmp(xml_name(c), "world") != 0) {
-	    clixon_err(OE_XML, 0, "Non-\"world\" in hello vec: %s",
+	if (strcmp(xml_name(c), "to") != 0) {
+	    clixon_err(OE_XML, 0, "Non-\"to\" in hello vec: %s",
 		       xml_name(c));
 	    return -1;
 	}
-	if (world_found) {
-	    clixon_err(OE_XML, 0, "Multiple \"world\" in hello vec");
+	if (to_found) {
+	    clixon_err(OE_XML, 0, "Multiple \"to\" in hello vec");
 	    return -1;
 	}
 
-	world_found = true;
+	c2 = xml_child_i(c, 0);
+	if (!c2) {
+	    clixon_err(OE_XML, 0, "The \"to\" element doesn't have data");
+	    return -1;
+	}
+
+	if (strcmp(xml_name(c2), "body") != 0) {
+	    clixon_err(OE_XML, 0, "The \"to\" element doesn't have a body");
+	    return -1;
+	}
+	s = xml_value(c2);
+	if (!s) {
+	    clixon_err(OE_XML, 0, "The \"to\" element doesn't have a value");
+	    return -1;
+	}
+
+	for (k = 0; valid_tos[k]; k++) {
+	    if (strcmp(valid_tos[k], s) == 0)
+		break;
+	}
+	if (!valid_tos[k]) {
+	    clixon_err(OE_XML, 0, "Invalid \"to\" element: %s", s);
+	    return -1;
+	}
+
+	*str = valid_tos[k];
+	to_found = true;
     }
 
-    if (ns_found && world_found)
+    if (ns_found && to_found)
 	return 1;
     return 0;
 }
 
 static int
 hello_validate(clicon_handle h, transaction_data td) {
-    int *data = transaction_arg(td);
+    struct hello_data *data = transaction_arg(td);
     cxobj **vec;
     size_t i, len;
+    int rv;
 
     printf("*****hello validate*****\n");
     transaction_print(stdout, td);
@@ -161,29 +201,52 @@ hello_validate(clicon_handle h, transaction_data td) {
     vec = transaction_dvec(td);
     len = transaction_dlen(td);
     for (i = 0; i < len; i++) {
-	switch (find_hello_world(vec[i])) {
-	case 0:
-	    break;
-	case 1:
-	    *data = 0;
-	    break;
-	default:
+	const char *place;
+
+	rv = find_hello_to(vec[i], &place);
+	if (rv == -1)
 	    return -1;
-	}
+	if (!rv)
+	    continue;
+	strncpy(data->to, place, sizeof(data->to) - 1);
+	data->op = HELLO_DEL;
     }
 
     vec = transaction_avec(td);
     len = transaction_alen(td);
     for (i = 0; i < len; i++) {
-	switch (find_hello_world(vec[i])) {
-	case 0:
-	    break;
-	case 1:
-	    *data = 1;
-	    break;
-	default:
+	const char *place;
+
+	rv = find_hello_to(vec[i], &place);
+	if (rv == -1)
 	    return -1;
-	}
+	if (!rv)
+	    continue;
+	strncpy(data->to, place, sizeof(data->to) - 1);
+	data->op = HELLO_ADD;
+    }
+
+    /*
+     * We do not look at the old data (_scvec), we just look at the
+     * changed data.  The only thing that can change is what is in
+     * "to", so we check the parent of "to" to verify it.
+     */
+    len = transaction_clen(td);
+    vec = transaction_tcvec(td);
+    for (i = 0; i < len; i++) {
+	cxobj *p = xml_parent(vec[i]);
+	const char *place;
+
+	if (!p)
+	    continue;
+
+	rv = find_hello_to(p, &place);
+	if (rv == -1)
+	    return -1;
+	if (!rv)
+	    continue;
+	strncpy(data->to, place, sizeof(data->to) - 1);
+	data->op = HELLO_ADD;
     }
 
     return 0;
@@ -191,13 +254,13 @@ hello_validate(clicon_handle h, transaction_data td) {
 
 static int
 hello_commit(clicon_handle h, transaction_data td) {
-    int *data = transaction_arg(td);
+    struct hello_data *data = transaction_arg(td);
     FILE *f;
     int rv;
 
-    printf("*****hello commit*****: %d\n", *data);
-    switch (*data) {
-    case 0:
+    printf("*****hello commit*****: %d\n", data->op);
+    switch (data->op) {
+    case HELLO_DEL:
 	rv = remove(WORLD_FILE);
 	if (rv < 0) {
 	    clixon_err(OE_XML, 0, "Error deleting %s: %s",
@@ -206,16 +269,17 @@ hello_commit(clicon_handle h, transaction_data td) {
 	}
 	break;
 
-    case 1:
+    case HELLO_ADD:
 	f = fopen("/tmp/world", "w");
 	if (!f) {
 	    clixon_err(OE_XML, 0, "Error creating %s: %s",
 		       WORLD_FILE, strerror(errno));
 	    return -1;
 	}
+	fprintf(f, "%s", data->to);
 	fclose(f);
 
-    default:
+    case HELLO_NOP:
 	break;
     }
     return 0;
@@ -224,27 +288,45 @@ hello_commit(clicon_handle h, transaction_data td) {
 static int
 hello_statedata(clixon_handle h, cvec *nsc, char *xpath, cxobj *xtop)
 {
-    int     retval = -1;
+    int rv = -1;
     cxobj **xvec = NULL;
     FILE *f = fopen(WORLD_FILE, "r");
+    char to[10], xmlstr[200];
+    int k;
 
-    printf("*****hello statedata*****\n");
+    printf("*****hello statedata*****: %p\n", f);
 
     if (f) {
+	memset(to, 0, sizeof(to));
+	k = fread(to, 1, 9, f);
 	fclose(f);
-	if (clixon_xml_parse_string("<hello xmlns=\"urn:example:hello\">"
-				    "<world/>"
-				    "</hello>", YB_NONE, NULL, &xtop, NULL) < 0)
+
+	if (!k) {
+	    clixon_err(OE_XML, 0, "Empty %s contents", WORLD_FILE);
+	    goto done;
+	}
+	for (k = 0; valid_tos[k]; k++) {
+	    if (strcmp(valid_tos[k], to) == 0)
+		break;
+	}
+	if (!valid_tos[k]) {
+	    clixon_err(OE_XML, 0, "Invalid %s contents: %s", WORLD_FILE, to);
+	    goto done;
+	}
+
+	snprintf(xmlstr, sizeof(xmlstr),
+		 "<hello xmlns=\"urn:example:hello\"><to>%s</to></hello>", to);
+	if (clixon_xml_parse_string(xmlstr, YB_NONE, NULL, &xtop, NULL) < 0)
 	    goto done;
     } else {
 	if (clixon_xml_parse_string("", YB_NONE, NULL, &xtop, NULL) < 0)
 	    goto done;
     }
-    retval = 0;
+    rv = 0;
  done:
     if (xvec)
         free(xvec);
-    return retval;
+    return rv;
 }
 
 static clixon_plugin_api api = {
