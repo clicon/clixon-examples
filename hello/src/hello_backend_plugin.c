@@ -54,8 +54,16 @@
 /* These include signatures for plugin and transaction callbacks. */
 #include <clixon/clixon_backend.h> 
 
-static bool hello_state = false;
+/*
+ * This file reflects the state of hello world.  If it exists, hello
+ * world is set.  If it does not exit, then hello world is not set.
+ */
+#define WORLD_FILE "/tmp/world"
 
+/*
+ * Allocate an integer for us to store the results of validation in.
+ * That was we don't have to parse again in the commit.
+ */
 static int
 hello_begin(clicon_handle h, transaction_data td) {
     int *data;
@@ -79,29 +87,46 @@ hello_begin(clicon_handle h, transaction_data td) {
 static int
 hello_end(clicon_handle h, transaction_data td) {
     int *data = transaction_arg(td);
+
     printf("*****hello end*****\n");
     free(data);
     return 0;
 }
 
+/*
+ * Validate that the current XML object is of the form:
+ *   <hello xmlns="urn:example:hello">
+ *     <world/>
+ *   </hello>
+ */
 static int
 find_hello_world(cxobj *vec)
 {
     bool world_found = false, ns_found = false;
     cxobj *c;
     int j;
-    char *ns = NULL;
 
     if (strcmp(xml_name(vec), "hello") != 0)
 	return 0;
+    /*
+     * It would be nice to be able to use nscache_xxx() for this.
+     * However, it's not always set for some reason.  The xmlns entry
+     * is always in the children, though, so use that.
+     */
     for (j = 0; (c = xml_child_i(vec, j)); j++) {
 	if (strcmp(xml_name(c), "xmlns") == 0) {
-	    if (ns) {
+	    char *ns;
+
+	    if (ns_found) {
 		clixon_err(OE_XML, 0, "Multiple xmlns in hello");
 		return -1;
 	    }
 	    ns = xml_value(c);
-	    if (!ns || strcmp(ns, "urn:example:hello") != 0)
+	    if (!ns) {
+		clixon_err(OE_XML, 0, "xmlns has no value");
+		return -1;
+	    }
+	    if (strcmp(ns, "urn:example:hello") != 0)
 		return 0;
 	    ns_found = true;
 	    continue;
@@ -115,6 +140,7 @@ find_hello_world(cxobj *vec)
 	    clixon_err(OE_XML, 0, "Multiple \"world\" in hello vec");
 	    return -1;
 	}
+
 	world_found = true;
     }
 
@@ -166,10 +192,32 @@ hello_validate(clicon_handle h, transaction_data td) {
 static int
 hello_commit(clicon_handle h, transaction_data td) {
     int *data = transaction_arg(td);
+    FILE *f;
+    int rv;
 
     printf("*****hello commit*****: %d\n", *data);
-    if (*data >= 0)
-	hello_state = *data;
+    switch (*data) {
+    case 0:
+	rv = remove(WORLD_FILE);
+	if (rv < 0) {
+	    clixon_err(OE_XML, 0, "Error deleting %s: %s",
+		       WORLD_FILE, strerror(errno));
+	    return -1;
+	}
+	break;
+
+    case 1:
+	f = fopen("/tmp/world", "w");
+	if (!f) {
+	    clixon_err(OE_XML, 0, "Error creating %s: %s",
+		       WORLD_FILE, strerror(errno));
+	    return -1;
+	}
+	fclose(f);
+
+    default:
+	break;
+    }
     return 0;
 }
 
@@ -178,10 +226,12 @@ hello_statedata(clixon_handle h, cvec *nsc, char *xpath, cxobj *xtop)
 {
     int     retval = -1;
     cxobj **xvec = NULL;
+    FILE *f = fopen(WORLD_FILE, "r");
 
-    printf("*****hello statedata*****: %d\n", hello_state);
+    printf("*****hello statedata*****\n");
 
-    if (hello_state) {
+    if (f) {
+	fclose(f);
 	if (clixon_xml_parse_string("<hello xmlns=\"urn:example:hello\">"
 				    "<world/>"
 				    "</hello>", YB_NONE, NULL, &xtop, NULL) < 0)
