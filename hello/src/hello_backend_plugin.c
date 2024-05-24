@@ -43,6 +43,7 @@
 #include <syslog.h>
 #include <fcntl.h>
 #include <sys/time.h>
+#include <stdbool.h>
 
 /* clicon */
 #include <cligen/cligen.h>
@@ -53,56 +54,155 @@
 /* These include signatures for plugin and transaction callbacks. */
 #include <clixon/clixon_backend.h> 
 
-int hello_validate(clicon_handle h, transaction_data td) {
-    cxobj **cxvec;
+static bool hello_state = false;
+
+static int
+hello_begin(clicon_handle h, transaction_data td) {
+    int *data;
+    int rv;
+
+    printf("*****hello begin*****\n");
+    data = malloc(sizeof(*data));
+    if (!data) {
+	clixon_err(OE_XML, 0, "Could not allocate memory");
+	return -1;
+    }
+    *data = -1;
+    rv = transaction_arg_set(td, data);
+    if (rv) {
+	free(data);
+	return rv;
+    }
+    return 0;
+}
+
+static int
+hello_end(clicon_handle h, transaction_data td) {
+    int *data = transaction_arg(td);
+    printf("*****hello end*****\n");
+    free(data);
+    return 0;
+}
+
+static int
+find_hello_world(cxobj *vec)
+{
+    bool world_found = false, ns_found = false;
+    cxobj *c;
+    int j;
+    char *ns = NULL;
+
+    if (strcmp(xml_name(vec), "hello") != 0)
+	return 0;
+    for (j = 0; (c = xml_child_i(vec, j)); j++) {
+	if (strcmp(xml_name(c), "xmlns") == 0) {
+	    if (ns) {
+		clixon_err(OE_XML, 0, "Multiple xmlns in hello");
+		return -1;
+	    }
+	    ns = xml_value(c);
+	    if (!ns || strcmp(ns, "urn:example:hello") != 0)
+		return 0;
+	    ns_found = true;
+	    continue;
+	}
+	if (strcmp(xml_name(c), "world") != 0) {
+	    clixon_err(OE_XML, 0, "Non-\"world\" in hello vec: %s",
+		       xml_name(c));
+	    return -1;
+	}
+	if (world_found) {
+	    clixon_err(OE_XML, 0, "Multiple \"world\" in hello vec");
+	    return -1;
+	}
+	world_found = true;
+    }
+
+    if (ns_found && world_found)
+	return 1;
+    return 0;
+}
+
+static int
+hello_validate(clicon_handle h, transaction_data td) {
+    int *data = transaction_arg(td);
+    cxobj **vec;
     size_t i, len;
 
     printf("*****hello validate*****\n");
-    printf("src\n");
-    xml_print(stdout, transaction_src(td));
-    printf("target\n");
-    xml_print(stdout, transaction_target(td));
-    printf("dvec\n");
-    cxvec = transaction_dvec(td);
+    transaction_print(stdout, td);
+
+    vec = transaction_dvec(td);
     len = transaction_dlen(td);
     for (i = 0; i < len; i++) {
-	printf(" [%lu] ", i);
-	xml_print(stdout, cxvec[i]);
+	switch (find_hello_world(vec[i])) {
+	case 0:
+	    break;
+	case 1:
+	    *data = 0;
+	    break;
+	default:
+	    return -1;
+	}
     }
-    printf("avec\n");
-    cxvec = transaction_avec(td);
+
+    vec = transaction_avec(td);
     len = transaction_alen(td);
     for (i = 0; i < len; i++) {
-	printf(" [%lu] ", i);
-	xml_print(stdout, cxvec[i]);
+	switch (find_hello_world(vec[i])) {
+	case 0:
+	    break;
+	case 1:
+	    *data = 1;
+	    break;
+	default:
+	    return -1;
+	}
     }
-    printf("scvec\n");
-    cxvec = transaction_scvec(td);
-    len = transaction_clen(td);
-    for (i = 0; i < len; i++) {
-	printf(" [%lu] ", i);
-	xml_print(stdout, cxvec[i]);
-    }
-    printf("tcvec\n");
-    cxvec = transaction_tcvec(td);
-    for (i = 0; i < len; i++) {
-	printf(" [%lu] ", i);
-	xml_print(stdout, cxvec[i]);
-    }
+
     return 0;
 }
 
-int hello_commit(clicon_handle h, transaction_data td) {
-    printf("*****hello commit*****\n");
+static int
+hello_commit(clicon_handle h, transaction_data td) {
+    int *data = transaction_arg(td);
+
+    printf("*****hello commit*****: %d\n", *data);
+    if (*data >= 0)
+	hello_state = *data;
     return 0;
 }
 
-/* Forward declaration */
-clixon_plugin_api *clixon_plugin_init(clicon_handle h);
+static int
+hello_statedata(clixon_handle h, cvec *nsc, char *xpath, cxobj *xtop)
+{
+    int     retval = -1;
+    cxobj **xvec = NULL;
+
+    printf("*****hello statedata*****: %d\n", hello_state);
+
+    if (hello_state) {
+	if (clixon_xml_parse_string("<hello xmlns=\"urn:example:hello\">"
+				    "<world/>"
+				    "</hello>", YB_NONE, NULL, &xtop, NULL) < 0)
+	    goto done;
+    } else {
+	if (clixon_xml_parse_string("", YB_NONE, NULL, &xtop, NULL) < 0)
+	    goto done;
+    }
+    retval = 0;
+ done:
+    if (xvec)
+        free(xvec);
+    return retval;
+}
 
 static clixon_plugin_api api = {
-    "hello backend",
-    clixon_plugin_init,
+    .ca_name = "hello backend",
+    .ca_init = clixon_plugin_init,
+    .ca_statedata = hello_statedata,
+    .ca_trans_begin = hello_begin,
+    .ca_trans_end = hello_end,
     .ca_trans_commit = hello_commit,
     .ca_trans_validate = hello_validate,
 };
