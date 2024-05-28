@@ -216,9 +216,7 @@ print_xml_flags(FILE *f, uint16_t flags)
 static void
 print_xml(FILE *f, int indent, cxobj *x)
 {
-    char *name;
-    char *value;
-    char *prefix;
+    char *name, *value, *prefix, *s;
     uint16_t flags;
     cxobj *c;
     unsigned int i;
@@ -242,10 +240,15 @@ print_xml(FILE *f, int indent, cxobj *x)
 	fputc(')', f);
     }
     print_xml_flags(f, flags);
-    fputc('\n', f);
 
-    for (i = 0; (c = xml_child_i(x, i)); i++)
-	print_xml(f, indent + 2, c);
+    s = xml_body(x);
+    if (s) {
+	fprintf(f, ": %s\n", s);
+    } else {
+	fputc('\n', f);
+	for (i = 0; (c = xml_child_i(x, i)); i++)
+	    print_xml(f, indent + 2, c);
+    }
 }
 
 static int
