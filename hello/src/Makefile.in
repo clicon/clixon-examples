@@ -55,7 +55,7 @@ CPPFLAGS  	= @CPPFLAGS@ -fPIC
 YANG_INSTALLDIR  = $(datadir)/clixon/$(APPNAME)
 
 # Local yang files to install
-YANGSPECS	 = clixon-hello@2019-04-17.yang
+YANGSPECS	 = clixon-hello@2024-05-25.yang
 
 .PHONY: all clean depend install 
 
