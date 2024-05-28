@@ -188,6 +188,66 @@ find_hello_to(cxobj *vec, const char **str)
     return 0;
 }
 
+static const char *xml_flag_strs[] = {
+    "mark",
+    "transient",
+    "add",
+    "del",
+    "change",
+    "none",
+    "default",
+    "top",
+    "bodykey",
+    "anydata",
+    NULL
+};
+
+static void
+print_xml_flags(FILE *f, uint16_t flags)
+{
+    unsigned int i;
+
+    for (i = 0; xml_flag_strs[i]; i++) {
+	if (flags & 1 << i)
+	    fprintf(f, " %s", xml_flag_strs[i]);
+    }
+}
+
+static void
+print_xml(FILE *f, int indent, cxobj *x)
+{
+    char *name;
+    char *value;
+    char *prefix;
+    uint16_t flags;
+    cxobj *c;
+    unsigned int i;
+
+    if (!x)
+	return;
+    name = xml_name(x);
+    value = xml_value(x);
+    prefix = xml_prefix(x);
+    flags = xml_flag(x, 0xffff);
+    for (i = 0; i < indent; i++)
+	fputc(' ', f);
+    fputs(name, f);
+    if (value) {
+	fputc('=', f);
+	fputs(value, f);
+    }
+    if (prefix) {
+	fputc('(', f);
+	fputs(value, f);
+	fputc(')', f);
+    }
+    print_xml_flags(f, flags);
+    fputc('\n', f);
+
+    for (i = 0; (c = xml_child_i(x, i)); i++)
+	print_xml(f, indent + 2, c);
+}
+
 static int
 hello_validate(clicon_handle h, transaction_data td) {
     struct hello_data *data = transaction_arg(td);
@@ -196,6 +256,11 @@ hello_validate(clicon_handle h, transaction_data td) {
     int rv;
 
     printf("*****hello validate*****\n");
+    printf("src:\n");
+    print_xml(stdout, 2, transaction_src(td));
+    printf("target:\n");
+    print_xml(stdout, 2, transaction_target(td));
+    printf("transaction:\n");
     transaction_print(stdout, td);
 
     vec = transaction_dvec(td);
