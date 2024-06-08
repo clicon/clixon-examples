@@ -3,6 +3,10 @@ module clixon-hello {
     namespace "urn:example:hello";
     prefix he;
     revision 2024-05-25 {
+        description
+	    "Converted to an enumeration";
+    }
+    revision 2019-04-17 {
 	description
 	    "Clixon hello world example";
     }
