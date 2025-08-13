@@ -53,12 +53,12 @@
 /* These include signatures for plugin and transaction callbacks. */
 #include <clixon/clixon_backend.h> 
 
-int wifi_commit(clicon_handle h, transaction_data td) {
+int wifi_commit(clixon_handle h, transaction_data td) {
     return 0;
 }
 
 /* Forward declaration */
-clixon_plugin_api *clixon_plugin_init(clicon_handle h);
+clixon_plugin_api *clixon_plugin_init(clixon_handle h);
 
 static clixon_plugin_api api = {
     "wifi backend",
@@ -67,6 +67,6 @@ static clixon_plugin_api api = {
 };
 
 clixon_plugin_api *
-clixon_plugin_init(clicon_handle h) {
+clixon_plugin_init(clixon_handle h) {
     return &api;
 }
