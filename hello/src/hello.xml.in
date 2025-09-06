@@ -7,6 +7,7 @@
   <CLICON_YANG_MODULE_MAIN>clixon-hello</CLICON_YANG_MODULE_MAIN>
   <CLICON_CLI_MODE>hello</CLICON_CLI_MODE>
   <CLICON_CLISPEC_DIR>@LIBDIR@/hello/clispec</CLICON_CLISPEC_DIR>
+  <CLICON_BACKEND_DIR>@LIBDIR@/hello/backend</CLICON_BACKEND_DIR>
   <CLICON_SOCK>@LOCALSTATEDIR@/hello/hello.sock</CLICON_SOCK>
   <CLICON_BACKEND_PIDFILE>@LOCALSTATEDIR@/hello/hello.pidfile</CLICON_BACKEND_PIDFILE>
   <!-- true here means restconf config is in datastore -->
