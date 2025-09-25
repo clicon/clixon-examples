@@ -7,7 +7,7 @@ openconfig-system docker container.
 
 First, the container is started with a backend and a restconf listening on port 8080:
 ```
-  $ sudo docker run --rm -p 8080:80 --name openconfig -d clixon/openconfig-system
+  $ sudo docker run --rm -p 8080:80 --name openconfig -d clixon/openconfig
 ```
 
 You can start a CLI with some example commands:

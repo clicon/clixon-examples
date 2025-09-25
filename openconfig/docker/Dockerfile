@@ -32,7 +32,8 @@
 #
 
 FROM alpine
-MAINTAINER Olof Hagsand <olof@hagsand.se>
+LABEL maintainer="Olof Hagsand <olof@hagsand.se>"
+
 
 # Dependencies
 RUN apk add --update git make build-base gcc flex bison curl-dev nghttp2
@@ -95,7 +96,7 @@ RUN install startsystem.sh /clixon/build/usr/local/bin/
 # Stage 2
 # The second step skips the development environment and builds a runtime system
 FROM alpine
-MAINTAINER Olof Hagsand <olof@hagsand.se>
+LABEL maintainer="Olof Hagsand <olof@hagsand.se>"
 
 # For clixon and cligen
 RUN apk add --update flex bison
@@ -122,6 +123,11 @@ EXPOSE 830/tcp
 RUN apk add --no-cache openssh
 COPY src/sshd_config /etc/ssh/sshd_config
 
+RUN adduser -h /home/admin -s /bin/sh -D admin
+RUN adduser admin clicon
+RUN echo -n 'admin:admin' | chpasswd
+
+# Obsolete user "noc", use "admin" instead
 RUN adduser -h /home/noc -s /bin/sh -D noc
 RUN adduser noc clicon
 RUN echo -n 'noc:noc' | chpasswd

@@ -32,7 +32,7 @@
 #
 
 FROM alpine
-MAINTAINER Olof Hagsand <olof@hagsand.se>
+LABEL maintainer="Olof Hagsand <olof@hagsand.se>"
 
 # Dependencies
 RUN apk add --update git make build-base gcc flex bison curl-dev nghttp2
@@ -94,7 +94,7 @@ RUN install startsystem.sh /clixon/build/usr/local/bin/
 # Stage 2
 # The second step skips the development environment and builds a runtime system
 FROM alpine
-MAINTAINER Olof Hagsand <olof@hagsand.se>
+LABEL maintainer="Olof Hagsand <olof@hagsand.se>"
 
 # For clixon and cligen
 RUN apk add --update flex bison

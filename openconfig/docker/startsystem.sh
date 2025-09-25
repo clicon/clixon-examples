@@ -51,11 +51,12 @@ DBG=${DBG:-0}
 # sudo: setrlimit(RLIMIT_CORE): Operation not permitted
 echo "Set disable_coredump false" > /etc/sudo.conf
 
-chown noc:noc /home/noc
+chown noc:noc /home/noc # obsolete
+chown adnmin:admin /home/admin
 
 # Start clixon backend
 >&2 echo "start clixon_backend:"
-/usr/local/sbin/clixon_backend -D $DBG -s startup -l e # logs on docker logs
+/usr/local/sbin/clixon_backend -D $DBG -s startup -l e -o CLICON_NETCONF_MONITORING_GETSCHEMA_CDATA=true # logs on docker logs
 
 ssh-keygen -A
 exec /usr/sbin/sshd -D -e "$@"
