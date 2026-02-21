@@ -55,7 +55,7 @@ src:
 	cp -R ${srcdir}/../$@ .
 
 docker: Dockerfile src yang
-	sudo docker build -t $(IMG) .  # --no-cache
+	sudo docker build --progress=plain -t $(IMG) .  # --no-cache
 
 push:
 	sudo docker push $(IMG)

@@ -31,9 +31,8 @@
 # ***** END LICENSE BLOCK *****
 #
 
-FROM alpine
+FROM alpine:latest
 LABEL maintainer="Olof Hagsand <olof@hagsand.se>"
-
 
 # Dependencies
 RUN apk add --update git make build-base gcc flex bison curl-dev nghttp2
