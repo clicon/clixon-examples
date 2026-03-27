@@ -1,0 +1,27 @@
+version: "2.2"
+# Generic clixon container example.
+#
+# Mount your clixon config and yang models as volumes:
+#   - CLIXON_CONFIG points to your config file inside the container
+#   - Your config's CLICON_YANG_DIR entries determine where yang files are read
+#
+# Directory layout example (on the host):
+#   ./config/clixon.xml          - clixon config file
+#   ./yang/                      - directory with your .yang files
+#
+services:
+  clixon:
+    container_name: clixon
+    build: .
+    environment:
+      - CLIXON_CONFIG=/usr/local/etc/clixon.xml
+      - DBG=0
+    ports:
+      - "8080:80"
+      - "2022:22"
+      - "8830:830"
+    volumes:
+      # Mount your clixon config file
+      - ./config/clixon.xml:/usr/local/etc/clixon.xml:ro
+      # Mount your yang models at the path referenced by CLICON_YANG_DIR in your config
+      - ./yang/:/usr/local/share/yang/:ro
