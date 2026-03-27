@@ -75,9 +75,6 @@ sudo docker-compose up
 sudo docker run -d \
   -v $(pwd)/config/clixon.xml:/usr/local/etc/clixon.xml:ro \
   -v $(pwd)/yang:/usr/local/share/yang:ro \
-  -p 8080:80 \
-  -p 2022:22 \
-  -p 8830:830 \
   clixon/generic
 ```
 
