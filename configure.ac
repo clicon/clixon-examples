@@ -210,5 +210,6 @@ AC_CONFIG_FILES([Makefile
   	  3gpp/src/3gpp.xml
 	  3gpp/yang/Makefile
     	  3gpp/docker/Makefile
+	  generic/Makefile
 ])
 AC_OUTPUT
