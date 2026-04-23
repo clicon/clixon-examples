@@ -1,0 +1,17 @@
+<clixon-config xmlns="http://clicon.org/config">
+  <CLICON_CONFIGFILE>/usr/local/etc/clixon/generic.xml</CLICON_CONFIGFILE>
+  <CLICON_CONFIGDIR>/usr/local/etc/clixon/generic.d</CLICON_CONFIGDIR>
+  <CLICON_FEATURE>*:*</CLICON_FEATURE>
+  <!-- Top-level dir for where to look at import/include YANGs -->
+  <CLICON_YANG_DIR>/usr/local/share/yang</CLICON_YANG_DIR>
+  <CLICON_YANG_MAIN_DIR>/usr/local/share/yang/main</CLICON_YANG_MAIN_DIR>
+  <!-- The following must be as-is: it is replaced if -e MAIN=mymodule is supplied to docker run -->
+  <!--CLICON_YANG_MODULE_MAIN></CLICON_YANG_MODULE_MAIN-->
+  <CLICON_CLI_MODE>generic</CLICON_CLI_MODE>
+  <CLICON_CLISPEC_DIR>/usr/local/lib/clispec</CLICON_CLISPEC_DIR>
+  <CLICON_SOCK>/usr/local/var/clixon/clixon.sock</CLICON_SOCK>
+  <CLICON_BACKEND_PIDFILE>/usr/local/var/clixon/clixon.pidfile</CLICON_BACKEND_PIDFILE>
+  <CLICON_BACKEND_RESTCONF_PROCESS>true</CLICON_BACKEND_RESTCONF_PROCESS>
+  <CLICON_XMLDB_DIR>/usr/local/var/clixon</CLICON_XMLDB_DIR>
+  <CLICON_STARTUP_MODE>init</CLICON_STARTUP_MODE>
+</clixon-config>

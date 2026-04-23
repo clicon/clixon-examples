@@ -1,7 +1,7 @@
 #
 # ***** BEGIN LICENSE BLOCK *****
 #
-# Copyright (C) 2009-2024 Olof Hagsand
+# Copyright (C) 2009-2026 Olof Hagsand
 #
 # This file is part of CLIXON
 #
@@ -45,7 +45,16 @@
 FROM alpine AS build
 
 # Build dependencies
-RUN apk add --update git make build-base gcc flex bison curl-dev nghttp2
+RUN apk add --update git make build-base gcc flex bison nghttp2 curl-dev
+
+# For netsnmp
+RUN apk add --update net-snmp net-snmp-dev
+
+# For grpc/gnmi
+RUN apk add --update protobuf-dev protobuf-c-dev
+
+# For groupadd/groupdel
+RUN apk add --update shadow
 
 # Create a directory to hold source-code, dependencies etc
 RUN mkdir /clixon
@@ -66,27 +75,54 @@ RUN adduser -D -H -G www-data www-data
 WORKDIR /clixon
 RUN git clone https://github.com/clicon/clixon.git
 WORKDIR /clixon/clixon
-RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build/usr/local --with-restconf=native --enable-nghttp2
+RUN ./configure --prefix=/usr/local --with-cligen=/clixon/build/usr/local --with-restconf=native --enable-nghttp2 --with-yang-installdir=/usr/local/share/yang/clixon --enable-grpc --with-mib-generated-yang-dir=/usr/local/share/mib-yangs/
 RUN make
+
 RUN make DESTDIR=/clixon/build install
 RUN make DESTDIR=/clixon/build install-include
 
 # Create the suggested yang model mount point and a writable datastore dir
-RUN mkdir -p /clixon/build/usr/local/share/yang
+RUN mkdir -p /clixon/build/usr/local/share/yang/main
+RUN mkdir -p /clixon/build/usr/local/share/yang/lib
 RUN mkdir -p /clixon/build/usr/local/var/clixon
+RUN mkdir -p /clixon/build/usr/local/etc/clixon/generic.d
+
+# Download standard YANG models from YangModels/yang (sparse checkout of standard/ only)
+RUN apk add --no-cache git
+RUN git clone --depth 1 --filter=blob:none --sparse \
+        https://github.com/YangModels/yang.git /clixon/yangmodels
+WORKDIR /clixon/yangmodels
+RUN git sparse-checkout set standard
+RUN cp -r standard /clixon/build/usr/local/share/yang
+
+# Copy config file
+WORKDIR /clixon
+COPY generic.xml .
+RUN install generic.xml /clixon/build/usr/local/etc/clixon/
+RUN ln -s clixon/generic.xml clixon/generic.xml
+
+# Copy clispec file
+WORKDIR /clixon
+COPY generic.cli .
+COPY pipe.cli .
+RUN mkdir /clixon/build/usr/local/lib/clispec
+RUN install generic.cli /clixon/build/usr/local/lib/clispec/
+RUN install pipe.cli /clixon/build/usr/local/lib/clispec/
 
 # Copy the startup script
 WORKDIR /clixon
-COPY startsystem.sh startsystem.sh
+COPY startsystem.sh .
 RUN install startsystem.sh /clixon/build/usr/local/bin/
 
 #
 # Stage 2 - runtime only
 #
 FROM alpine
-MAINTAINER Olof Hagsand <olof@hagsand.se>
 
-RUN apk add --update flex bison openssl nghttp2
+RUN apk add --update flex bison openssl nghttp2 git
+
+# For grpc/gnmi
+RUN apk add --update protobuf-c
 
 # Users required by clixon
 RUN adduser -D -H -G www-data www-data
@@ -101,6 +137,7 @@ RUN echo -n 'noc:noc' | chpasswd
 EXPOSE 80/tcp
 EXPOSE 22/tcp
 EXPOSE 830/tcp
+EXPOSE 9339/tcp
 
 # Copy the built binaries and libraries from stage 1
 COPY --from=build /clixon/build/ /

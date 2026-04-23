@@ -1,7 +1,6 @@
-#
 # ***** BEGIN LICENSE BLOCK *****
 #
-# Copyright (C) 2020-2024 Olof Hagsand and Rubicon Communications, LLC
+# Copyright (C) 2024 Olof Hagsand
 #
 # This file is part of CLIXON
 #
@@ -29,23 +28,20 @@
 # the terms of any one of the Apache License version 2 or the GPL.
 #
 # ***** END LICENSE BLOCK *****
-#
 
-IMG = clixon/generic
+# Clixon pipe example specification
 
-.PHONY: all clean distclean docker push
-
-all:
-	echo "Run make docker to build the generic clixon image"
-
-docker: Dockerfile startsystem.sh
-	sudo docker build --progress=plain -t $(IMG) . # --no-cache
-
-push:
-	sudo docker push $(IMG)
-
-clean:
-	rm -f *~
-
-distclean: clean
-	rm -f Makefile
+CLICON_MODE="|pipe"; # Must start with |
+\| {
+   grep("Search for pattern") <arg:string>, pipe_grep_fn("-e", "arg");
+   except("Inverted search") <arg:string>, pipe_grep_fn("-v", "arg");
+   tail("Output last part") <arg:string>, pipe_tail_fn("-n", "arg");
+   count("Line count"), pipe_wc_fn("-l");
+   show("Show other format") {
+     cli("set Input cli syntax"), pipe_showas_fn("cli", true, "set ");
+     xml("XML"), pipe_showas_fn("xml", true);
+     json("JSON"), pipe_showas_fn("json");
+     text("Text curly braces"), pipe_showas_fn("text");
+   }
+   save("Save to file") <filename:string>("Local filename"), pipe_save_file("filename");
+}

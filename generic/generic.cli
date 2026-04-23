@@ -1,0 +1,172 @@
+# ***** BEGIN LICENSE BLOCK *****
+#
+# Copyright (C) 2009-2016 Olof Hagsand and Benny Holmgren
+# Copyright (C) 2017-2019 Olof Hagsand
+# Copyright (C) 2020-2022 Olof Hagsand and Rubicon Communications, LLC(Netgate)
+#
+# This file is part of CLIXON
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Alternatively, the contents of this file may be used under the terms of
+# the GNU General Public License Version 3 or later (the "GPL"),
+# in which case the provisions of the GPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of the GPL, and not to allow others to
+# use your version of this file under the terms of Apache License version 2,
+# indicate your decision by deleting the provisions above and replace them with
+# the notice and other provisions required by the GPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the Apache License version 2 or the GPL.
+#
+# ***** END LICENSE BLOCK *****
+
+# Clixon example specification
+CLICON_MODE="generic";
+CLICON_PROMPT="%U@%H %W> ";
+
+# Autocli syntax tree operations
+edit @datamodelmode, cli_auto_edit("basemodel");
+up, cli_auto_up("basemodel");
+top, cli_auto_top("basemodel");
+set @datamodel, cli_auto_set();
+set default {
+   format("Set default output format") <fmt:string choice:xml|json|text|cli>("CLI output format"), cli_format_set();
+}
+merge @datamodel, cli_auto_merge();
+create @datamodel, cli_auto_create();
+delete("Delete a configuration item") {
+      @datamodel, @add:leafref-no-refer, @add:ac-strict-expand, cli_auto_del();
+      all("Delete whole candidate configuration"), delete_all("candidate");
+}
+validate("Validate changes"), cli_validate();
+commit("Commit the changes") {
+  [persist-id("Specify the 'persist' value of a previous confirmed-commit") <persist-id-val:string show:"string">("The 'persist' value of the persistent confirmed-commit")], cli_commit(); {
+    <cancel:string keyword:cancel>("Cancel an ongoing confirmed-commit"), cli_commit();
+    <confirmed:string keyword:confirmed>("Require a confirming commit") {
+       [persist("Make this confirmed-commit persistent") <persist-val:string show:"string">("The value that must be provided as 'persist-id' in the confirming-commit or cancel-commit")]
+       [<timeout:uint32 range[1:4294967295] show:"1..4294967295">("The rollback timeout in seconds")], cli_commit();
+    }
+  }
+}
+quit("Quit"), cli_quit();
+
+debug("Debugging parts of the system"){
+    cli("Set cli debug")	 (<level:uint32>("Set debug level")|
+                                  <level:string expand_yang_bits("/cc:clixon-config/cc:CLICON_DEBUG")>("Set debug level")), cli_debug_cli("/cc:clixon-config/cc:CLICON_DEBUG");
+    backend("Set backend debug") (<level:uint32>("Set debug level (0..n)")|
+                                  <level:string expand_yang_bits("/cc:clixon-config/cc:CLICON_DEBUG")>("Set debug level")), cli_debug_backend("/cc:clixon-config/cc:CLICON_DEBUG");
+    restconf("Set restconf debug") (<level:uint32>("Set debug level (0..n)")|
+                                    <level:string expand_yang_bits("/cc:clixon-config/cc:CLICON_DEBUG")>("Set debug level")), cli_debug_restconf("/cc:clixon-config/cc:CLICON_DEBUG");
+}
+clear("Clear system state") {
+    autocli("Autocli file cache"), cli_cache_clear("autocli", "default"); # clixon-cache branch
+}
+copy("Copy and create a new object") {
+    running("Copy from running db")  startup("Copy to startup config"), db_copy("running", "startup");
+    interface("Copy interface"){
+	(<name:string>|<name:string expand_dbvar("candidate","/ietf-interfaces:interfaces/interface=%s/name")>("name of interface to copy from")) to("Copy to interface") <toname:string>("Name of interface to copy to"), cli_copy_config("candidate","//interface[%s='%s']","urn:ietf:params:xml:ns:yang:ietf-interfaces","name","name","toname");
+    }
+}
+discard("Discard edits (rollback 0)"), discard_changes();
+
+show("Show a particular state of the system"){
+    default{
+       format("Show default output format"), cli_format_show();
+    }
+    auto("Show expand x"){
+       @datamodelshow, cli_show_auto("candidate", "default", true, false, "report-all");
+    }
+    debug("Show debug"), cli_debug_show();{
+          cli("Show cli debug"), cli_debug_show();
+    }
+    xpath("Show configuration") <xpath:string>("XPATH expression")
+       [<ns:string>("Namespace")], show_conf_xpath("candidate");
+    version("Show version"), cli_show_version("candidate", "text", "/");
+    options("Show clixon options"), cli_show_options();{
+       @|pipe, cli_show_options();
+    }
+    compare("Compare candidate and running databases"), compare_dbs("running", "candidate", "default");{
+    		     xml("Show comparison in xml"), compare_dbs("running", "candidate", "xml");
+                     text("Show comparison in text"), compare_dbs("running", "candidate", "text");
+    }
+    pagination("Show list pagination") xpath("Show configuration") <xpath:string>("XPATH expression"), cli_pagination("use xpath var", "es", "https://example.com/ns/example-social", "default", "10");
+    configuration("Show configuration"), cli_show_auto_mode("candidate", "default", true, false, "explicit", "set ");{
+       @|pipe, cli_show_auto_mode("candidate", "xml", true, false, "explicit");
+       default("With-default mode"){
+          report-all, cli_show_auto_mode("candidate", "default", true, false, "report-all");
+	  trim, cli_show_auto_mode("candidate", "default", true, false, "trim");
+	  explicit, cli_show_auto_mode("candidate", "default", true, false, "explicit");
+	  report-all-tagged, cli_show_auto_mode("candidate", "default", true, false, "report-all-tagged");
+	  report-all-tagged-default, cli_show_auto_mode("candidate", "default", true, false, "report-all-tagged-default");
+	  report-all-tagged-strip, cli_show_auto_mode("candidate", "default", true, false, "report-all-tagged-strip");
+       }
+    }
+    state("Show configuration and state"), cli_show_auto_mode("running", "default", true, true); {
+       @|pipe, cli_show_auto_mode("running", "xml", true, true);
+       default("With-default mode"){
+          report-all, cli_show_auto_mode("running", "default", true, true, "report-all");
+	  trim, cli_show_auto_mode("running", "default", true, true, "trim");
+	  explicit, cli_show_auto_mode("running", "default", true, true, "explicit");
+	  report-all-tagged, cli_show_auto_mode("running", "default", true, true, "report-all-tagged");
+	  report-all-tagged-default, cli_show_auto_mode("running", "default", true, true, "report-all-tagged-default");
+	  report-all-tagged-strip, cli_show_auto_mode("running", "default", true, true, "report-all-tagged-strip");
+       }
+    }
+    yang("Show yang specs"), show_yang(); {
+        clixon-example("Show clixon-example yang spec"), show_yang("clixon-example");
+    }
+    memory("Show memory usage") {
+      [<detail:string keyword:detail>] [<cli:string keyword:cli>]  [<backend:string keyword:backend>], cli_show_statistics();
+         @|pipe, cli_show_statistics();
+    }
+    sessions("Show client sessions"), cli_show_sessions();{
+         detail("Show sessions detailed state"), cli_show_sessions("detail");
+    }
+}
+
+save("Save candidate configuration to XML file") <filename:string>("Filename (local filename)"), save_config_file("candidate","filename", "xml");{
+    cli("Save configuration as CLI commands"), save_config_file("candidate","filename", "cli");
+    xml("Save configuration as XML"), save_config_file("candidate","filename", "xml");
+    json("Save configuration as JSON"), save_config_file("candidate","filename", "json");
+    text("Save configuration as TEXT"), save_config_file("candidate","filename", "text");
+    netconf("Save configuration as NETCONF"), save_config_file("candidate","filename", "netconf");
+}
+load("Load configuration from XML file") <filename:string>("Filename (local filename)"),load_config_file("filename", "replace");{
+    replace("Replace candidate with file contents"), load_config_file("filename", "replace");{
+	cli("Replace candidate with file containing CLI commands"), load_config_file("filename", "replace", "cli");
+	xml("Replace candidate with file containing XML"), load_config_file("filename", "replace", "xml");
+	json("Replace candidate with file containing JSON"), load_config_file("filename", "replace", "json");
+	text("Replace candidate with file containing TEXT"), load_config_file("filename", "replace", "text");
+    }
+    merge("Merge file with existent candidate"), load_config_file("filename", "merge");{
+	cli("Merge candidate with file containing CLI commands"), load_config_file("filename", "merge", "cli");
+	xml("Merge candidate with file containing XML"), load_config_file("filename", "merge", "xml");
+	json("Merge candidate with file containing JSON"), load_config_file("filename", "merge", "json");
+	text("Merge candidate with file containing TEXT"), load_config_file("filename", "merge", "text");
+    }
+}
+notify("Get notifications from backend"), cli_notify("EXAMPLE", "1", "text");
+no("Negate") notify("Get notifications from backend"), cli_notify("EXAMPLE", "0", "xml");
+lock,cli_lock("candidate");
+unlock,cli_unlock("candidate");
+restart <plugin:string>, cli_restart_plugin();
+ping("Check packend liveness"), cli_ping();
+
+session("Client sessions") {
+   kill("Kill client session")
+      <session:uint32>("Client session number"), cli_kill_session("session");
+}
+
+update("Update private candidate from running configuration"), cli_update();
+

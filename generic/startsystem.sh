@@ -37,24 +37,34 @@
 # Starts the clixon backend and then runs sshd in the foreground.
 #
 # Environment variables:
-#   CLIXON_CONFIG  Path to the clixon config XML file
-#                  Default: /usr/local/etc/clixon.xml
+#   MAIN           MAIN yang module main
 #   DBG            Debug level passed to backend/restconf (default: 0)
 
-set -u
+set -ux
 
 >&2 echo "$0"
 
 DBG=${DBG:-0}
+MAIN=${MAIN:-""}
 CLIXON_CONFIG=${CLIXON_CONFIG:-/usr/local/etc/clixon.xml}
+
+# Link clixon.xml to generic.xml
+ln -s clixon/generic.xml ${CLIXON_CONFIG}
 
 # Workaround for: sudo: setrlimit(RLIMIT_CORE): Operation not permitted
 echo "Set disable_coredump false" > /etc/sudo.conf
-
 if [ ! -f "${CLIXON_CONFIG}" ]; then
     >&2 echo "ERROR: clixon config file not found: ${CLIXON_CONFIG}"
     >&2 echo "Mount your config file at ${CLIXON_CONFIG} or set CLIXON_CONFIG"
     exit 1
+fi
+
+# Add MAIN if it is defined to config file
+if [ -n "$MAIN" ]; then
+    sed "s/<!--CLICON_YANG_MODULE_MAIN><\/CLICON_YANG_MODULE_MAIN-->/<CLICON_YANG_MODULE_MAIN>$MAIN<\/CLICON_YANG_MODULE_MAIN>/g" ${CLIXON_CONFIG} > /tmp/foo.xml
+    if [ -s /tmp/foo.xml ]; then
+        mv /tmp/foo.xml ${CLIXON_CONFIG}
+    fi
 fi
 
 chown noc:noc /home/noc
@@ -69,6 +79,9 @@ fi
 # Start clixon backend (logs go to docker logs via -l e)
 >&2 echo "Starting clixon_backend with config: ${CLIXON_CONFIG}"
 /usr/local/sbin/clixon_backend -D "${DBG}" -f "${CLIXON_CONFIG}" -l e
+
+>&2 echo "Starting clixon_grpc"
+/usr/local/sbin/clixon_grpc -df "${CLIXON_CONFIG}"
 
 # Generate sshd_config with the correct clixon_netconf path and config file.
 # This runs on both port 22 (interactive) and port 830 (NETCONF).
