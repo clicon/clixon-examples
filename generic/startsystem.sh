@@ -37,7 +37,7 @@
 # Starts the clixon backend and then runs sshd in the foreground.
 #
 # Environment variables:
-#   MAIN           MAIN yang module main
+#   MODULE         yang main module
 #   DBG            Debug level passed to backend/restconf (default: 0)
 
 set -ux
@@ -45,7 +45,7 @@ set -ux
 >&2 echo "$0"
 
 DBG=${DBG:-0}
-MAIN=${MAIN:-""}
+MODULE=${MODULE:-""}
 CLIXON_CONFIG=${CLIXON_CONFIG:-/usr/local/etc/clixon.xml}
 
 # Link clixon.xml to generic.xml
@@ -59,9 +59,9 @@ if [ ! -f "${CLIXON_CONFIG}" ]; then
     exit 1
 fi
 
-# Add MAIN if it is defined to config file
-if [ -n "$MAIN" ]; then
-    sed "s/<!--CLICON_YANG_MODULE_MAIN><\/CLICON_YANG_MODULE_MAIN-->/<CLICON_YANG_MODULE_MAIN>$MAIN<\/CLICON_YANG_MODULE_MAIN>/g" ${CLIXON_CONFIG} > /tmp/foo.xml
+# Add MODULE if it is defined to config file
+if [ -n "$MODULE" ]; then
+    sed "s/<!--CLICON_YANG_MODULE_MAIN><\/CLICON_YANG_MODULE_MAIN-->/<CLICON_YANG_MODULE_MAIN>$MODULE<\/CLICON_YANG_MODULE_MAIN>/g" ${CLIXON_CONFIG} > /tmp/foo.xml
     if [ -s /tmp/foo.xml ]; then
         mv /tmp/foo.xml ${CLIXON_CONFIG}
     fi
@@ -75,10 +75,15 @@ if [ -f /home/noc/.ssh/authorized_keys ]; then
     chmod 700 /home/noc/.ssh
     chmod 600 /home/noc/.ssh/authorized_keys
 fi
+if [ -f /usr/local/var/clixon/startup_db ]; then
+    mode=startup
+else
+    mode=init
+fi
 
 # Start clixon backend (logs go to docker logs via -l e)
->&2 echo "Starting clixon_backend with config: ${CLIXON_CONFIG}"
-/usr/local/sbin/clixon_backend -D "${DBG}" -f "${CLIXON_CONFIG}" -l e
+>&2 echo "Starting clixon_backend with config: ${CLIXON_CONFIG} -s ${mode}"
+/usr/local/sbin/clixon_backend -D "${DBG}" -f "${CLIXON_CONFIG}" -s ${mode} -l e
 
 >&2 echo "Starting clixon_grpc"
 /usr/local/sbin/clixon_grpc -df "${CLIXON_CONFIG}"

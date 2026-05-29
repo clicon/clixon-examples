@@ -5,7 +5,9 @@ You just provide the YANG files of your application, and the container provides 
 This means the same container can be reused for different applications.
 However, not that the container is management-only, the commits are no-op, there is no real semantics in the container, it is purely for exercising the management and YANG API:s.
 
-## How it works
+## YANGs
+
+### Main dir
 
 Assume you have YANG files in a directory, say /usr/local/share/myyang.
 
@@ -17,20 +19,63 @@ sudo docker run -d \
   clixon/generic
 ```
 
-You can also specify a (single) yang main module `mymodule` and use a library of YANG files. Then start as follows:
+### Module + lib dir
+
+Some projects prefer a single top-level yang module and a library of YANG files. Then start as follows:
 ```sh
 sudo docker run -d \
   -v /usr/local/share/myyang:/usr/local/share/yang/lib:ro \
-  -e MAIN=mymodule \
+  -e MODULE=mymodule \
+  --name clixon-generic  \
+  clixon/generic
+
+Yuou can combine the main and lib dir options.
+
+## Startup
+
+```sh
+sudo docker run -d \
+  -v /usr/local/share/myyang:/usr/local/share/yang/main:ro \
+  -v mystartup:/usr/local/var/clixon/startup_db:ro \
   --name clixon-generic  \
   clixon/generic
 ```
+
+## CLI
 
 When the docker has started you can start a cli in it:
 ```sh
 docker exec -it clixon-generic clixon_cli
 ```
 
+## NETCONF
+
+## RESTCONF
+
+Map ports and run:
+```
+sudo docker run -d \
+  -v /usr/local/share/myyang:/usr/local/share/yang/main:ro \
+  -p 8080:80 -p 830:430
+  --name clixon-generic  \
+  clixon/generic
+
+curl http://localhost:8080/restconf/data
+```
+
+## gRPC/gNMI
+
+Run with the grpc port: `-p 9339` plain-text port:
+
+```sh
+sudo docker run -d \
+  -v /usr/local/share/myyang:/usr/local/share/yang/main:ro \
+  -p 9339:9339
+  --name clixon-generic  \
+  clixon/generic
+
+grpcurl -plaintext -import-path /usr/local/share/clixon/proto -import-path /usr/include -proto gnmi.proto -d '{"path":[{"elem":[]}],"type":"ALL","encoding":"ASCII"}' localhost:9339 gnmi.gNMI/Get
+```
 ## Build
 
 ```sh
@@ -48,7 +93,7 @@ sudo docker-compose up
 | Variable        | Default                          | Description                          |
 |-----------------|----------------------------------|--------------------------------------|
 | `DBG`           | `0`                              | Debug level passed to the backend    |
-| `MAIN`          | `""`                             | Name of main YANG module             |
+| `MODULE`        | `""`                             | Name of main YANG module             |
 
 ## Exposed ports
 
@@ -96,20 +141,6 @@ volumes:
   - ./config/clixon.xml:/usr/local/etc/clixon.xml:ro
   - ./yang/:/usr/local/share/yang/:ro
   - ~/.ssh/id_rsa.pub:/home/noc/.ssh/authorized_keys:ro
-```
-
-### RESTCONF
-
-```sh
-curl http://localhost:8080/restconf/data
-```
-
-### gRPC/gNMI
-
-Run with the grpc port: `-p 9339` plain-text port:
-
-```sh
-grpcurl -plaintext -import-path /usr/local/share/clixon/proto -import-path /usr/include -proto gnmi.proto -d '{"path":[{"elem":[]}],"type":"ALL","encoding":"ASCII"}' localhost:9339 gnmi.gNMI/Get
 ```
 
 ### Logs
