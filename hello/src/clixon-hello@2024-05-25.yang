@@ -1,0 +1,24 @@
+module clixon-hello {
+    yang-version 1.1;
+    namespace "urn:example:hello";
+    prefix he;
+    revision 2024-05-25 {
+        description
+	    "Converted to an enumeration";
+    }
+    revision 2019-04-17 {
+	description
+	    "Clixon hello world example";
+    }
+    container hello {
+	leaf to {
+	    type enumeration {
+	        enum city;
+		enum state;
+		enum country;
+		enum world;
+	    }
+	    description "To whom are we saying hello?";
+	}
+    }
+}
